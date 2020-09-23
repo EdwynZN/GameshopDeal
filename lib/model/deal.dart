@@ -1,10 +1,30 @@
 import 'dart:convert';
+import 'package:equatable/equatable.dart';
 
 List<Deal> dealFromJson(String str) => List<Deal>.from(json.decode(str).map((x) => Deal.fromJson(x)));
 
 String dealToJson(List<Deal> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class Deal {
+class DealResponse{
+  List<Deal> deals;
+  String error;
+
+  DealResponse({this.deals, this.error});
+
+  factory DealResponse.withJsonResponse(List<dynamic> json) =>
+    DealResponse(
+      deals: List<Deal>.from(json.map((x) => Deal.fromJson(x)))
+    );
+
+  factory DealResponse.withError(String error) => DealResponse(error: error);
+
+  bool get hasData => deals != null;
+
+  bool get hasError => error != null;
+
+}
+
+class Deal extends Equatable{
   final String internalName;
   final String title;
   final String metacriticLink;
@@ -90,4 +110,27 @@ class Deal {
     "dealRating": dealRating,
     "thumb": thumb,
   };
+
+  @override
+  List<Object> get props => [
+    internalName,
+    title,
+    metacriticLink,
+    dealId,
+    storeId,
+    gameId,
+    salePrice,
+    normalPrice,
+    isOnSale,
+    savings,
+    metacriticScore,
+    steamRatingText,
+    steamRatingPercent,
+    steamRatingCount,
+    steamAppId,
+    releaseDate,
+    lastChange,
+    dealRating,
+    thumb,
+  ];
 }

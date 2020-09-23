@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'package:equatable/equatable.dart';
 
 List<Game> gameFromJson(String str) => List<Game>.from(json.decode(str).map((x) => Game.fromJson(x)));
 
 String gameToJson(List<Game> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class Game {
+class Game extends Equatable{
   final String gameId;
   final String steamAppId;
   final String cheapest;
@@ -42,4 +43,15 @@ class Game {
     "internalName": internalName,
     "thumb": thumb,
   };
+
+  @override
+  List<Object> get props => [
+    gameId,
+    steamAppId,
+    cheapest,
+    cheapestDealId,
+    gameExternal,
+    internalName,
+    thumb
+  ];
 }

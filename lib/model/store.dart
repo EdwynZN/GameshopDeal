@@ -1,13 +1,16 @@
 import 'dart:convert';
+import 'package:equatable/equatable.dart';
 
-List<Store> storeFromJson(String str) => List<Store>.from(json.decode(str).map((x) => Store.fromJson(x)));
+//List<Store> storeFromJson(String str) => List<Store>.from(json.decode(str).map((x) => Store.fromJson(x)));
+
+List<Store> storeFromJson(List<dynamic> json) => List<Store>.from(json.map((x) => Store.fromJson(x)));
 
 String storeToJson(List<Store> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class Store {
+class Store extends Equatable{
   final String storeId;
   final String storeName;
-  final int isActive;
+  final bool isActive;
   final _Images images;
 
   Store({
@@ -20,19 +23,28 @@ class Store {
   factory Store.fromJson(Map<String, dynamic> json) => Store(
     storeId: json["storeID"],
     storeName: json["storeName"],
-    isActive: json["isActive"],
+    isActive: json["isActive"] == 1,
     images: _Images.fromJson(json["images"]),
   );
 
   Map<String, dynamic> toJson() => {
     "storeID": storeId,
     "storeName": storeName,
-    "isActive": isActive,
+    "isActive": isActive ? 1 : 0,
     "images": images.toJson(),
   };
+
+  @override
+  List<Object> get props => [
+    storeId,
+    storeName,
+    isActive,
+    images
+  ];
+
 }
 
-class _Images {
+class _Images extends Equatable{
   final String banner;
   final String logo;
   final String icon;
@@ -54,4 +66,11 @@ class _Images {
     "logo": logo,
     "icon": icon,
   };
+
+  @override
+  List<Object> get props => [
+    banner,
+    logo,
+    icon
+  ];
 }

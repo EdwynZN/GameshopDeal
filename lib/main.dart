@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:gameshop_deals/provider/filter_provider.dart';
 import 'package:gameshop_deals/provider/theme_provider.dart';
 import 'package:gameshop_deals/provider/deal_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:gameshop_deals/screen/home_page.dart';
-import 'package:flutter/services.dart';
+import 'package:gameshop_deals/widget/route_transitions.dart';
+import 'package:gameshop_deals/utils/routes_constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Map<String,dynamic> savedTheme = await getTheme();
+
   runApp(GameShop(savedTheme));
 }
 
@@ -17,43 +19,31 @@ class GameShop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    BottomNavigationBar(items: null);
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<ThemeProvider>(
-          create: (BuildContext context) => ThemeProvider(theme['Theme']),
-        ),
         Provider<DealProvider>(
           create: (_) => DealProvider(),
           dispose: (context, deal) => deal.dispose(),
-          lazy: false,
+          lazy: true,
         ),
-        Provider<StoreProvider>(
-          create: (_) => StoreProvider(),
+        ChangeNotifierProvider<ThemeProvider>(
+          create: (_) => ThemeProvider(theme['Theme']),
         ),
-        Consumer<ThemeProvider>(
-          builder: (BuildContext context, ThemeProvider themeData, child){
-            return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              title: 'Flutter Demo',
-              theme: Themes.light,
-              darkTheme: Themes.dark,
-              themeMode: themeData.preferredTheme,
-              home: Builder(
-                builder: (BuildContext context){
-                  return AnnotatedRegion<SystemUiOverlayStyle>(
-                    value: SystemUiOverlayStyle(
-                      statusBarColor: Theme.of(context).primaryColor,
-                      systemNavigationBarColor: Theme.of(context).primaryColor
-                    ),
-                    child: child,
-                  );
-                }
-              )
-            );
-          },
-        )
       ],
-      child: MyHomePage(),
+      builder: (context, _){
+        final ThemeProvider themeData = context.watch<ThemeProvider>();
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          darkTheme: themeData.theme.dark,
+          theme: themeData.theme.light,
+          //theme: Themes.light,
+          //darkTheme: Themes.dark,
+          themeMode: themeData.preferredTheme,
+          onGenerateRoute: Routes.getRoute,
+          initialRoute: homeRoute,
+        );
+      },
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:gameshop_deals/model/deal.dart';
 import 'package:gameshop_deals/model/game.dart';
 import 'package:gameshop_deals/model/store.dart';
+import 'package:dio_http_cache/dio_http_cache.dart';
 
 const String _host = 'https://www.cheapshark.com/api/1.0/';
 
@@ -9,18 +10,33 @@ BaseOptions _options = BaseOptions(
   baseUrl: _host,
   connectTimeout: 5000,
   receiveTimeout: 3000,
-  responseType: ResponseType.plain
+  responseType: ResponseType.json
 );
-Dio dio = Dio(_options);
+DioCacheManager _dioCacheManager = DioCacheManager(CacheConfig());
+Dio dio = Dio(_options)..interceptors.add(_dioCacheManager.interceptor);
 
-Future<String> getHttp(String path, Map<String, dynamic> parameters) async {
-  try {
+Future<List<dynamic>> getJSONHttp(String path, Map<String, dynamic> parameters) async {
+  Response response = await dio.get<List<dynamic>>(path, queryParameters: parameters);
+  return response.data;
+  /*try {
     Response response = await dio.get<String>(path, queryParameters: parameters);
     return response.data;
   } catch (error, stacktrace) {
     //print("Exception occured: $error stackTrace: $stacktrace");
-    return null;
-  }
+    return error.toString();
+  } */
+}
+
+Future<String> getHttp(String path, Map<String, dynamic> parameters) async {
+  Response response = await dio.get<String>(path, queryParameters: parameters);
+  return response.data;
+  /*try {
+    Response response = await dio.get<String>(path, queryParameters: parameters);
+    return response.data;
+  } catch (error, stacktrace) {
+    //print("Exception occured: $error stackTrace: $stacktrace");
+    return error.toString();
+  } */
 }
 
 Future<List<Deal>> get listOfDeals async {
@@ -45,7 +61,7 @@ Future<List<Deal>> get listOfDeals async {
     Response response = await dio.get('deals', queryParameters: parameters);
     return dealFromJson(response.data);
   } catch (error, stacktrace) {
-    //print("Exception occured: $error stackTrace: $stacktrace");
+    print("Exception occured: $error stackTrace: $stacktrace");
     return null;
   }
 }
@@ -110,7 +126,7 @@ Future<List<Store>> get listOfStores async {
     Response response = await dio.get('stores');
     return storeFromJson(response.data);
   } catch (error, stacktrace) {
-    //print("Exception occured: $error stackTrace: $stacktrace");
+    print("Exception occured: $error stackTrace: $stacktrace");
     return null;
   }
 }

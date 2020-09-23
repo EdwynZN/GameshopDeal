@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gameshop_deals/model/deal.dart';
 import 'package:intl/intl.dart';
@@ -34,7 +33,7 @@ class StylishCard extends StatelessWidget{
                   padding: const EdgeInsets.only(left: _radius * 2, bottom: 5),
                   child: Text(
                     lorem,
-                    style: Theme.of(context).textTheme.title,
+                    style: Theme.of(context).textTheme.headline6,
                     maxLines: 1, softWrap: false,
                     overflow: TextOverflow.fade,
                   ),
@@ -44,7 +43,7 @@ class StylishCard extends StatelessWidget{
                 ),
                 Text(
                   'Text',
-                  style: Theme.of(context).textTheme.display1,
+                  style: Theme.of(context).textTheme.headline4,
                 ),
               ],
             ),
@@ -98,7 +97,7 @@ class DealCard extends StatelessWidget{
                     padding: const EdgeInsets.only(left: _radius * 2, bottom: 5),
                     child: Text(
                       deal.title,
-                      style: Theme.of(context).textTheme.title,
+                      style: Theme.of(context).textTheme.headline6,
                       maxLines: 1, softWrap: false,
                       overflow: TextOverflow.fade,
                     ),
@@ -150,11 +149,13 @@ class DealCard extends StatelessWidget{
 class DealCard2 extends StatelessWidget{
   final Deal deal;
   final bool score;
+  final int store;
 
   DealCard2({
     Key key,
     this.deal}) :
       score = deal.metacriticScore != '0',
+      store = int.tryParse(deal.storeId),
       super(key: key);
 
   @override
@@ -204,7 +205,7 @@ class DealCard2 extends StatelessWidget{
                         alignment: Alignment.centerLeft,
                         child: Image.network('https://www.cheapshark.com/img/stores/icons/12.png',
                           height: 24,
-                        ),
+                        )
                       ),
                       _Discount(deal.normalPrice, deal.salePrice, deal.savings),
                     ],
@@ -231,14 +232,14 @@ class _Released extends StatelessWidget{
   Widget build(BuildContext context) {
     if(released != null)
       return Text('Released on: $released',
-        style: Theme.of(context).textTheme.subtitle,
+        style: Theme.of(context).textTheme.subtitle2,
       );
     else
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         color: Colors.orangeAccent,
         child: Text('To be released',
-          style: Theme.of(context).textTheme.subtitle.copyWith(
+          style: Theme.of(context).textTheme.subtitle2.copyWith(
           color: Colors.black
           )
         ),
@@ -261,7 +262,7 @@ class _Metacritic extends StatelessWidget{
             width: 14, height: 14, fit: BoxFit.contain,
           ),
           Text(' $metacritic%',
-            style: Theme.of(context).textTheme.subtitle.copyWith(fontWeight: FontWeight.w800),
+            style: Theme.of(context).textTheme.subtitle2.copyWith(fontWeight: FontWeight.w800),
           ),
         ],
       ),
@@ -291,19 +292,19 @@ class _Discount extends StatelessWidget{
               children: [
                 TextSpan(
                   text: '\$$normalPrice',
-                  style: Theme.of(context).textTheme.subtitle.copyWith(
+                  style: Theme.of(context).textTheme.subtitle2.copyWith(
                     decoration: TextDecoration.lineThrough,
                     color: Colors.red,
                   ),
                 ),
                 TextSpan(
                     text: '\n',
-                    style: Theme.of(context).textTheme.subtitle
+                    style: Theme.of(context).textTheme.subtitle2
                 ),
                 TextSpan(
                   text: '\$$salePrice',
-                  style: Theme.of(context).textTheme.subtitle.copyWith(
-                    color: Colors.green,
+                  style: Theme.of(context).textTheme.subtitle2.copyWith(
+                    color: Colors.greenAccent,
                   ),
                 ),
               ]
@@ -316,12 +317,12 @@ class _Discount extends StatelessWidget{
             height: 28,
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
             decoration: BoxDecoration(
-              color: Colors.green,
+              color: Colors.greenAccent,
               borderRadius: BorderRadius.all(Radius.circular(4)),
             ),
             child: Center(
               child: Text('-$savings%',
-                style: Theme.of(context).textTheme.subtitle.copyWith(
+                style: Theme.of(context).textTheme.subtitle2.copyWith(
                     color: Colors.black
                 )
               ),
@@ -332,7 +333,7 @@ class _Discount extends StatelessWidget{
     else
       return Align(
         alignment: Alignment.centerRight,
-        child: Text('\$$salePrice', style: Theme.of(context).textTheme.subhead,),
+        child: Text('\$$salePrice', style: Theme.of(context).textTheme.subtitle1,),
       );
   }
 }
