@@ -1,67 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:gameshop_deals/provider/filter_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gameshop_deals/riverpod/filter_provider.dart';
+import 'package:gameshop_deals/model/filter_model.dart';
 
-class OrderByWidget extends StatefulWidget {
+final _orderBy = Provider.autoDispose((ref) =>
+  ref.watch(filterProviderCopy).state.orderBy == OrderBy.Descendant,
+  name: 'Order By'
+);
 
-  @override
-  _OrderByWidgetState createState() => _OrderByWidgetState();
-}
-
-class _OrderByWidgetState extends State<OrderByWidget> {
-  FilterProvider _filterProvider;
-
-  @override
-  void didChangeDependencies(){
-    super.didChangeDependencies();
-    _filterProvider = context.read<FilterProvider>();
-  }
+class OrderByWidget extends ConsumerWidget{
+  const OrderByWidget({Key key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final bool _isDescendant = _filterProvider.orderBy == OrderBy.Descendant;
+  Widget build(BuildContext context, ScopedReader watch) {
+    final bool _isDescendant = watch(_orderBy);
+    final ThemeData theme = Theme.of(context);
+    final Color _accentColor = theme.accentColor;
+    final Color _accentTextThemeColor = theme.accentTextTheme.headline6.color;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
         Expanded(
-          child: FlatButton.icon(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            textColor: !_isDescendant ? Theme.of(context).accentTextTheme.headline6.color : null,
-            color: !_isDescendant ? Theme.of(context).accentColor : null,
-            shape: Border.all(
-              color: Theme.of(context).accentColor,
-              width: 2,
-            ),
-            onPressed: () => !_isDescendant ? null : setState(() => _filterProvider.orderBy = OrderBy.Ascendant),
+          child: OutlinedButton.icon(
+            style: !_isDescendant ? OutlinedButton.styleFrom(
+              primary: _accentTextThemeColor,
+              backgroundColor: _accentColor
+            ) : null,
+            onPressed: () {
+              if(!_isDescendant) return;
+              final StateController<Filter> filter = context.read(filterProviderCopy);
+              filter.state = filter.state.copyWith(orderBy: OrderBy.Ascendant);
+            },
             icon: const Icon(Icons.arrow_downward, size: 20,),
             label:  const Flexible(child: FittedBox(child: Text('Ascending (A-Z)'),)),
           )
         ),
         Expanded(
-          child: FlatButton.icon(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            textColor: _isDescendant ? Theme.of(context).accentTextTheme.headline6.color : null,
-            color: _isDescendant ? Theme.of(context).accentColor : null,
-            shape: Border(
-              bottom: BorderSide(
-                color: Theme.of(context).accentColor,
-                width: 2,
-              ),
-              top: BorderSide(
-                color: Theme.of(context).accentColor,
-                width: 2,
-              ),
-              left: BorderSide(
-                  color: Theme.of(context).accentColor,
-                  width: 0.0
-              ),
-              right: BorderSide(
-                  color: Theme.of(context).accentColor,
-                  width: 2.0
-              ),
-            ),
-            onPressed: () => _isDescendant ? null : setState(() => _filterProvider.orderBy = OrderBy.Descendant),
+          child: OutlinedButton.icon(
+            style: _isDescendant ? OutlinedButton.styleFrom(
+              primary: _accentTextThemeColor,
+              backgroundColor: _accentColor
+            ) : null,
+            onPressed: () {
+              if(_isDescendant) return;
+              final StateController<Filter> filter = context.read(filterProviderCopy);
+              filter.state = filter.state.copyWith(orderBy: OrderBy.Descendant);
+            },
             icon: const Icon(Icons.arrow_upward, size: 20),
             label: const Flexible(child: FittedBox(child: Text('Descending (Z-A)'),))
           )

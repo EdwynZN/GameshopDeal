@@ -11,23 +11,38 @@ abstract class DiscountApi{
   factory DiscountApi(Dio dio, {String baseUrl}) = _DiscountApi;
 
   @GET('/deals')
-  Future<List<Deal>> getDeals();
+  Future<List<Deal>> getDeals([@CancelRequest() CancelToken cancelToken]);
 
   @GET('/deals?id={id}')
-  Future<List<Deal>> getDealsById(@Path('id') String id);
+  Future<List<Deal>> getDealsById(
+    @Path('id') String id,
+    [@CancelRequest() CancelToken cancelToken]
+  );
 
   @GET('/deals')
-  Future<List<Deal>> getDealsFromFilter(@Queries() Map<String, dynamic> parameters);
+  Future<List<Deal>> getDealsFromFilter(
+    @Queries() Map<String, dynamic> parameters,
+    [@CancelRequest() CancelToken cancelToken]
+  );
 
   @GET('/games')
-  Future<List<Game>> getGames();
+  Future<List<Game>> getGames([@CancelRequest() CancelToken cancelToken]);
 
   @GET('/games?id={id}')
-  Future<Game> getGamesById(@Path('id') int id);
+  Future<Game> getGamesById(
+    @Path('id') int id,
+    [@CancelRequest() CancelToken cancelToken]
+  );
 
   @GET('/games?ids={id}')
-  Future<List<Game>> getGamesByMultipleId(@Path('id') List<int> id);
+  Future<List<Game>> getGamesByMultipleId(
+    @Path('id') List<int> id,
+    [@CancelRequest() CancelToken cancelToken]
+  );
 
   @GET('/stores')
-  Future<List<Store>> getStores(@DioOptions() options);
+  Future<List<Store>> getStores(
+    @DioOptions() options,
+    [@CancelRequest() CancelToken cancelToken]
+  );
 }

@@ -1,15 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:gameshop_deals/provider/filter_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gameshop_deals/riverpod/filter_provider.dart';
+import 'package:gameshop_deals/model/filter_model.dart';
+
+final _onSaleProvider = Provider.autoDispose((ref) =>
+  ref.watch(filterProviderCopy).state.onSale,
+  name: 'On Sale'
+);
+
+final _retailProvider = Provider.autoDispose((ref) =>
+  ref.watch(filterProviderCopy).state.onlyRetail,
+  name: 'Only Retail'
+);
+
+final _steamWorksProvider = Provider.autoDispose((ref) =>
+  ref.watch(filterProviderCopy).state.steamWorks,
+  name: 'SteamWorks'
+);
 
 class FlagFilterWidget extends StatelessWidget {
+  const FlagFilterWidget({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Wrap(
       spacing: 8,
       alignment: WrapAlignment.center,
       children: <Widget>[
-        _OnSaleFilterWidget(),
+        const _OnSaleFilterWidget(),
         _RetailWidget(),
         _SteamWorksWidget(),
       ],
@@ -17,80 +35,56 @@ class FlagFilterWidget extends StatelessWidget {
   }
 }
 
-class _OnSaleFilterWidget extends StatefulWidget {
-  @override
-  __OnSaleFilterWidgetState createState() => __OnSaleFilterWidgetState();
-}
-
-class __OnSaleFilterWidgetState extends State<_OnSaleFilterWidget> {
-  FilterProvider _filterProvider;
+class _OnSaleFilterWidget extends ConsumerWidget{
+  const _OnSaleFilterWidget({Key key}) : super(key: key);
 
   @override
-  void didChangeDependencies(){
-    super.didChangeDependencies();
-    _filterProvider = context.read<FilterProvider>();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final bool sale = _filterProvider.onSale;
+  Widget build(BuildContext context, ScopedReader watch) {
+    final bool sale = watch(_onSaleProvider);
     return FilterChip(
       label: const Text('On sale'),
       tooltip: 'On sale',
       selected: sale,
-      onSelected: (value) => setState(() => _filterProvider.onSale = value)
+      onSelected: (value) {
+        final StateController<Filter> filter = context.read(filterProviderCopy);
+        filter.state = filter.state.copyWith(onSale: value);
+      },
     );
   }
 }
 
-class _RetailWidget extends StatefulWidget {
-  @override
-  __RetailWidgetState createState() => __RetailWidgetState();
-}
-
-class __RetailWidgetState extends State<_RetailWidget> {
-  FilterProvider _filterProvider;
+class _RetailWidget extends ConsumerWidget{
+  const _RetailWidget({Key key}) : super(key: key);
 
   @override
-  void didChangeDependencies(){
-    super.didChangeDependencies();
-    _filterProvider = context.read<FilterProvider>();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final bool retail = _filterProvider.onlyRetail;
+  Widget build(BuildContext context, ScopedReader watch) {
+    final bool retail = watch(_retailProvider);
     return FilterChip(
       label: const Text('Retail discount'),
       tooltip: 'Retail discount',
       selected: retail,
-      onSelected: (value) => setState(() => _filterProvider.onlyRetail = value)
+      onSelected: (value) {
+        final StateController<Filter> filter = context.read(filterProviderCopy);
+        filter.state = filter.state.copyWith(onlyRetail: value);
+      },
     );
   }
 }
 
-class _SteamWorksWidget extends StatefulWidget {
-  @override
-  __SteamWorksWidgetState createState() => __SteamWorksWidgetState();
-}
-
-class __SteamWorksWidgetState extends State<_SteamWorksWidget> {
-  FilterProvider _filterProvider;
+class _SteamWorksWidget extends ConsumerWidget{
+  const _SteamWorksWidget({Key key}) : super(key: key);
 
   @override
-  void didChangeDependencies(){
-    super.didChangeDependencies();
-    _filterProvider = context.read<FilterProvider>();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final bool steamWorks = _filterProvider.steamWorks;
+  Widget build(BuildContext context, ScopedReader watch) {
+    final bool steamWorks = watch(_steamWorksProvider);
     return FilterChip(
       label: const Text('SteamWorks'),
       tooltip: 'SteamWorks',
       selected: steamWorks,
-      onSelected: (value) => setState(() => _filterProvider.steamWorks = value)
+      onSelected: (value) {
+        final StateController<Filter> filter = context.read(filterProviderCopy);
+        filter.state = filter.state.copyWith(steamWorks: value);
+      },
     );
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gameshop_deals/widget/drawer.dart';
 import 'package:gameshop_deals/model/deal.dart';
 import 'package:gameshop_deals/provider/deal_provider.dart';
 import 'package:provider/provider.dart';
@@ -27,7 +26,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        endDrawer: EndDrawer(),
+        //endDrawer: FilterScreen(isDrawer: true),
         body: RefreshIndicator(
           child: CustomScrollView(
             slivers: <Widget>[

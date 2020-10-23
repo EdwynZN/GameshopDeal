@@ -1,41 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:gameshop_deals/provider/filter_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gameshop_deals/riverpod/filter_provider.dart';
+import 'package:gameshop_deals/model/filter_model.dart';
 
-class PriceSlider extends StatefulWidget {
-  @override
-  _PriceSliderState createState() => _PriceSliderState();
-}
+final _rangePrice = Provider.autoDispose((ref) {
+  double lower = ref.watch(filterProviderCopy).state.lowerPrice.toDouble();
+  double upper = ref.watch(filterProviderCopy).state.upperPrice.toDouble();
 
-class _PriceSliderState extends State<PriceSlider> {
-  FilterProvider _filterProvider;
+  return RangeValues(lower, upper);
+}, name: 'RangePrice');
 
-  @override
-  void didChangeDependencies(){
-    super.didChangeDependencies();
-    _filterProvider = context.read<FilterProvider>();
-  }
+class PriceSlider extends ConsumerWidget{
+  const PriceSlider({Key key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final RangeValues range = RangeValues(
-      _filterProvider.lowerPrice.toDouble(),
-      _filterProvider.upperPrice.toDouble()
-    );
+  Widget build(BuildContext context, ScopedReader watch) {
+    final RangeValues range = watch(_rangePrice);
     return RangeSlider(
       values: range,
-      onChanged: (newRange) => setState((){
-        _filterProvider.lowerPrice = newRange.start.round();
-        _filterProvider.upperPrice = newRange.end.round();
-      }),
+      onChanged: (newRange) {
+        final StateController<Filter> filter = context.read(filterProviderCopy);
+        filter.state = filter.state.copyWith(
+          lowerPrice: newRange.start.round(),
+          upperPrice: newRange.end.round()
+        );
+      },
       min: 0, max: 50,
       divisions: 50,
-      labels: RangeLabels(
-        '\$${range.start}',
-        '\$${range.end}'
-      ),
-      semanticFormatterCallback: (RangeValues rangeValues) =>
-      '${rangeValues.start.round()} - ${rangeValues.end.round()} dollars'
+      labels: RangeLabels('\$${range.start.toInt()}', '\$${range.end.toInt()}'),
+      semanticFormatterCallback: (value) => '$value dollars'
     );
   }
 }

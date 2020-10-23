@@ -17,9 +17,10 @@ class _DiscountApi implements DiscountApi {
   String baseUrl;
 
   @override
-  getDeals() async {
+  getDeals([cancelToken]) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     final Response<List<dynamic>> _result = await _dio.request('/deals',
         queryParameters: queryParameters,
@@ -28,7 +29,8 @@ class _DiscountApi implements DiscountApi {
             headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
-        data: _data);
+        data: _data,
+        cancelToken: cancelToken);
     var value = _result.data
         .map((dynamic i) => Deal.fromJson(i as Map<String, dynamic>))
         .toList();
@@ -36,10 +38,11 @@ class _DiscountApi implements DiscountApi {
   }
 
   @override
-  getDealsById(id) async {
+  getDealsById(id, [cancelToken]) async {
     ArgumentError.checkNotNull(id, 'id');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     final Response<List<dynamic>> _result = await _dio.request('/deals?id=$id',
         queryParameters: queryParameters,
@@ -48,7 +51,8 @@ class _DiscountApi implements DiscountApi {
             headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
-        data: _data);
+        data: _data,
+        cancelToken: cancelToken);
     var value = _result.data
         .map((dynamic i) => Deal.fromJson(i as Map<String, dynamic>))
         .toList();
@@ -56,11 +60,12 @@ class _DiscountApi implements DiscountApi {
   }
 
   @override
-  getDealsFromFilter(parameters) async {
+  getDealsFromFilter(parameters, [cancelToken]) async {
     ArgumentError.checkNotNull(parameters, 'parameters');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.addAll(parameters ?? <String, dynamic>{});
+    queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     final Response<List<dynamic>> _result = await _dio.request('/deals',
         queryParameters: queryParameters,
@@ -69,7 +74,8 @@ class _DiscountApi implements DiscountApi {
             headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
-        data: _data);
+        data: _data,
+        cancelToken: cancelToken);
     var value = _result.data
         .map((dynamic i) => Deal.fromJson(i as Map<String, dynamic>))
         .toList();
@@ -77,9 +83,10 @@ class _DiscountApi implements DiscountApi {
   }
 
   @override
-  getGames() async {
+  getGames([cancelToken]) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     final Response<List<dynamic>> _result = await _dio.request('/games',
         queryParameters: queryParameters,
@@ -88,7 +95,8 @@ class _DiscountApi implements DiscountApi {
             headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
-        data: _data);
+        data: _data,
+        cancelToken: cancelToken);
     var value = _result.data
         .map((dynamic i) => Game.fromJson(i as Map<String, dynamic>))
         .toList();
@@ -96,10 +104,11 @@ class _DiscountApi implements DiscountApi {
   }
 
   @override
-  getGamesById(id) async {
+  getGamesById(id, [cancelToken]) async {
     ArgumentError.checkNotNull(id, 'id');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     final Response<Map<String, dynamic>> _result = await _dio.request(
         '/games?id=$id',
@@ -109,16 +118,18 @@ class _DiscountApi implements DiscountApi {
             headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
-        data: _data);
+        data: _data,
+        cancelToken: cancelToken);
     final value = Game.fromJson(_result.data);
     return value;
   }
 
   @override
-  getGamesByMultipleId(id) async {
+  getGamesByMultipleId(id, [cancelToken]) async {
     ArgumentError.checkNotNull(id, 'id');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     final Response<List<dynamic>> _result = await _dio.request('/games?ids=$id',
         queryParameters: queryParameters,
@@ -127,7 +138,8 @@ class _DiscountApi implements DiscountApi {
             headers: <String, dynamic>{},
             extra: _extra,
             baseUrl: baseUrl),
-        data: _data);
+        data: _data,
+        cancelToken: cancelToken);
     var value = _result.data
         .map((dynamic i) => Game.fromJson(i as Map<String, dynamic>))
         .toList();
@@ -135,10 +147,11 @@ class _DiscountApi implements DiscountApi {
   }
 
   @override
-  getStores(options) async {
+  getStores(options, [cancelToken]) async {
     ArgumentError.checkNotNull(options, 'options');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     final newOptions = newRequestOptions(options);
     newOptions.extra.addAll(_extra);
@@ -146,7 +159,8 @@ class _DiscountApi implements DiscountApi {
     final Response<List<dynamic>> _result = await _dio.request('/stores',
         queryParameters: queryParameters,
         options: newOptions.merge(method: 'GET', baseUrl: baseUrl),
-        data: _data);
+        data: _data,
+        cancelToken: cancelToken);
     var value = _result.data
         .map((dynamic i) => Store.fromJson(i as Map<String, dynamic>))
         .toList();

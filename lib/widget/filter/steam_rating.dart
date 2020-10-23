@@ -1,31 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:gameshop_deals/provider/filter_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gameshop_deals/riverpod/filter_provider.dart';
+import 'package:gameshop_deals/model/filter_model.dart';
 
-class SteamRating extends StatefulWidget {
-  @override
-  _SteamRatingState createState() => _SteamRatingState();
-}
+final _steamScore = Provider.autoDispose((ref) =>
+  ref.watch(filterProviderCopy).state.steamRating.clamp(40, 95).toDouble(),
+  name: 'Steam Score'
+);
 
-class _SteamRatingState extends State<SteamRating> {
-  FilterProvider _filterProvider;
-
-  @override
-  void didChangeDependencies(){
-    super.didChangeDependencies();
-    _filterProvider = context.read<FilterProvider>();
-  }
+class SteamRating extends ConsumerWidget{
+  const SteamRating({Key key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final int steamScore = _filterProvider.metacritic;
+  Widget build(BuildContext context, ScopedReader watch) {
+    final double score = watch(_steamScore);
     return Slider.adaptive(
-      value: steamScore <= 40 ? 40 : steamScore.toDouble(),
-      onChanged: (newValue) =>
-        setState(() => _filterProvider.steamRating = newValue <= 40 ? 0 : newValue.toInt()),
+      value: score,
+      onChanged: (newValue) {
+        final StateController<Filter> filter = context.read(filterProviderCopy);
+        filter.state = filter.state.copyWith(steamRating: newValue <= 40 ? 0 : newValue.toInt());
+      },
       min: 40, max: 95,
       divisions: 11,
-      label: '${steamScore <= 40 ? ' Any' : steamScore.toString()}',
+      label: '${score <= 40 ? 'Any' : score.toInt()}',
     );
   }
 }

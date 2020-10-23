@@ -15,7 +15,7 @@ class BottomFilter extends StatelessWidget{
         final DealProvider dealProvider = Provider.of<DealProvider>(ctx, listen: false);
         return SizedBox(
           height: MediaQuery.of(context).size.height - 24,
-          child: FilterPage(dealProvider.parameters),
+          child: FilterPage(dealProvider.filter),
         );
       }
     );

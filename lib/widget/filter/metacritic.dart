@@ -1,30 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:gameshop_deals/provider/filter_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gameshop_deals/riverpod/filter_provider.dart';
+import 'package:gameshop_deals/model/filter_model.dart';
 
-class MetacriticFilter extends StatefulWidget {
-  @override
-  _MetacriticFilterState createState() => _MetacriticFilterState();
-}
+final _metaScore = Provider.autoDispose((ref) =>
+  ref.watch(filterProviderCopy).state.metacritic.toDouble(),
+  name: 'Metacritic Score'
+);
 
-class _MetacriticFilterState extends State<MetacriticFilter> {
-  FilterProvider _filterProvider;
-
-  @override
-  void didChangeDependencies(){
-    super.didChangeDependencies();
-    _filterProvider = context.read<FilterProvider>();
-  }
+class MetacriticFilter extends ConsumerWidget{
+  const MetacriticFilter({Key key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final int metaScore = _filterProvider.metacritic;
+  Widget build(BuildContext context, ScopedReader watch) {
+    final double metacritic = watch(_metaScore);
     return Slider.adaptive(
-      value: metaScore.toDouble(),
-      onChanged: (newValue) => setState(() => _filterProvider.metacritic = newValue.toInt()),
+      value: metacritic,
+      onChanged: (newValue) {
+        final StateController<Filter> filter = context.read(filterProviderCopy);
+        filter.state = filter.state.copyWith(metacritic: newValue.toInt());
+      },
       min: 0, max: 95,
       divisions: 19,
-      label: '${metaScore <= 0 ? ' Any' : metaScore.toString()}',
+      label: '${metacritic <= 0 ? 'Any' : metacritic.toInt()}',
+      semanticFormatterCallback: (value) => '${metacritic <= 0 ? 'Any score' : metacritic.toInt()}'
     );
   }
 }

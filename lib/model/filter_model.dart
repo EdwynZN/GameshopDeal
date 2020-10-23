@@ -1,20 +1,21 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
-class FilterProvider {
-  Set<int> storeId;
-  int pageNumber;
-  int pageSize;
-  SortBy sortBy;
-  OrderBy orderBy;
-  int lowerPrice;
-  int upperPrice;
-  int metacritic;
-  int steamRating;
-  bool onlyRetail;
-  bool steamWorks;
-  bool onSale;
+class Filter extends Equatable{
+  final Set<int> storeId;
+  final int pageNumber;
+  final int pageSize;
+  final SortBy sortBy;
+  final OrderBy orderBy;
+  final int lowerPrice;
+  final int upperPrice;
+  final int metacritic;
+  final int steamRating;
+  final bool onlyRetail;
+  final bool steamWorks;
+  final bool onSale;
 
-  FilterProvider({
+  Filter({
     Set<int> stores,
     this.pageNumber = 0,
     this.pageSize = 60,
@@ -30,22 +31,22 @@ class FilterProvider {
     this.onSale = false
   }) : this.storeId = stores ?? <int>{};
 
-  FilterProvider copyWith({
-      Set<int> stores,
-      int pageNumber,
-      int pageSize,
-      SortBy sortBy,
-      OrderBy orderBy,
-      int lowerPrice,
-      int upperPrice,
-      int metacritic,
-      int steamRating,
-      //this.steamAppId,
-      bool onlyRetail,
-      bool steamWorks,
-      bool onSale
-    }) =>
-      FilterProvider(
+  Filter copyWith({
+    Set<int> stores,
+    int pageNumber,
+    int pageSize,
+    SortBy sortBy,
+    OrderBy orderBy,
+    int lowerPrice,
+    int upperPrice,
+    int metacritic,
+    int steamRating,
+    //this.steamAppId,
+    bool onlyRetail,
+    bool steamWorks,
+    bool onSale
+  }) =>
+    Filter(
       stores: stores ?? this.storeId,
       pageSize: pageSize ?? this.pageSize,
       pageNumber: pageNumber ?? this.pageNumber,
@@ -60,8 +61,25 @@ class FilterProvider {
       onSale: onSale ?? this.onSale,
     );
 
+  Filter get copy =>
+    Filter(
+      stores: this.storeId,
+      pageSize: this.pageSize,
+      pageNumber: this.pageNumber,
+      sortBy: this.sortBy,
+      orderBy: this.orderBy,
+      lowerPrice: this.lowerPrice,
+      upperPrice: this.upperPrice,
+      metacritic: this.metacritic,
+      steamRating: this.steamRating,
+      onlyRetail: this.onlyRetail,
+      steamWorks: this.steamWorks,
+      onSale: this.onSale,
+    );
+
   Map<String, dynamic> get parameters => <String, dynamic>{
     if(storeId.isNotEmpty) 'storeID' : storeId.toList(),
+    // 'pageNumber': pageNumber,
     'sortBy' : describeEnum(sortBy).replaceFirst('_', ' '),
     'desc' : orderBy.index,
     'lowerPrice' : lowerPrice,
@@ -86,6 +104,27 @@ class FilterProvider {
     if(onSale) 'onSale' : 1
   };
 
+  @override
+  List<Object> get props => [
+    storeId,
+    steamRating,
+    storeId,
+    pageNumber,
+    pageSize,
+    sortBy,
+    orderBy,
+    lowerPrice,
+    upperPrice,
+    metacritic,
+    steamRating,
+    onlyRetail,
+    steamWorks,
+    onSale
+  ];
+
+  @override
+  bool get stringify => true;
+
 }
 
 enum OrderBy{
@@ -102,5 +141,10 @@ enum SortBy{
   Reviews,
   Release,
   Store,
-  recent
+  Recent
+}
+
+extension enumToString on SortBy{
+
+  String get name => describeEnum(this).replaceFirst('_', ' ');
 }

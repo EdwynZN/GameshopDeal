@@ -1,38 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gameshop_deals/utils/theme_constants.dart';
+import 'package:flutter/rendering.dart';
 
-Future<Map<String,dynamic>> getTheme() async {
-  final SharedPreferences preferences = await SharedPreferences.getInstance();
-  final int themeMode = preferences.getInt('Theme') ?? 0;
-  // final int light = preferences.getInt(sharedLightTheme) ?? 0;
-  // final int dark = preferences.getInt(sharedDarkTheme) ?? 0;
-  return {'Theme' : themeMode};
-}
-
-class ThemeProvider with ChangeNotifier{
-  ThemeMode _preferredTheme;
-  _Theme theme = _Theme(dark: 0, light: 0);
-
-  ThemeProvider(int themeMode) : _preferredTheme = ThemeMode.values[themeMode];
-
-  ThemeMode get preferredTheme => _preferredTheme;
-
-  themePreference(ThemeMode mode) async {
-    if(mode != _preferredTheme){
-      final SharedPreferences preferences = await SharedPreferences.getInstance();
-      await preferences.setInt('Theme', mode.index);
-      _preferredTheme = mode;
-      notifyListeners();
-    }
-  }
-}
-
-class _Theme{
-  ThemeData _lightTheme;
-  ThemeData _darkTheme;
+abstract class ThemeRepository{
   Color _darkAccentColor;
-  TextTheme __darkAccentTextTheme = const TextTheme(
+  TextTheme _darkAccentTextTheme = const TextTheme(
     subtitle1: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.w400),
     subtitle2: TextStyle(color: Colors.black87, fontSize: 12, fontWeight: FontWeight.w400),
     bodyText1: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.w400),
@@ -44,7 +16,7 @@ class _Theme{
     headline5: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.w400),
     headline6: TextStyle(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.w600),
   );
-  TextTheme __lightAccentTextTheme = const TextTheme(
+  TextTheme _lightAccentTextTheme = const TextTheme(
     subtitle1: TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.w400),
     subtitle2: TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w400),
     bodyText1: TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.w400),
@@ -57,9 +29,17 @@ class _Theme{
     headline6: TextStyle(color: Colors.white70, fontSize: 18, fontWeight: FontWeight.w600),
   );
 
-  _Theme({int light, int dark}){
-    setLight = light;
-    setDark = dark;
+  ThemeData get light;
+  ThemeData get dark;
+}
+
+class ThemeImpl extends ThemeRepository{
+  ThemeData _lightTheme;
+  ThemeData _darkTheme;
+
+  ThemeImpl() {
+    setLight = 0;
+    setDark = 1;
   }
 
   set setLight(int light){
@@ -78,7 +58,7 @@ class _Theme{
     _darkAccentColor = accentColor;*/
     MaterialColor color = lightColor;
     MaterialAccentColor accentColor = lightAccentColor;
-    _darkAccentColor = accentColor;
+    _darkAccentColor = accentColor[700];
     final Brightness _brightnessColor = ThemeData.estimateBrightnessForColor(color);
     final Brightness _brightnessAccentColor = ThemeData.estimateBrightnessForColor(accentColor);
     final Brightness _brightnessPrimaryColor = ThemeData.estimateBrightnessForColor(accentColor[100]);
@@ -96,8 +76,8 @@ class _Theme{
         elevation: 0.0,
         color: color,
         textTheme: _brightnessColor == Brightness.light ?
-        __darkAccentTextTheme.apply(fontSizeFactor: 1.15, fontSizeDelta: 1.0) :
-        __lightAccentTextTheme.apply(fontSizeFactor: 1.15, fontSizeDelta: 1.0, bodyColor: Colors.white, displayColor: Colors.white),
+        _darkAccentTextTheme.apply(fontSizeFactor: 1.15, fontSizeDelta: 1.0) :
+        _lightAccentTextTheme.apply(fontSizeFactor: 1.15, fontSizeDelta: 1.0, bodyColor: Colors.white, displayColor: Colors.white),
         iconTheme: IconThemeData(
           color: _brightnessColor == Brightness.dark ? Colors.white : Colors.black,
         ),
@@ -128,16 +108,16 @@ class _Theme{
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         elevation: 8,
       ),
-      textTheme: __darkAccentTextTheme,
-      primaryTextTheme: _brightnessPrimaryColor == Brightness.dark ? __lightAccentTextTheme : __darkAccentTextTheme,
-      accentTextTheme: _brightnessAccentTextTheme == Brightness.dark ? __lightAccentTextTheme : __darkAccentTextTheme,
+      textTheme: _darkAccentTextTheme,
+      primaryTextTheme: _brightnessPrimaryColor == Brightness.dark ? _lightAccentTextTheme : _darkAccentTextTheme,
+      accentTextTheme: _brightnessAccentTextTheme == Brightness.dark ? _lightAccentTextTheme : _darkAccentTextTheme,
       bottomAppBarTheme: BottomAppBarTheme(
           color: Colors.transparent,
           elevation: 0.0
       ),
       dialogTheme: DialogTheme(
-        titleTextStyle: __darkAccentTextTheme.headline6,
-        contentTextStyle: __darkAccentTextTheme.subtitle1,
+        titleTextStyle: _darkAccentTextTheme.headline6,
+        contentTextStyle: _darkAccentTextTheme.subtitle1,
         backgroundColor: color[50],
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
@@ -151,6 +131,49 @@ class _Theme{
             side: BorderSide(color: accentColor)
         ),
         behavior: SnackBarBehavior.floating,
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: ButtonStyle(
+          mouseCursor: MaterialStateProperty.all<MouseCursor>(MaterialStateMouseCursor.clickable),
+          padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.symmetric(horizontal: 8.0)),
+          //enableFeedback: false,
+          shape: MaterialStateProperty.all<OutlinedBorder>(RoundedRectangleBorder()),
+          side: MaterialStateProperty.all<BorderSide>(BorderSide(
+            color: accentColor[700],
+            width: 1,
+          )),
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+          foregroundColor: MaterialStateProperty.all<Color>(_brightnessAccentColor == Brightness.dark ? accentColor[700] : Colors.black),
+        )
+      ),
+      textButtonTheme: TextButtonThemeData(
+          style: ButtonStyle(
+            mouseCursor: MaterialStateProperty.all<MouseCursor>(MaterialStateMouseCursor.clickable),
+            //enableFeedback: false,
+            shape: MaterialStateProperty.all<OutlinedBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+            foregroundColor: MaterialStateProperty.all<Color>(_brightnessAccentColor == Brightness.dark ? accentColor[700] : Colors.black),
+          )
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          mouseCursor: MaterialStateProperty.all<MouseCursor>(MaterialStateMouseCursor.clickable),
+          //enableFeedback: false,
+          shape: MaterialStateProperty.all<OutlinedBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+          elevation: MaterialStateProperty.resolveWith<double>((states) {
+            if(states.contains({MaterialState.pressed}) || states.contains(MaterialState.disabled)) return 0.0;
+            return 8.0;
+          }),
+          backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+            if(states.contains(MaterialState.disabled)) return null;
+            return color[100];
+          }),
+          // backgroundColor: MaterialStateProperty.all<Color>(color[100]),
+          foregroundColor: MaterialStateProperty.all<Color>(_darkAccentTextTheme.headline1.color),
+          textStyle: MaterialStateProperty.all<TextStyle>(_darkAccentTextTheme.bodyText1),
+          overlayColor: MaterialStateProperty.all<Color>(_darkAccentColor.withOpacity(0.24)),
+          visualDensity: VisualDensity(vertical: 1)
+        )
       ),
       buttonTheme: ButtonThemeData(
         textTheme: ButtonTextTheme.normal,
@@ -175,8 +198,8 @@ class _Theme{
         secondarySelectedColor: color[100],
         labelPadding: const EdgeInsets.symmetric(horizontal: 4.0),
         padding: const EdgeInsets.all(4.0),
-        labelStyle: __darkAccentTextTheme.bodyText2,
-        secondaryLabelStyle: __darkAccentTextTheme.bodyText2.apply(
+        labelStyle: _darkAccentTextTheme.bodyText2,
+        secondaryLabelStyle: _darkAccentTextTheme.bodyText2.apply(
           color: _brightnessColor == Brightness.light ? null : color[500]
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -188,11 +211,11 @@ class _Theme{
           elevation: 8.0,
           groupAlignment: 1.0,
           selectedIconTheme: IconThemeData(color: accentColor[700]),
-          selectedLabelTextStyle: __lightAccentTextTheme.bodyText2.apply(
+          selectedLabelTextStyle: _lightAccentTextTheme.bodyText2.apply(
               color: _brightnessAccentTextTheme == Brightness.dark ? accentColor[700] : Colors.black
           ),
           unselectedIconTheme: const IconThemeData(color: Colors.black),
-          unselectedLabelTextStyle: __darkAccentTextTheme.bodyText2
+          unselectedLabelTextStyle: _darkAccentTextTheme.bodyText2
       ),
       toggleableActiveColor: accentColor[700],
       indicatorColor: color[100],
@@ -202,7 +225,7 @@ class _Theme{
 
   set setDark(int dark){
     dark ??= 2;
-    final Brightness _brightness = ThemeData.estimateBrightnessForColor(_darkAccentColor);
+    final Brightness _brightness = Brightness.dark;
     final Color _accentColor = _brightness == Brightness.dark ? Colors.white : Colors.black;
     switch(dark){
       case 0:
@@ -215,7 +238,7 @@ class _Theme{
           appBarTheme: AppBarTheme(
             elevation: 0.0,
             color: Colors.blueGrey[900],
-            textTheme: __lightAccentTextTheme.apply(fontSizeFactor: 1.15, fontSizeDelta: 1.0),
+            textTheme: _lightAccentTextTheme.apply(fontSizeFactor: 1.15, fontSizeDelta: 1.0),
             iconTheme: const IconThemeData(color: Colors.white70),
           ),
           brightness: Brightness.dark,
@@ -245,9 +268,9 @@ class _Theme{
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             elevation: 8,
           ),
-          textTheme: __lightAccentTextTheme,
-          primaryTextTheme: __lightAccentTextTheme,
-          accentTextTheme: _brightness == Brightness.dark ? __lightAccentTextTheme : __darkAccentTextTheme,
+          textTheme: _lightAccentTextTheme,
+          primaryTextTheme: _lightAccentTextTheme,
+          accentTextTheme: _brightness == Brightness.dark ? _lightAccentTextTheme : _darkAccentTextTheme,
           bottomAppBarTheme: BottomAppBarTheme(
               color: Colors.transparent,
               elevation: 0.0
@@ -268,13 +291,57 @@ class _Theme{
             ),
             behavior: SnackBarBehavior.floating,
           ),
+          outlinedButtonTheme: OutlinedButtonThemeData(
+            style: ButtonStyle(
+              mouseCursor: MaterialStateProperty.all<MouseCursor>(MaterialStateMouseCursor.clickable),
+              padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.symmetric(horizontal: 8.0)),
+              //enableFeedback: false,
+              shape: MaterialStateProperty.all<OutlinedBorder>(RoundedRectangleBorder()),
+              side: MaterialStateProperty.all<BorderSide>(BorderSide(
+                color: _darkAccentColor,
+                width: 1,
+              )),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+              foregroundColor: MaterialStateProperty.all<Color>(_darkAccentColor),
+            )
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: ButtonStyle(
+              mouseCursor: MaterialStateProperty.all<MouseCursor>(MaterialStateMouseCursor.clickable),
+              //enableFeedback: false,
+              shape: MaterialStateProperty.all<OutlinedBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+              foregroundColor: MaterialStateProperty.all<Color>(_darkAccentColor),
+              overlayColor: MaterialStateProperty.all<Color>(_darkAccentColor.withOpacity(0.24)),
+            )
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+              mouseCursor: MaterialStateProperty.all<MouseCursor>(MaterialStateMouseCursor.clickable),
+              //enableFeedback: false,
+              shape: MaterialStateProperty.all<OutlinedBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+              elevation: MaterialStateProperty.resolveWith<double>((states) {
+                if(states.contains(MaterialState.pressed) || states.contains(MaterialState.disabled)) return 0.0;
+                return 8.0;
+              }),
+              backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+                if(states.contains(MaterialState.disabled)) return null;
+                return Colors.blueGrey[800];
+              }),
+              // backgroundColor: MaterialStateProperty.all<Color>(Colors.blueGrey[800]),
+              foregroundColor: MaterialStateProperty.all<Color>(_lightAccentTextTheme.headline1.color),
+              textStyle: MaterialStateProperty.all<TextStyle>(_lightAccentTextTheme.bodyText1),
+              overlayColor: MaterialStateProperty.all<Color>(_darkAccentColor.withOpacity(0.24)),
+              visualDensity: VisualDensity(vertical: 1)
+            )
+          ),
           buttonTheme: ButtonThemeData(
-              textTheme: ButtonTextTheme.normal,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              layoutBehavior: ButtonBarLayoutBehavior.constrained,
-              buttonColor: Colors.grey[900],
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              height: 48
+            textTheme: ButtonTextTheme.normal,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            layoutBehavior: ButtonBarLayoutBehavior.constrained,
+            buttonColor: Colors.grey[900],
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            height: 48
           ),
           bottomSheetTheme: BottomSheetThemeData(
             elevation: 0.0,
@@ -282,28 +349,32 @@ class _Theme{
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
           ),
           chipTheme: ChipThemeData(
-              checkmarkColor: _brightness == Brightness.dark ? Colors.white : Colors.black,
-              backgroundColor: Colors.white12,
-              deleteIconColor: Colors.white70,
-              disabledColor: Colors.white.withAlpha(0x0C),
-              selectedColor: Colors.white24,
-              secondarySelectedColor: _darkAccentColor.withAlpha(0xFC),
-              labelPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-              padding: const EdgeInsets.all(4.0),
-              labelStyle: __lightAccentTextTheme.bodyText2,
-              secondaryLabelStyle: _brightness == Brightness.dark ? __lightAccentTextTheme.bodyText2 : __darkAccentTextTheme.bodyText2,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              brightness: _brightness
+            checkmarkColor: _brightness == Brightness.dark ? Colors.white : Colors.black,
+            backgroundColor: Colors.white12,
+            deleteIconColor: Colors.white70,
+            disabledColor: Colors.white.withAlpha(0x0C),
+            selectedColor: _darkAccentColor.withAlpha(0xFC), //Colors.white24,
+            secondarySelectedColor: _darkAccentColor.withAlpha(0xFC),
+            labelPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+            padding: const EdgeInsets.all(4.0),
+            labelStyle: _lightAccentTextTheme.bodyText2,
+            secondaryLabelStyle: _brightness == Brightness.dark ? _lightAccentTextTheme.bodyText2 : _darkAccentTextTheme.bodyText2,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            brightness: _brightness
           ),
           navigationRailTheme: NavigationRailThemeData(
-              labelType: NavigationRailLabelType.selected,
-              backgroundColor: Colors.blueGrey[800],
-              elevation: 8.0,
-              groupAlignment: 1.0,
-              selectedIconTheme: IconThemeData(color: _darkAccentColor),
-              selectedLabelTextStyle: __lightAccentTextTheme.bodyText2.apply(color: _darkAccentColor),
-              unselectedIconTheme: const IconThemeData(color: Colors.white70),
-              unselectedLabelTextStyle: __lightAccentTextTheme.bodyText2
+            labelType: NavigationRailLabelType.selected,
+            backgroundColor: Colors.blueGrey[800],
+            elevation: 8.0,
+            groupAlignment: 1.0,
+            selectedIconTheme: IconThemeData(color: _darkAccentColor),
+            selectedLabelTextStyle: _lightAccentTextTheme.bodyText2.apply(color: _darkAccentColor),
+            unselectedIconTheme: const IconThemeData(color: Colors.white70),
+            unselectedLabelTextStyle: _lightAccentTextTheme.bodyText2
+          ),
+          sliderTheme: SliderThemeData(
+            valueIndicatorColor: Color.alphaBlend(_darkAccentColor.withOpacity(0.36), _darkAccentColor.withAlpha(0xFC)),
+            valueIndicatorTextStyle: _brightness == Brightness.dark ? _lightAccentTextTheme.bodyText1 : _darkAccentTextTheme.bodyText1,
           ),
           toggleableActiveColor: _darkAccentColor,
           indicatorColor: Colors.blueGrey[700],
@@ -320,7 +391,7 @@ class _Theme{
           appBarTheme: AppBarTheme(
             elevation: 0.0,
             color: Colors.grey[900],
-            textTheme: __lightAccentTextTheme.apply(fontSizeFactor: 1.15, fontSizeDelta: 1.0),
+            textTheme: _lightAccentTextTheme.apply(fontSizeFactor: 1.15, fontSizeDelta: 1.0),
             iconTheme: const IconThemeData(color: Colors.white70),
           ),
           brightness: Brightness.dark,
@@ -350,9 +421,9 @@ class _Theme{
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             elevation: 8,
           ),
-          textTheme: __lightAccentTextTheme,
-          primaryTextTheme: __lightAccentTextTheme,
-          accentTextTheme: _brightness == Brightness.dark ? __lightAccentTextTheme : __darkAccentTextTheme,
+          textTheme: _lightAccentTextTheme,
+          primaryTextTheme: _lightAccentTextTheme,
+          accentTextTheme: _brightness == Brightness.dark ? _lightAccentTextTheme : _darkAccentTextTheme,
           bottomAppBarTheme: BottomAppBarTheme(
               color: Colors.transparent,
               elevation: 0.0
@@ -395,8 +466,8 @@ class _Theme{
               secondarySelectedColor: _darkAccentColor.withAlpha(0xFC),
               labelPadding: const EdgeInsets.symmetric(horizontal: 4.0),
               padding: const EdgeInsets.all(4.0),
-              labelStyle: __lightAccentTextTheme.bodyText2,
-              secondaryLabelStyle: _brightness == Brightness.dark ? __lightAccentTextTheme.bodyText2 : __darkAccentTextTheme.bodyText2,
+              labelStyle: _lightAccentTextTheme.bodyText2,
+              secondaryLabelStyle: _brightness == Brightness.dark ? _lightAccentTextTheme.bodyText2 : _darkAccentTextTheme.bodyText2,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               brightness: _brightness
           ),
@@ -407,8 +478,12 @@ class _Theme{
               groupAlignment: 1.0,
               selectedIconTheme: IconThemeData(color: _darkAccentColor),
               unselectedIconTheme: const IconThemeData(color: Colors.white70),
-              selectedLabelTextStyle: __lightAccentTextTheme.bodyText2.apply(color: _darkAccentColor),
-              unselectedLabelTextStyle: __lightAccentTextTheme.bodyText2
+              selectedLabelTextStyle: _lightAccentTextTheme.bodyText2.apply(color: _darkAccentColor),
+              unselectedLabelTextStyle: _lightAccentTextTheme.bodyText2
+          ),
+          sliderTheme: SliderThemeData(
+            valueIndicatorColor: Color.alphaBlend(_darkAccentColor.withOpacity(0.36), _darkAccentColor.withAlpha(0xFC)),
+            valueIndicatorTextStyle: _brightness == Brightness.dark ? _lightAccentTextTheme.bodyText1 : _darkAccentTextTheme.bodyText1,
           ),
           toggleableActiveColor: _darkAccentColor,
           indicatorColor: Colors.grey[700],
@@ -426,7 +501,7 @@ class _Theme{
           appBarTheme: AppBarTheme(
             elevation: 0.0,
             color: Colors.black,
-            textTheme: __lightAccentTextTheme.apply(fontSizeFactor: 1.15, fontSizeDelta: 1.0),
+            textTheme: _lightAccentTextTheme.apply(fontSizeFactor: 1.15, fontSizeDelta: 1.0),
             iconTheme: const IconThemeData(color: Colors.white70),
           ),
           brightness: Brightness.dark,
@@ -467,8 +542,8 @@ class _Theme{
             headline4: TextStyle(color: Colors.white70, fontSize: 18, fontWeight: FontWeight.w600),
             subtitle1: TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.w400),
           ),
-          primaryTextTheme: __lightAccentTextTheme,
-          accentTextTheme: _brightness == Brightness.dark ? __lightAccentTextTheme : __darkAccentTextTheme,
+          primaryTextTheme: _lightAccentTextTheme,
+          accentTextTheme: _brightness == Brightness.dark ? _lightAccentTextTheme : _darkAccentTextTheme,
           bottomAppBarTheme: BottomAppBarTheme(
               color: Colors.transparent,
               elevation: 0.0
@@ -512,8 +587,8 @@ class _Theme{
               secondarySelectedColor: _darkAccentColor.withAlpha(0xFC),
               labelPadding: const EdgeInsets.symmetric(horizontal: 4.0),
               padding: const EdgeInsets.all(4.0),
-              labelStyle: __lightAccentTextTheme.bodyText2,
-              secondaryLabelStyle: _brightness == Brightness.dark ? __lightAccentTextTheme.bodyText2 : __darkAccentTextTheme.bodyText2,
+              labelStyle: _lightAccentTextTheme.bodyText2,
+              secondaryLabelStyle: _brightness == Brightness.dark ? _lightAccentTextTheme.bodyText2 : _darkAccentTextTheme.bodyText2,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               brightness: _brightness
           ),
@@ -522,9 +597,13 @@ class _Theme{
               backgroundColor: Colors.transparent,
               groupAlignment: 1.0,
               selectedIconTheme: IconThemeData(color: _darkAccentColor),
-              selectedLabelTextStyle: __lightAccentTextTheme.bodyText2.apply(color: _darkAccentColor),
+              selectedLabelTextStyle: _lightAccentTextTheme.bodyText2.apply(color: _darkAccentColor),
               unselectedIconTheme: const IconThemeData(color: Colors.white70),
-              unselectedLabelTextStyle: __lightAccentTextTheme.bodyText2
+              unselectedLabelTextStyle: _lightAccentTextTheme.bodyText2
+          ),
+          sliderTheme: SliderThemeData(
+            valueIndicatorColor: Color.alphaBlend(_darkAccentColor.withOpacity(0.36), _darkAccentColor.withAlpha(0xFC)),
+            valueIndicatorTextStyle: _brightness == Brightness.dark ? _lightAccentTextTheme.bodyText1 : _darkAccentTextTheme.bodyText1,
           ),
           toggleableActiveColor: _darkAccentColor,
           buttonColor: Colors.grey[900],
