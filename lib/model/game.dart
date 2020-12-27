@@ -10,7 +10,7 @@ class Game extends Equatable{
   final String steamAppId;
   final String cheapest;
   final String cheapestDealId;
-  final String gameExternal;
+  final String external;
   final String internalName;
   final String thumb;
 
@@ -19,7 +19,7 @@ class Game extends Equatable{
     this.steamAppId,
     this.cheapest,
     this.cheapestDealId,
-    this.gameExternal,
+    this.external,
     this.internalName,
     this.thumb,
   });
@@ -29,7 +29,7 @@ class Game extends Equatable{
     steamAppId: json["steamAppID"],
     cheapest: json["cheapest"],
     cheapestDealId: json["cheapestDealID"],
-    gameExternal: json["external"],
+    external: json["external"],
     internalName: json["internalName"],
     thumb: json["thumb"],
   );
@@ -39,7 +39,7 @@ class Game extends Equatable{
     "steamAppID": steamAppId,
     "cheapest": cheapest,
     "cheapestDealID": cheapestDealId,
-    "external": gameExternal,
+    "external": external,
     "internalName": internalName,
     "thumb": thumb,
   };
@@ -50,7 +50,7 @@ class Game extends Equatable{
     steamAppId,
     cheapest,
     cheapestDealId,
-    gameExternal,
+    external,
     internalName,
     thumb
   ];

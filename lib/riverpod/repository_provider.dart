@@ -14,4 +14,5 @@ final dioProvider = Provider.autoDispose<Dio>((ref) {
   return dio;
 }, name: 'Dio');
 
-final cheapSharkProvider = Provider.autoDispose<DiscountApi>((ref) => DiscountApi(ref.watch(dioProvider)), name: 'CheapShark API');
+final cheapSharkProvider = Provider.autoDispose<DiscountApi>((ref) =>
+  DiscountApi(ref.watch(dioProvider)), name: 'CheapShark API');

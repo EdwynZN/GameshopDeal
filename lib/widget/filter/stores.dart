@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:gameshop_deals/model/store.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gameshop_deals/riverpod/cache_manager_provider.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
-import 'package:gameshop_deals/model/filter_model.dart';
-import 'package:gameshop_deals/riverpod/deal_provider.dart';
+import 'package:gameshop_deals/riverpod/deal_provider.dart' show storesProvider;
+import 'package:gameshop_deals/model/filter.dart';
+import 'package:gameshop_deals/utils/preferences_constants.dart';
 
-final _storesProvider = Provider.autoDispose((ref) =>
-  ref.watch(filterProviderCopy).state.storeId,
-  name: 'Stores ID'
-);
+final _storesProvider = ScopedProvider<Set<int>>(
+    (watch) => watch(filterProviderCopy).state.storeID,
+    name: 'Stores ID');
 
-class StoreWidget extends ConsumerWidget{
+class StoreWidget extends ConsumerWidget {
   const StoreWidget({Key key}) : super(key: key);
 
   @override
@@ -28,52 +29,58 @@ class StoreWidget extends ConsumerWidget{
         onPressed: () => context.refresh(storesProvider),
       ),
       data: (stores) {
-        List<Store> activeStores = stores.where((element) => element.isActive).toList();
+        List<Store> activeStores =
+            stores.where((element) => element.isActive).toList();
         return Wrap(
           spacing: 8,
           children: <Widget>[
             ChoiceChip(
               selected: storesSelected.isEmpty,
-              onSelected: (val)  {
+              onSelected: (val) {
                 //if(val) return;
-                final StateController<Filter> filter = context.read(filterProviderCopy);
-                filter.state = filter.state.copyWith(stores: <int>{});
+                final StateController<Filter> filter =
+                    context.read(filterProviderCopy);
+                filter.state = filter.state.copyWith(storeID: <int>{});
               },
               label: const Text('All'),
-              avatar: const Icon(Icons.all_inclusive, size: 20,),
+              avatar: const Icon(
+                Icons.all_inclusive,
+                size: 20,
+              ),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(4),
                       bottomRight: Radius.circular(4),
                       topRight: Radius.circular(4),
-                      topLeft: Radius.circular(4)
-                  )
-              ),
+                      topLeft: Radius.circular(4))),
               tooltip: 'All',
             ),
-            for(Store store in activeStores)
+            for (Store store in activeStores)
               ChoiceChip(
                 selected: storesSelected.contains(int.tryParse(store.storeId)),
                 onSelected: (val) {
-                  final StateController<Filter> filter = context.read(filterProviderCopy);
+                  final StateController<Filter> filter =
+                      context.read(filterProviderCopy);
                   Set<int> set = Set<int>.from(storesSelected);
-                  if(val) set.add(int.tryParse(store.storeId));
-                  else set.remove(int.tryParse(store.storeId));
-                  filter.state = filter.state.copyWith(stores: set);
+                  if (val)
+                    set.add(int.tryParse(store.storeId));
+                  else
+                    set.remove(int.tryParse(store.storeId));
+                  filter.state = filter.state.copyWith(storeID: set);
                 },
                 label: Text(store.storeName),
                 avatar: CachedNetworkImage(
+                  cacheManager:
+                      watch(cacheManagerFamilyProvider(cacheKeyStores)),
                   imageUrl: 'https://www.cheapshark.com${store.images.icon}',
                   fit: BoxFit.contain,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(4),
-                    bottomRight: Radius.circular(4),
-                    topRight: Radius.circular(4),
-                    topLeft: Radius.circular(4)
-                  )
-                ),
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(4),
+                        bottomRight: Radius.circular(4),
+                        topRight: Radius.circular(4),
+                        topLeft: Radius.circular(4))),
                 tooltip: store.storeName,
               ),
           ],

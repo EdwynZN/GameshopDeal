@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:equatable/equatable.dart';
 
-//List<Store> storeFromJson(String str) => List<Store>.from(json.decode(str).map((x) => Store.fromJson(x)));
-
 List<Store> storeFromJson(List<dynamic> json) => List<Store>.from(json.map((x) => Store.fromJson(x)));
 
 String storeToJson(List<Store> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));

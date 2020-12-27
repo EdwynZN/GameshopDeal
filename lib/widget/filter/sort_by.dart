@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
-import 'package:gameshop_deals/model/filter_model.dart';
+import 'package:gameshop_deals/model/filter.dart';
+import 'package:flutter/foundation.dart';
 
-final _sortByProvider = Provider.autoDispose((ref) =>
-  ref.watch(filterProviderCopy).state.sortBy,
+extension on SortBy{
+  String get name => describeEnum(this).replaceFirst('_', ' ');
+}
+
+final _sortByProvider = ScopedProvider<SortBy>((watch) =>
+  watch(filterProviderCopy).state.sortBy,
   name: 'Sort By'
 );
 

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
-import 'package:gameshop_deals/model/filter_model.dart';
+import 'package:gameshop_deals/model/filter.dart';
 
-final _steamScore = Provider.autoDispose((ref) =>
-  ref.watch(filterProviderCopy).state.steamRating.clamp(40, 95).toDouble(),
+final _steamScore = ScopedProvider<double>((watch) =>
+  watch(filterProviderCopy).state.steamRating.clamp(40, 95).toDouble(),
   name: 'Steam Score'
 );
 

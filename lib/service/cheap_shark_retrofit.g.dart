@@ -17,9 +17,10 @@ class _DiscountApi implements DiscountApi {
   String baseUrl;
 
   @override
-  getDeals([cancelToken]) async {
+  getDeals([parameters, cancelToken]) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.addAll(parameters ?? <String, dynamic>{});
     queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     final Response<List<dynamic>> _result = await _dio.request('/deals',
@@ -44,7 +45,8 @@ class _DiscountApi implements DiscountApi {
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    final Response<List<dynamic>> _result = await _dio.request('/deals?id=$id',
+    final Response<Map<String, dynamic>> _result = await _dio.request(
+        '/deals?id=$id',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -53,39 +55,16 @@ class _DiscountApi implements DiscountApi {
             baseUrl: baseUrl),
         data: _data,
         cancelToken: cancelToken);
-    var value = _result.data
-        .map((dynamic i) => Deal.fromJson(i as Map<String, dynamic>))
-        .toList();
+    final value = DealLookup.fromJson(_result.data);
     return value;
   }
 
   @override
-  getDealsFromFilter(parameters, [cancelToken]) async {
+  getGames(parameters, [cancelToken]) async {
     ArgumentError.checkNotNull(parameters, 'parameters');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.addAll(parameters ?? <String, dynamic>{});
-    queryParameters.removeWhere((k, v) => v == null);
-    final _data = <String, dynamic>{};
-    final Response<List<dynamic>> _result = await _dio.request('/deals',
-        queryParameters: queryParameters,
-        options: RequestOptions(
-            method: 'GET',
-            headers: <String, dynamic>{},
-            extra: _extra,
-            baseUrl: baseUrl),
-        data: _data,
-        cancelToken: cancelToken);
-    var value = _result.data
-        .map((dynamic i) => Deal.fromJson(i as Map<String, dynamic>))
-        .toList();
-    return value;
-  }
-
-  @override
-  getGames([cancelToken]) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     final Response<List<dynamic>> _result = await _dio.request('/games',
@@ -107,11 +86,10 @@ class _DiscountApi implements DiscountApi {
   getGamesById(id, [cancelToken]) async {
     ArgumentError.checkNotNull(id, 'id');
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'id': id};
     queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    final Response<Map<String, dynamic>> _result = await _dio.request(
-        '/games?id=$id',
+    final Response<Map<String, dynamic>> _result = await _dio.request('/games',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -120,18 +98,18 @@ class _DiscountApi implements DiscountApi {
             baseUrl: baseUrl),
         data: _data,
         cancelToken: cancelToken);
-    final value = Game.fromJson(_result.data);
+    final value = GameLookup.fromJson(_result.data);
     return value;
   }
 
   @override
-  getGamesByMultipleId(id, [cancelToken]) async {
-    ArgumentError.checkNotNull(id, 'id');
+  getGamesByMultipleId(ids, [cancelToken]) async {
+    ArgumentError.checkNotNull(ids, 'ids');
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'ids': ids};
     queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    final Response<List<dynamic>> _result = await _dio.request('/games?ids=$id',
+    final Response<Map<String, dynamic>> _result = await _dio.request('/games',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -140,9 +118,9 @@ class _DiscountApi implements DiscountApi {
             baseUrl: baseUrl),
         data: _data,
         cancelToken: cancelToken);
-    var value = _result.data
-        .map((dynamic i) => Game.fromJson(i as Map<String, dynamic>))
-        .toList();
+    var value = _result.data.map((k, dynamic v) =>
+        MapEntry(k, GameLookup.fromJson(v as Map<String, dynamic>)));
+
     return value;
   }
 

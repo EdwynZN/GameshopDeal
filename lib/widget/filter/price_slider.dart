@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
-import 'package:gameshop_deals/model/filter_model.dart';
+import 'package:gameshop_deals/model/filter.dart';
 
-final _rangePrice = Provider.autoDispose((ref) {
-  double lower = ref.watch(filterProviderCopy).state.lowerPrice.toDouble();
-  double upper = ref.watch(filterProviderCopy).state.upperPrice.toDouble();
+final _rangePrice = ScopedProvider<RangeValues>((watch) {
+  double lower = watch(filterProviderCopy).state.lowerPrice.toDouble();
+  double upper = watch(filterProviderCopy).state.upperPrice.toDouble();
 
   return RangeValues(lower, upper);
 }, name: 'RangePrice');

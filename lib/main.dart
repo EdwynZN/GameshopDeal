@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-//import 'package:gameshop_deals/provider/theme_provider.dart';
-//import 'package:gameshop_deals/provider/deal_provider.dart';
-//import 'package:provider/provider.dart';
 import 'package:gameshop_deals/widget/route_transitions.dart';
 import 'package:gameshop_deals/utils/routes_constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/theme_provider.dart';
+import 'package:gameshop_deals/riverpod/shared_preference_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Logger extends ProviderObserver {
   @override
@@ -39,15 +38,11 @@ class Logger extends ProviderObserver {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Map<String,dynamic> savedTheme = await getTheme();
-  //runApp(GameShop(savedTheme));
-  runApp(
-    ProviderScope(
+  final SharedPreferences preferences = await SharedPreferences.getInstance();
+  runApp(ProviderScope(
       // observers: [Logger()],
       overrides: [
-        themeModeState.overrideWithValue(
-          ThemeNotifier(ThemeMode.values[savedTheme['Theme']])
-        ),
+        sharedPreferencesProvider.overrideWithValue(preferences),
       ],
       child: const GameShop()
     )
@@ -59,10 +54,8 @@ class GameShop extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    //final ThemeProvider themeData = watch(themeProvider(theme['Theme'])).state;
-    // final family = watch(themeFamilyModeState(ThemeMode.light));
-    final themeMode = watch(themeModeState.state);
-    final themeData = watch(themeModeState);
+    final themeMode = watch(themeProvider.state);
+    final themeData = watch(themeProvider);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       darkTheme: themeData.darkTheme,
@@ -73,30 +66,5 @@ class GameShop extends ConsumerWidget {
       onGenerateRoute: Routes.getRoute,
       initialRoute: homeRoute,
     );
-    /*return MultiProvider(
-      providers: [
-        Provider<DealProvider>(
-          create: (_) => DealProvider(),
-          dispose: (context, deal) => deal.dispose(),
-          lazy: true,
-        ),
-        ChangeNotifierProvider<ThemeProvider>(
-          create: (_) => ThemeProvider(theme['Theme']),
-        ),
-      ],
-      builder: (context, _){
-        final ThemeProvider themeData = context.watch<ThemeProvider>();
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          darkTheme: themeData.theme.dark,
-          theme: themeData.theme.light,
-          //theme: Themes.light,
-          //darkTheme: Themes.dark,
-          themeMode: themeData.preferredTheme,
-          onGenerateRoute: Routes.getRoute,
-          initialRoute: homeRoute,
-        );
-      },
-    );*/
   }
 }

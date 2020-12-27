@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
-import 'package:gameshop_deals/model/filter_model.dart';
+import 'package:gameshop_deals/model/filter.dart';
 
-final _onSaleProvider = Provider.autoDispose((ref) =>
-  ref.watch(filterProviderCopy).state.onSale,
-  name: 'On Sale'
-);
+final _onSaleProvider = ScopedProvider<bool>(
+    (watch) => watch(filterProviderCopy).state.onSale,
+    name: 'On Sale');
 
-final _retailProvider = Provider.autoDispose((ref) =>
-  ref.watch(filterProviderCopy).state.onlyRetail,
-  name: 'Only Retail'
-);
+final _retailProvider = ScopedProvider<bool>(
+    (watch) => watch(filterProviderCopy).state.onlyRetail,
+    name: 'Only Retail');
 
-final _steamWorksProvider = Provider.autoDispose((ref) =>
-  ref.watch(filterProviderCopy).state.steamWorks,
-  name: 'SteamWorks'
-);
+final _steamWorksProvider = ScopedProvider<bool>(
+    (watch) => watch(filterProviderCopy).state.steamWorks,
+    name: 'SteamWorks');
 
 class FlagFilterWidget extends StatelessWidget {
   const FlagFilterWidget({Key key}) : super(key: key);
@@ -35,7 +32,7 @@ class FlagFilterWidget extends StatelessWidget {
   }
 }
 
-class _OnSaleFilterWidget extends ConsumerWidget{
+class _OnSaleFilterWidget extends ConsumerWidget {
   const _OnSaleFilterWidget({Key key}) : super(key: key);
 
   @override
@@ -53,7 +50,7 @@ class _OnSaleFilterWidget extends ConsumerWidget{
   }
 }
 
-class _RetailWidget extends ConsumerWidget{
+class _RetailWidget extends ConsumerWidget {
   const _RetailWidget({Key key}) : super(key: key);
 
   @override
@@ -61,7 +58,7 @@ class _RetailWidget extends ConsumerWidget{
     final bool retail = watch(_retailProvider);
     return FilterChip(
       label: const Text('Retail discount'),
-      tooltip: 'Retail discount',
+      tooltip: 'Games with a current retail price <\$29',
       selected: retail,
       onSelected: (value) {
         final StateController<Filter> filter = context.read(filterProviderCopy);
@@ -71,7 +68,7 @@ class _RetailWidget extends ConsumerWidget{
   }
 }
 
-class _SteamWorksWidget extends ConsumerWidget{
+class _SteamWorksWidget extends ConsumerWidget {
   const _SteamWorksWidget({Key key}) : super(key: key);
 
   @override
@@ -79,7 +76,7 @@ class _SteamWorksWidget extends ConsumerWidget{
     final bool steamWorks = watch(_steamWorksProvider);
     return FilterChip(
       label: const Text('SteamWorks'),
-      tooltip: 'SteamWorks',
+      tooltip: 'Games registered in Steam, regardless the strore',
       selected: steamWorks,
       onSelected: (value) {
         final StateController<Filter> filter = context.read(filterProviderCopy);

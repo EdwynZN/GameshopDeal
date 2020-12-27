@@ -4,3 +4,7 @@ const String sharedThemeMode = 'ThemeMode';
 const String sharedLightTheme = 'lightColor';
 /// Dark Theme Preferences
 const String sharedDarkTheme = 'darkColor';
+/// Cache Key for Stores
+const String cacheKeyStores = 'stores';
+/// Cache Key for Deals
+const String cacheKeyDeals = 'deals';

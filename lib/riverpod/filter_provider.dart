@@ -1,8 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gameshop_deals/model/filter_model.dart';
+import 'package:gameshop_deals/model/filter.dart';
+
 
 final filterProviderCopy = StateProvider.autoDispose<Filter>((ref) =>
-  ref.watch(filterProvider).state.copy,
+  ref.read(filterProvider).state.copyWith(),
   name: 'FilterScreen'
 );
 

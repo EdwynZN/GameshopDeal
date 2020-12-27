@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_riverpod/all.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/widget/filter/flag_filter.dart';
 import 'package:gameshop_deals/widget/filter/metacritic.dart';
 import 'package:gameshop_deals/widget/filter/price_slider.dart';
@@ -8,9 +8,8 @@ import 'package:gameshop_deals/widget/filter/sort_by.dart';
 import 'package:gameshop_deals/widget/filter/steam_rating.dart';
 import 'package:gameshop_deals/widget/filter/order_by.dart';
 import 'package:gameshop_deals/widget/filter/stores.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gameshop_deals/model/filter_model.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
+import 'package:gameshop_deals/model/filter.dart';
 
 class FilterScreen extends StatelessWidget{
   const FilterScreen({Key key}) : super(key: key);
@@ -21,7 +20,7 @@ class FilterScreen extends StatelessWidget{
     if(isDrawer) return const Drawer(child: const FilterPage());
     return const SafeArea(
       child: const Material(
-        child: const FilterPage() //FilterPage(dealProvider.parameters)
+        child: const FilterPage()
       )
     );
   }
@@ -47,7 +46,7 @@ class FilterPage extends StatelessWidget {
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 4),
             leading: CloseButton(),
-            title: Text('Filters', style: Theme.of(context).textTheme.headline4),
+            title: Text('Filters', style: Theme.of(context).textTheme.headline3),
             trailing: IconButton(
               icon: Icon(Icons.refresh),
               tooltip: 'Restart',
@@ -77,27 +76,27 @@ class FilterPage extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 19),
                       child: const FlagFilterWidget(),
                     ),
-                    Text('Price Range', style: Theme.of(context).textTheme.headline6),
+                    Text('Price Range', style: Theme.of(context).textTheme.headline5),
                     const Padding(
                       padding: const EdgeInsets.only(bottom: 19),
                       child: const PriceSlider()
                     ),
-                    Text('Metacritic', style: Theme.of(context).textTheme.headline6),
+                    Text('Metacritic', style: Theme.of(context).textTheme.headline5),
                     const Padding(
                       padding: const EdgeInsets.only(bottom: 19),
                       child: const MetacriticFilter(),
                     ),
-                    Text('Steam Rating', style: Theme.of(context).textTheme.headline6),
+                    Text('Steam Rating', style: Theme.of(context).textTheme.headline5),
                     const Padding(
                       padding: const EdgeInsets.only(bottom: 19),
                       child: const SteamRating(),
                     ),
-                    Text('Sort By', style: Theme.of(context).textTheme.headline6),
+                    Text('Sort By', style: Theme.of(context).textTheme.headline5),
                     const Padding(
                       padding: const EdgeInsets.only(bottom: 19),
                       child: const SortByWidget(),
                     ),
-                    Text('Stores', style: Theme.of(context).textTheme.headline6),
+                    Text('Stores', style: Theme.of(context).textTheme.headline5),
                     const StoreWidget()
                   ]),
                 ),
@@ -133,10 +132,10 @@ class _ApplyButton extends StatelessWidget {
         final StateController<Filter> filterCopy = context.read(filterProviderCopy);
         final StateController<Filter> filter = context.read(filterProvider);
         if(filter.state == filterCopy.state) return;
-        filter.state = filterCopy.state.copy;
+        filter.state = filterCopy.state.copyWith();
         Navigator.maybePop(context);
       },
-      child: Text('Apply'),
+      child: const Text('Apply'),
     );
   }
 }

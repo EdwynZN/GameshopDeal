@@ -5,25 +5,6 @@ List<Deal> dealFromJson(String str) => List<Deal>.from(json.decode(str).map((x) 
 
 String dealToJson(List<Deal> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class DealResponse{
-  List<Deal> deals;
-  String error;
-
-  DealResponse({this.deals, this.error});
-
-  factory DealResponse.withJsonResponse(List<dynamic> json) =>
-    DealResponse(
-      deals: List<Deal>.from(json.map((x) => Deal.fromJson(x)))
-    );
-
-  factory DealResponse.withError(String error) => DealResponse(error: error);
-
-  bool get hasData => deals != null;
-
-  bool get hasError => error != null;
-
-}
-
 class Deal extends Equatable{
   final String internalName;
   final String title;
@@ -69,13 +50,13 @@ class Deal extends Equatable{
 
   factory Deal.fromJson(Map<String, dynamic> json) => Deal(
     internalName: json["internalName"],
-    title: json["title"]?.trim(),
+    title: (json["title"] ?? json['name'])?.trim(),
     metacriticLink: json["metacriticLink"],
     dealId: json["dealID"],
     storeId: json["storeID"],
     gameId: json["gameID"],
-    salePrice: json["salePrice"],
-    normalPrice: json["normalPrice"],
+    salePrice: json["salePrice"] ?? json['price'],
+    normalPrice: json["normalPrice"] ?? json['retailPrice'],
     isOnSale: json["isOnSale"],
     savings: json["savings"] == null ? null : double.tryParse(json["savings"])?.round(),
     metacriticScore: json["metacriticScore"],
@@ -110,6 +91,9 @@ class Deal extends Equatable{
     "dealRating": dealRating,
     "thumb": thumb,
   };
+
+  @override
+  bool get stringify => true;
 
   @override
   List<Object> get props => [
