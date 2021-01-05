@@ -33,6 +33,11 @@ class _$FilterTearOff {
           int metacritic = 0,
       @JsonKey(defaultValue: 0)
           int steamRating = 0,
+      @JsonKey(defaultValue: const <String>{})
+          Set<String> steamAppId = const <String>{},
+      String title,
+      @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
+          bool exact = false,
       @JsonKey(name: 'AAA', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           bool onlyRetail = false,
       @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
@@ -48,6 +53,9 @@ class _$FilterTearOff {
       upperPrice: upperPrice,
       metacritic: metacritic,
       steamRating: steamRating,
+      steamAppId: steamAppId,
+      title: title,
+      exact: exact,
       onlyRetail: onlyRetail,
       steamWorks: steamWorks,
       onSale: onSale,
@@ -85,6 +93,11 @@ mixin _$Filter {
   int get metacritic;
   @JsonKey(defaultValue: 0)
   int get steamRating;
+  @JsonKey(defaultValue: const <String>{})
+  Set<String> get steamAppId;
+  String get title;
+  @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
+  bool get exact;
   @JsonKey(
       name: 'AAA',
       defaultValue: false,
@@ -120,6 +133,11 @@ abstract class $FilterCopyWith<$Res> {
           int metacritic,
       @JsonKey(defaultValue: 0)
           int steamRating,
+      @JsonKey(defaultValue: const <String>{})
+          Set<String> steamAppId,
+      String title,
+      @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
+          bool exact,
       @JsonKey(name: 'AAA', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           bool onlyRetail,
       @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
@@ -146,6 +164,9 @@ class _$FilterCopyWithImpl<$Res> implements $FilterCopyWith<$Res> {
     Object upperPrice = freezed,
     Object metacritic = freezed,
     Object steamRating = freezed,
+    Object steamAppId = freezed,
+    Object title = freezed,
+    Object exact = freezed,
     Object onlyRetail = freezed,
     Object steamWorks = freezed,
     Object onSale = freezed,
@@ -161,6 +182,10 @@ class _$FilterCopyWithImpl<$Res> implements $FilterCopyWith<$Res> {
       metacritic: metacritic == freezed ? _value.metacritic : metacritic as int,
       steamRating:
           steamRating == freezed ? _value.steamRating : steamRating as int,
+      steamAppId:
+          steamAppId == freezed ? _value.steamAppId : steamAppId as Set<String>,
+      title: title == freezed ? _value.title : title as String,
+      exact: exact == freezed ? _value.exact : exact as bool,
       onlyRetail:
           onlyRetail == freezed ? _value.onlyRetail : onlyRetail as bool,
       steamWorks:
@@ -191,6 +216,11 @@ abstract class _$FilterCopyWith<$Res> implements $FilterCopyWith<$Res> {
           int metacritic,
       @JsonKey(defaultValue: 0)
           int steamRating,
+      @JsonKey(defaultValue: const <String>{})
+          Set<String> steamAppId,
+      String title,
+      @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
+          bool exact,
       @JsonKey(name: 'AAA', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           bool onlyRetail,
       @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
@@ -218,6 +248,9 @@ class __$FilterCopyWithImpl<$Res> extends _$FilterCopyWithImpl<$Res>
     Object upperPrice = freezed,
     Object metacritic = freezed,
     Object steamRating = freezed,
+    Object steamAppId = freezed,
+    Object title = freezed,
+    Object exact = freezed,
     Object onlyRetail = freezed,
     Object steamWorks = freezed,
     Object onSale = freezed,
@@ -233,6 +266,10 @@ class __$FilterCopyWithImpl<$Res> extends _$FilterCopyWithImpl<$Res>
       metacritic: metacritic == freezed ? _value.metacritic : metacritic as int,
       steamRating:
           steamRating == freezed ? _value.steamRating : steamRating as int,
+      steamAppId:
+          steamAppId == freezed ? _value.steamAppId : steamAppId as Set<String>,
+      title: title == freezed ? _value.title : title as String,
+      exact: exact == freezed ? _value.exact : exact as bool,
       onlyRetail:
           onlyRetail == freezed ? _value.onlyRetail : onlyRetail as bool,
       steamWorks:
@@ -262,6 +299,11 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
           this.metacritic = 0,
       @JsonKey(defaultValue: 0)
           this.steamRating = 0,
+      @JsonKey(defaultValue: const <String>{})
+          this.steamAppId = const <String>{},
+      this.title,
+      @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
+          this.exact = false,
       @JsonKey(name: 'AAA', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           this.onlyRetail = false,
       @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
@@ -276,6 +318,8 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
         assert(upperPrice != null),
         assert(metacritic != null),
         assert(steamRating != null),
+        assert(steamAppId != null),
+        assert(exact != null),
         assert(onlyRetail != null),
         assert(steamWorks != null),
         assert(onSale != null);
@@ -312,6 +356,14 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
   @JsonKey(defaultValue: 0)
   final int steamRating;
   @override
+  @JsonKey(defaultValue: const <String>{})
+  final Set<String> steamAppId;
+  @override
+  final String title;
+  @override
+  @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
+  final bool exact;
+  @override
   @JsonKey(
       name: 'AAA',
       defaultValue: false,
@@ -341,6 +393,11 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
         if (upperPrice < 50) 'upperPrice': upperPrice,
         if (metacritic != 0) 'metacritic': metacritic,
         if (steamRating > 40) 'steamRating': steamRating,
+        if (steamAppId.isNotEmpty) 'steamAppID ': steamAppId.join(','),
+        if (title != null && title.isNotEmpty) ...<String, dynamic>{
+          'title': title,
+          if (exact) 'exact': 1,
+        },
         if (onlyRetail) 'AAA': 1,
         if (steamWorks) 'steamworks': 1,
         if (onSale) 'onSale': 1
@@ -351,7 +408,7 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Filter(storeID: $storeID, pageSize: $pageSize, sortBy: $sortBy, isAscendant: $isAscendant, lowerPrice: $lowerPrice, upperPrice: $upperPrice, metacritic: $metacritic, steamRating: $steamRating, onlyRetail: $onlyRetail, steamWorks: $steamWorks, onSale: $onSale, parameters: $parameters)';
+    return 'Filter(storeID: $storeID, pageSize: $pageSize, sortBy: $sortBy, isAscendant: $isAscendant, lowerPrice: $lowerPrice, upperPrice: $upperPrice, metacritic: $metacritic, steamRating: $steamRating, steamAppId: $steamAppId, title: $title, exact: $exact, onlyRetail: $onlyRetail, steamWorks: $steamWorks, onSale: $onSale, parameters: $parameters)';
   }
 
   @override
@@ -367,6 +424,9 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
       ..add(DiagnosticsProperty('upperPrice', upperPrice))
       ..add(DiagnosticsProperty('metacritic', metacritic))
       ..add(DiagnosticsProperty('steamRating', steamRating))
+      ..add(DiagnosticsProperty('steamAppId', steamAppId))
+      ..add(DiagnosticsProperty('title', title))
+      ..add(DiagnosticsProperty('exact', exact))
       ..add(DiagnosticsProperty('onlyRetail', onlyRetail))
       ..add(DiagnosticsProperty('steamWorks', steamWorks))
       ..add(DiagnosticsProperty('onSale', onSale))
@@ -400,6 +460,13 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
             (identical(other.steamRating, steamRating) ||
                 const DeepCollectionEquality()
                     .equals(other.steamRating, steamRating)) &&
+            (identical(other.steamAppId, steamAppId) ||
+                const DeepCollectionEquality()
+                    .equals(other.steamAppId, steamAppId)) &&
+            (identical(other.title, title) ||
+                const DeepCollectionEquality().equals(other.title, title)) &&
+            (identical(other.exact, exact) ||
+                const DeepCollectionEquality().equals(other.exact, exact)) &&
             (identical(other.onlyRetail, onlyRetail) ||
                 const DeepCollectionEquality()
                     .equals(other.onlyRetail, onlyRetail)) &&
@@ -421,6 +488,9 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
       const DeepCollectionEquality().hash(upperPrice) ^
       const DeepCollectionEquality().hash(metacritic) ^
       const DeepCollectionEquality().hash(steamRating) ^
+      const DeepCollectionEquality().hash(steamAppId) ^
+      const DeepCollectionEquality().hash(title) ^
+      const DeepCollectionEquality().hash(exact) ^
       const DeepCollectionEquality().hash(onlyRetail) ^
       const DeepCollectionEquality().hash(steamWorks) ^
       const DeepCollectionEquality().hash(onSale);
@@ -452,6 +522,11 @@ abstract class _Filter implements Filter {
           int metacritic,
       @JsonKey(defaultValue: 0)
           int steamRating,
+      @JsonKey(defaultValue: const <String>{})
+          Set<String> steamAppId,
+      String title,
+      @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
+          bool exact,
       @JsonKey(name: 'AAA', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           bool onlyRetail,
       @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
@@ -488,6 +563,14 @@ abstract class _Filter implements Filter {
   @override
   @JsonKey(defaultValue: 0)
   int get steamRating;
+  @override
+  @JsonKey(defaultValue: const <String>{})
+  Set<String> get steamAppId;
+  @override
+  String get title;
+  @override
+  @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
+  bool get exact;
   @override
   @JsonKey(
       name: 'AAA',

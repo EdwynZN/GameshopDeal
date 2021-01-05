@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gameshop_deals/riverpod/deal_provider.dart' show dealsProvider, dealPageProvider, singleDeal;
+import 'package:gameshop_deals/riverpod/deal_provider.dart'
+    show dealsProvider, dealPageProvider, singleDeal;
 import 'package:gameshop_deals/screen/filter_screen.dart';
 import 'package:gameshop_deals/widget/appbar.dart';
 import 'package:gameshop_deals/widget/deal_widget.dart';
 import 'package:flutter/rendering.dart';
+import 'package:gameshop_deals/generated/l10n.dart';
 //import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 final _scrollControllerProvider = ScopedProvider<ScrollController>(null);
@@ -81,8 +83,11 @@ class _MyHomePageState extends State<MyHomePage>
           body: ProviderListener<AsyncValue>(
             onChange: (context, deal) {
               if (deal is AsyncError)
-                Scaffold.of(context)
-                    .showSnackBar(SnackBar(content: Text('${deal.error}')));
+                Scaffold.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('${deal.error}'),
+                  ),
+                );
             },
             provider: dealPageProvider.state,
             child: RefreshIndicator(
@@ -93,8 +98,9 @@ class _MyHomePageState extends State<MyHomePage>
                   const HomeAppBar(),
                   const _DealListView(),
                   const SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: const EndLinearProgressIndicator()),
+                    hasScrollBody: false,
+                    child: const EndLinearProgressIndicator(),
+                  ),
                 ],
               ),
               onRefresh: () async => context.refresh(dealPageProvider),
@@ -114,22 +120,24 @@ class _FAB extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
+    final S translate = S.of(context);
     final AnimationController animationController = watch(_animationProvider);
     final ScrollController scrollController = watch(_scrollControllerProvider);
     return ScaleTransition(
-        scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-          parent: animationController,
-          curve: Interval(0.0, 1, curve: Curves.decelerate),
-        )),
-        child: FloatingActionButton(
-          // tooltip: S.of(context).upToolTip,
-          mini: true,
-          heroTag: 'MenuFAB',
-          // onPressed: () => scrollController.animateTo(0.0, curve: Curves.decelerate, duration: const Duration(seconds: 2)),
-          // onPressed: () => scrollController.animateTo(0, duration: Duration.zero, curve: Curves.easeOut),
-          onPressed: () => scrollController.jumpTo(0.5),
-          child: const Icon(Icons.keyboard_arrow_up),
-        ));
+      scale: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+        parent: animationController,
+        curve: Interval(0.0, 1, curve: Curves.decelerate),
+      )),
+      child: FloatingActionButton(
+        tooltip: S.of(context).up_tooltip,
+        mini: true,
+        heroTag: 'MenuFAB',
+        // onPressed: () => scrollController.animateTo(0.0, curve: Curves.decelerate, duration: const Duration(seconds: 2)),
+        // onPressed: () => scrollController.animateTo(0, duration: Duration.zero, curve: Curves.easeOut),
+        onPressed: () => scrollController.jumpTo(0.5),
+        child: const Icon(Icons.keyboard_arrow_up),
+      ),
+    );
   }
 }
 
@@ -140,15 +148,18 @@ class EndLinearProgressIndicator extends ConsumerWidget {
   Widget build(BuildContext context, ScopedReader watch) {
     final deals = watch(dealPageProvider.state);
     return deals.maybeWhen(
-        orElse: () => const Align(
-            alignment: Alignment.topCenter,
-            child: const LinearProgressIndicator()),
-        error: (e, stack) => Center(
-                child: OutlinedButton(
-              child: const Text('Error fetching the deals'),
-              onPressed: () async =>
-                  context.read(dealPageProvider).retrievePage(),
-            )));
+      orElse: () => const Align(
+        alignment: Alignment.topCenter,
+        child: const LinearProgressIndicator(),
+      ),
+      error: (e, stack) => Center(
+        child: OutlinedButton(
+          child: const Text('Error fetching the deals'),
+          onPressed: () async =>
+              context.read(dealPageProvider).retrievePage(),
+        ),
+      ),
+    );
   }
 }
 
@@ -175,7 +186,7 @@ class _DealListView extends ConsumerWidget {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (BuildContext _, int index) {
-        /*return ProviderScope(
+          /*return ProviderScope(
           overrides: [
             singleDeal.overrideWithValue(deals[index]),
             indexDeal.overrideWithValue(index)

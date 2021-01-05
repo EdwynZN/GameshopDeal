@@ -9,6 +9,7 @@ import 'package:gameshop_deals/widget/display_deal/thumb_image.dart';
 import 'package:gameshop_deals/widget/display_deal/deal_date.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:gameshop_deals/utils/routes_constants.dart';
+import 'package:gameshop_deals/utils/preferences_constants.dart' show cheapsharkUrl;
 
 final indexDeal = ScopedProvider<int>(null);
 
@@ -24,15 +25,14 @@ class GridDeal extends ConsumerWidget {
     assert(deal != null);
     return ElevatedButton(
       style: Theme.of(context).elevatedButtonTheme.style.copyWith(
-            padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.zero),
-            backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-              if (states.contains(MaterialState.disabled)) return null;
-              return Theme.of(context).cardColor;
-            }),
-          ),
+        padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.zero),
+        backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+          if (states.contains(MaterialState.disabled)) return null;
+          return Theme.of(context).cardColor;
+        }),
+      ),
       onPressed: () async {
-        String _dealLink =
-            'https://www.cheapshark.com/redirect?dealID=${deal.dealId}';
+        String _dealLink = '$cheapsharkUrl/redirect?dealID=${deal.dealId}';
         if (await canLaunch(_dealLink)) {
           await launch(_dealLink);
         } else {

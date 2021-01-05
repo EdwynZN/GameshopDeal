@@ -5,10 +5,11 @@ import 'package:gameshop_deals/model/game.dart';
 import 'package:gameshop_deals/model/store.dart';
 import 'package:gameshop_deals/model/game_lookup.dart';
 import 'package:gameshop_deals/model/deal_lookup.dart';
+import 'package:gameshop_deals/utils/preferences_constants.dart';
 
 part 'cheap_shark_retrofit.g.dart';
 
-@RestApi(baseUrl: "https://www.cheapshark.com/api/1.0/")
+@RestApi(baseUrl: "$cheapsharkUrl/api/1.0/")
 abstract class DiscountApi{
   factory DiscountApi(Dio dio, {String baseUrl}) = _DiscountApi;
 

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/all.dart';
+import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart' show singleDeal;
 import 'package:flutter/material.dart';
 
@@ -7,12 +8,13 @@ class Released extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
+    final S translate = S.of(context);
     final deal = watch(singleDeal);
     assert(deal != null);
     final int releaseDate = deal.releaseDate;
-    if (releaseDate == 0)
+    if (releaseDate == null || releaseDate == 0)
       return Text(
-        'To be released',
+        translate.no_date,
         style: Theme.of(context).textTheme.overline.copyWith(
           color: Colors.black,
           backgroundColor: Colors.orangeAccent,
@@ -21,10 +23,10 @@ class Released extends ConsumerWidget {
         maxLines: 1,
         softWrap: false,
       );
-    final DateTime released =
-        DateTime.fromMillisecondsSinceEpoch(releaseDate * 1000);
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(releaseDate * 1000);
+    final formatShortDate = MaterialLocalizations.of(context).formatShortDate(dateTime);
     return Text(
-      'Released on: ${MaterialLocalizations.of(context).formatShortDate(released)}',
+      translate.release(formatShortDate),
       style: Theme.of(context).textTheme.overline,
       overflow: TextOverflow.clip,
       softWrap: true,

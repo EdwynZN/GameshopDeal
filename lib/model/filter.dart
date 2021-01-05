@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
-
 part 'filter.freezed.dart';
 part 'filter.g.dart';
 
@@ -19,6 +18,9 @@ abstract class Filter with _$Filter {
     @Default(50) @JsonKey(defaultValue: 0) int upperPrice,
     @Default(0) @JsonKey(defaultValue: 0) int metacritic,
     @Default(0) @JsonKey(defaultValue: 0) int steamRating,
+    @Default(const <String>{}) @JsonKey(defaultValue: const <String>{}) Set<String> steamAppId,
+    String title,
+    @Default(false) @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool) bool exact,
     @Default(false) @JsonKey(name: 'AAA', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool) bool onlyRetail,
     @Default(false) @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool) bool steamWorks,
     @Default(false) @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool) bool onSale,
@@ -34,6 +36,11 @@ abstract class Filter with _$Filter {
     if(upperPrice < 50) 'upperPrice' : upperPrice,
     if(metacritic != 0) 'metacritic' : metacritic,
     if(steamRating > 40) 'steamRating' : steamRating,
+    if(steamAppId.isNotEmpty) 'steamAppID ' : steamAppId.join(','),
+    if(title != null && title.isNotEmpty) ...<String, dynamic>{
+      'title' : title,
+      if(exact) 'exact' : 1,
+    },
     if(onlyRetail) 'AAA' : 1,
     if(steamWorks) 'steamworks' : 1,
     if(onSale) 'onSale' : 1

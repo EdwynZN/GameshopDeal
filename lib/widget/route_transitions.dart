@@ -5,9 +5,9 @@ import 'package:gameshop_deals/screen/detail_screen.dart';
 import 'package:gameshop_deals/screen/home_screen.dart';
 import 'package:gameshop_deals/screen/filter_screen.dart';
 import 'package:gameshop_deals/screen/settings_screen.dart';
+import 'package:gameshop_deals/screen/search_screen.dart';
 import 'package:gameshop_deals/utils/routes_constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-//import 'package:gameshop_deals/widget/deal_card.dart';
 import 'package:gameshop_deals/widget/deal_widget.dart';
 
 import 'dart:math' as math;
@@ -22,6 +22,8 @@ class Routes {
         return materialRoute(child: const MyHomePage(), settings: settings);
       case settingsRoute:
         return materialRoute(child: const SettingsScreen(), settings: settings);
+      case searchRoute:
+        return materialRoute(child: SearchScreen(filter: settings.arguments), settings: settings);
       case detailRoute:
         return materialRoute(
           child: ProviderScope(
@@ -62,23 +64,24 @@ CupertinoPageRoute cupertinoRoute(
 MaterialPageRoute materialRoute(
     {Widget child, RouteSettings settings, bool fullscreenDialog = false}) {
   return MaterialPageRoute(
-      settings: settings,
-      fullscreenDialog: fullscreenDialog,
-      builder: (ctx) => AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle(
-              statusBarIconBrightness:
-                  Theme.of(ctx).appBarTheme.brightness == Brightness.light
-                      ? Brightness.dark
-                      : Brightness.light,
-              systemNavigationBarIconBrightness:
-                  Theme.of(ctx).appBarTheme.brightness == Brightness.light
-                      ? Brightness.dark
-                      : Brightness.light,
-              statusBarColor: Theme.of(ctx).appBarTheme.color,
-              systemNavigationBarColor: Theme.of(ctx).appBarTheme.color,
-            ),
-            child: child,
-          ));
+    settings: settings,
+    fullscreenDialog: fullscreenDialog,
+    builder: (ctx) => AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarIconBrightness:
+            Theme.of(ctx).appBarTheme.brightness == Brightness.light
+                ? Brightness.dark
+                : Brightness.light,
+        systemNavigationBarIconBrightness:
+            Theme.of(ctx).appBarTheme.brightness == Brightness.light
+                ? Brightness.dark
+                : Brightness.light,
+        statusBarColor: Theme.of(ctx).appBarTheme.color,
+        systemNavigationBarColor: Theme.of(ctx).appBarTheme.color,
+      ),
+      child: child,
+    ),
+  );
 }
 
 class FadeRoute<T> extends MaterialPageRoute<T> {

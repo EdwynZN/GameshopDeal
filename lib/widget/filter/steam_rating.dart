@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/model/filter.dart';
@@ -13,6 +14,7 @@ class SteamRating extends ConsumerWidget{
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
+    final S translate = S.of(context);
     final double score = watch(_steamScore);
     return Slider.adaptive(
       value: score,
@@ -22,7 +24,7 @@ class SteamRating extends ConsumerWidget{
       },
       min: 40, max: 95,
       divisions: 11,
-      label: '${score <= 40 ? 'Any' : score.toInt()}',
+      label: '${score <= 40 ? translate.any_rating : score.toInt()}',
     );
   }
 }

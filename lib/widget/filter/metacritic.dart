@@ -1,29 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
+import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/model/filter.dart';
 
-final _metaScore = ScopedProvider<double>((watch) =>
-  watch(filterProviderCopy).state.metacritic.toDouble(),
-  name: 'Metacritic Score'
-);
+final _metaScore = ScopedProvider<double>(
+    (watch) => watch(filterProviderCopy).state.metacritic.toDouble(),
+    name: 'Metacritic Score');
 
-class MetacriticFilter extends ConsumerWidget{
+class MetacriticFilter extends ConsumerWidget {
   const MetacriticFilter({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
+    final S translate = S.of(context);
     final double metacritic = watch(_metaScore);
     return Slider.adaptive(
       value: metacritic,
       onChanged: (newValue) {
-        final StateController<Filter> filter = context.read(filterProviderCopy);
+        final StateController<Filter> filter =
+            context.read(filterProviderCopy);
         filter.state = filter.state.copyWith(metacritic: newValue.toInt());
       },
-      min: 0, max: 95,
+      min: 0,
+      max: 95,
       divisions: 19,
-      label: '${metacritic <= 0 ? 'Any' : metacritic.toInt()}',
-      semanticFormatterCallback: (value) => '${metacritic <= 0 ? 'Any score' : metacritic.toInt()}'
+      label: '${metacritic <= 0 ? translate.any_metacritic : metacritic.toInt()}',
+      semanticFormatterCallback: (value) =>
+        '${metacritic <= 0 ? translate.any_metacritic : metacritic.toInt()}',
     );
   }
 }

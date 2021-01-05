@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/model/store.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,16 +8,19 @@ import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart' show storesProvider;
 import 'package:gameshop_deals/model/filter.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
+import 'package:gameshop_deals/utils/preferences_constants.dart' show cheapsharkUrl;
 
 final _storesProvider = ScopedProvider<Set<int>>(
-    (watch) => watch(filterProviderCopy).state.storeID,
-    name: 'Stores ID');
+  (watch) => watch(filterProviderCopy).state.storeID,
+  name: 'Stores ID',
+);
 
 class StoreWidget extends ConsumerWidget {
   const StoreWidget({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
+    final S translate = S.of(context);
     final Set<int> storesSelected = watch(_storesProvider);
     final stores = watch(storesProvider);
     return stores.when(
@@ -37,23 +41,24 @@ class StoreWidget extends ConsumerWidget {
             ChoiceChip(
               selected: storesSelected.isEmpty,
               onSelected: (val) {
-                //if(val) return;
                 final StateController<Filter> filter =
                     context.read(filterProviderCopy);
                 filter.state = filter.state.copyWith(storeID: <int>{});
               },
-              label: const Text('All'),
+              label: Text(translate.all_choice),
               avatar: const Icon(
                 Icons.all_inclusive,
                 size: 20,
               ),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(4),
-                      bottomRight: Radius.circular(4),
-                      topRight: Radius.circular(4),
-                      topLeft: Radius.circular(4))),
-              tooltip: 'All',
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(4),
+                  bottomRight: Radius.circular(4),
+                  topRight: Radius.circular(4),
+                  topLeft: Radius.circular(4),
+                ),
+              ),
+              tooltip: translate.all_stores_tooltip,
             ),
             for (Store store in activeStores)
               ChoiceChip(
@@ -72,15 +77,17 @@ class StoreWidget extends ConsumerWidget {
                 avatar: CachedNetworkImage(
                   cacheManager:
                       watch(cacheManagerFamilyProvider(cacheKeyStores)),
-                  imageUrl: 'https://www.cheapshark.com${store.images.icon}',
+                  imageUrl: cheapsharkUrl + store.images.icon,
                   fit: BoxFit.contain,
                 ),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(4),
-                        bottomRight: Radius.circular(4),
-                        topRight: Radius.circular(4),
-                        topLeft: Radius.circular(4))),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(4),
+                    bottomRight: Radius.circular(4),
+                    topRight: Radius.circular(4),
+                    topLeft: Radius.circular(4),
+                  ),
+                ),
                 tooltip: store.storeName,
               ),
           ],

@@ -7,30 +7,21 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gameshop_deals/riverpod/deal_detail_provider.dart';
-import 'package:gameshop_deals/model/deal.dart';
+import 'package:gameshop_deals/model/game_lookup.dart';
+import 'package:gameshop_deals/riverpod/deal_provider.dart';
 import 'package:gameshop_deals/service/cheap_shark_retrofit.dart';
+import 'package:gameshop_deals/riverpod/repository_provider.dart';
 import 'package:flutter_riverpod/all.dart';
 import 'package:mockito/mockito.dart';
 import 'dart:io';
 
-import 'game_test.dart';
+import 'model_json_deserialization_test.dart';
 
 class MockCheapShark extends Mock implements DiscountApi {}
 
 const dioHttpHeadersForResponseBody = {
   Headers.contentTypeHeader: [Headers.jsonContentType],
 };
-
-final gameDealLookupTestProvider =
-    FutureProvider.family<List<Deal>, String>((ref, id) async {
-  final cancelToken = CancelToken();
-  ref.onDispose(cancelToken.cancel);
-
-  final gameLookup = await DiscountApi(Dio()).getGamesById(id);
-  final deals = gameLookup.deals;
-  return deals..sort((a, b) => b.savings.compareTo(a.savings));
-}, name: 'Game Deal Lookup');
 
 void main() {
   group('Testing different dio responses', () {
@@ -49,7 +40,7 @@ void main() {
     }); */
 
     test('Compare Deal with Games.deals Provider', () async {
-      final file = File('test_resources/deal_response.json');
+      final file = File('test_resources/game_lookup.json');
       final dioAdapterMock = DioAdapterMock();
 
       final httpResponse = ResponseBody.fromString(
@@ -59,19 +50,19 @@ void main() {
       );
 
       final container = ProviderContainer(overrides: [
-        //dioProvider.overrideWithValue(Dio()..httpClientAdapter = dioAdapterMock)
+        dioProvider.overrideWithValue(Dio()..httpClientAdapter = dioAdapterMock)
       ]);
 
       when(dioAdapterMock.fetch(any, any, any))
           .thenAnswer((_) async => httpResponse);
 
-      final result = container.listen(
-        dealsOfGameProvider('LEGO Batman'),
-        // didChange: (value) => print(value.read())
-        // didChange: (value) => expect(value.read(), isA<AsyncData<List<Deal>>>())
+      final resultGame = container.listen(
+        gameDealLookupProvider('612').future,
       );
 
-      final resultTest = container.listen(gameDealLookupTestProvider('612'));
+      //final result = container.listen(dealsOfGameProvider('612'),);
+
+      /* final resultTest = container.listen(gameDealLookupTestProvider('612'));
 
       expect(result.read(), const AsyncValue<List<Deal>>.loading());
       expect(resultTest.read(), const AsyncValue<List<Deal>>.loading());
@@ -84,8 +75,12 @@ void main() {
       final List<Deal> deals = result.read().data.value;
       final List<Deal> dealsTest = resultTest.read().data.value;
 
-      expect(deals.length, dealsTest.length);
-      //expect(deals.map<String>((cb) => cb.dealId), equals(dealsTest.map<String>((cb) => cb.dealId)));
+      expect(deals.length, dealsTest.length); */
+      await expectLater(
+        resultGame.read(),
+        completion(isA<GameLookup>()
+            .having((d) => d.deals, 'deals length', hasLength(7))),
+      );
     });
   });
 

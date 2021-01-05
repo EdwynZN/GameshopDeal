@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/widget/route_transitions.dart';
 import 'package:gameshop_deals/utils/routes_constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/theme_provider.dart';
-import 'package:gameshop_deals/riverpod/shared_preference_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive/hive.dart';
+import 'package:gameshop_deals/model/theme_mode_adapter_enum.dart';
+import 'package:gameshop_deals/model/deal_view_enum.dart';
 
 class Logger extends ProviderObserver {
   @override
@@ -37,26 +41,34 @@ class Logger extends ProviderObserver {
 }
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final SharedPreferences preferences = await SharedPreferences.getInstance();
-  runApp(ProviderScope(
-      // observers: [Logger()],
-      overrides: [
-        sharedPreferencesProvider.overrideWithValue(preferences),
-      ],
-      child: const GameShop()
-    )
+  //WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter<ThemeMode>(ThemeModeAdapter());
+  Hive.registerAdapter<DealView>(DealVieweAdapter());
+  await Hive.openBox<dynamic>('preferences');
+  runApp(
+    ProviderScope(
+      //observers: [Logger()],
+      child: const GameShop(),
+    ),
   );
 }
 
 class GameShop extends ConsumerWidget {
-  const GameShop();
+  const GameShop({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final themeMode = watch(themeProvider.state);
     final themeData = watch(themeProvider);
     return MaterialApp(
+      localizationsDelegates: [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: S.delegate.supportedLocales,
       debugShowCheckedModeBanner: false,
       darkTheme: themeData.darkTheme,
       theme: themeData.lightTheme,

@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-//import 'package:gameshop_deals/widget/deal_card.dart';
-//import 'package:gameshop_deals/riverpod/deal_detail_provider.dart';
+import 'package:gameshop_deals/model/deal_view_enum.dart';
+import 'package:gameshop_deals/riverpod/display_provider.dart';
 import 'package:gameshop_deals/widget/deal_widget.dart';
 import 'package:gameshop_deals/widget/store_deal_widget.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart'
   show dealsProvider, dealsOfGameProvider, gameDealLookupProvider, singleDeal;
-
-//final _detailProvider = ScopedProvider<DetailDeal>(null);
 
 class DetailDealScreen extends StatelessWidget {
   const DetailDealScreen({Key key}) : super(key: key);
@@ -109,6 +107,7 @@ class _CustomView extends StatefulWidget {
 
 class __CustomViewState extends State<_CustomView>
     with AutomaticKeepAliveClientMixin {
+      
   @override
   bool get wantKeepAlive => true;
 
@@ -138,9 +137,9 @@ class _DealListWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final bool isTablet = MediaQuery.of(context).size.shortestSide >= 700;
+    final bool isTablet = MediaQuery.of(context).size.shortestSide >= 700 
+      || watch(displayProvider.state) == DealView.Detail;
     final String gameId = watch(singleDeal).gameId;
-    //final String gameId = watch(singleDealProvider(watch(indexDeal))).gameId;
     final dealList = watch(dealsOfGameProvider(gameId));
     return dealList.when(
       loading: () =>
@@ -167,8 +166,6 @@ class _DealListWidget extends ConsumerWidget {
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) => ProviderScope(
                   overrides: [
-                    /* _detailProvider.overrideWithValue(
-                        DetailDeal(index: index, id: gameId)), */
                     singleDeal.overrideWithValue(deals[index])
                   ],
                   child: const StoreDealGrid(),

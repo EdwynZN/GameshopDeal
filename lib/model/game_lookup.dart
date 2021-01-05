@@ -1,15 +1,51 @@
-import 'dart:convert';
-import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:gameshop_deals/model/deal.dart';
-import 'package:gameshop_deals/model/cheapest_price_model.dart';
+import 'package:gameshop_deals/model/cheapest_price.dart';
 
-Map<String, GameLookup> gameLookupFromJson(String str) => Map.from(json.decode(str)).map((k, v) => MapEntry<String, GameLookup>(k, GameLookup.fromJson(v)));
+part 'game_lookup.freezed.dart';
+part 'game_lookup.g.dart';
 
-String gameLookupToJson(Map<String, GameLookup> data) => json.encode(Map.from(data).map((k, v) => MapEntry<String, dynamic>(k, v.toJson())));
+@freezed
+abstract class GameLookup with _$GameLookup {
+  @HiveType(typeId: 1, adapterName: 'GameLookupAdapter')
+  const factory GameLookup({
+    @HiveField(0) Info info,
+    @JsonKey(name: 'cheapestPriceEver')
+    @HiveField(1)
+        CheapestPrice cheapestPrice,
+    @HiveField(2) List<Deal> deals,
+  }) = _GameLookup;
 
+  factory GameLookup._fromJsonWithFallback(Map<String, dynamic> json) {
+    if (json['info'] == false) json.remove('info');
+    return _$GameLookupFromJson(json);
+  }
+
+  factory GameLookup.fromJson(Map<String, dynamic> json) =>
+    GameLookup._fromJsonWithFallback(json);
+}
+
+@freezed
+abstract class Info with _$Info {
+  @HiveType(typeId: 2, adapterName: 'InfoAdapter')
+  const factory Info({
+    @HiveField(0) String title,
+    @JsonKey(name: 'steamAppID') @HiveField(1) String steamAppId,
+    @HiveField(2) String thumb,
+  }) = _Info;
+
+  factory Info.fromJson(Map<String, dynamic> json) => _$InfoFromJson(json);
+}
+
+/* 
+@HiveType(typeId: 1, adapterName: 'GameLookup')
 class GameLookup extends Equatable{
+  @HiveField(0)
   final Info info;
+  @HiveField(1)
   final CheapestPrice cheapestPrice;
+  @HiveField(2)
   final List<Deal> deals;
 
   GameLookup({
@@ -41,9 +77,13 @@ class GameLookup extends Equatable{
   ];
 }
 
+@HiveType(typeId: 2, adapterName: 'Info')
 class Info extends Equatable{
+  @HiveField(0)
   final String title;
+  @HiveField(1)
   final String steamAppId;
+  @HiveField(2)
   final String thumb;
 
   Info({
@@ -74,3 +114,4 @@ class Info extends Equatable{
     thumb
   ];
 }
+ */

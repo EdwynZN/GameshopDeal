@@ -2,18 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/model/filter.dart';
+import 'package:gameshop_deals/generated/l10n.dart';
 
 final _onSaleProvider = ScopedProvider<bool>(
-    (watch) => watch(filterProviderCopy).state.onSale,
-    name: 'On Sale');
+  (watch) => watch(filterProviderCopy).state.onSale,
+  name: 'On Sale',
+);
 
 final _retailProvider = ScopedProvider<bool>(
-    (watch) => watch(filterProviderCopy).state.onlyRetail,
-    name: 'Only Retail');
+  (watch) => watch(filterProviderCopy).state.onlyRetail,
+  name: 'Only Retail',
+);
 
 final _steamWorksProvider = ScopedProvider<bool>(
-    (watch) => watch(filterProviderCopy).state.steamWorks,
-    name: 'SteamWorks');
+  (watch) => watch(filterProviderCopy).state.steamWorks,
+  name: 'SteamWorks',
+);
 
 class FlagFilterWidget extends StatelessWidget {
   const FlagFilterWidget({Key key}) : super(key: key);
@@ -23,10 +27,10 @@ class FlagFilterWidget extends StatelessWidget {
     return Wrap(
       spacing: 8,
       alignment: WrapAlignment.center,
-      children: <Widget>[
+      children: const <Widget>[
         const _OnSaleFilterWidget(),
-        _RetailWidget(),
-        _SteamWorksWidget(),
+        const _RetailWidget(),
+        const _SteamWorksWidget(),
       ],
     );
   }
@@ -37,10 +41,11 @@ class _OnSaleFilterWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
+    final S translate = S.of(context);
     final bool sale = watch(_onSaleProvider);
     return FilterChip(
-      label: const Text('On sale'),
-      tooltip: 'On sale',
+      label: Text(translate.on_sale),
+      tooltip: translate.on_sale_tooltip,
       selected: sale,
       onSelected: (value) {
         final StateController<Filter> filter = context.read(filterProviderCopy);
@@ -55,10 +60,11 @@ class _RetailWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
+    final S translate = S.of(context);
     final bool retail = watch(_retailProvider);
     return FilterChip(
-      label: const Text('Retail discount'),
-      tooltip: 'Games with a current retail price <\$29',
+      label: Text(translate.retail_discount),
+      tooltip: translate.retail_discount_tooltip,
       selected: retail,
       onSelected: (value) {
         final StateController<Filter> filter = context.read(filterProviderCopy);
@@ -73,10 +79,11 @@ class _SteamWorksWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
+    final S translate = S.of(context);
     final bool steamWorks = watch(_steamWorksProvider);
     return FilterChip(
-      label: const Text('SteamWorks'),
-      tooltip: 'Games registered in Steam, regardless the strore',
+      label: Text(translate.steamworks),
+      tooltip: translate.steamworks_tooltip,
       selected: steamWorks,
       onSelected: (value) {
         final StateController<Filter> filter = context.read(filterProviderCopy);

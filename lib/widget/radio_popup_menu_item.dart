@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/all.dart';
+import 'package:gameshop_deals/riverpod/preference_provider.dart';
 
-class RadioPopupMenuItem<T> extends PopupMenuItem<T> {
+class RadioPopupMenuItem<T extends Object> extends PopupMenuItem<T> {
   const RadioPopupMenuItem({
     Key key,
     T value,
     bool enabled = true,
-    this.groupValue,
+    @required this.provider,
     Widget child,
-  }) : super(
-    key: key,
-    value: value,
-    enabled: enabled,
-    child: child,
-  );
+  }) : 
+    assert(enabled != null),
+    assert(provider != null),
+    super(
+      key: key,
+      value: value,
+      enabled: enabled,
+      child: child,
+    );
 
-  final T groupValue;
+  final StateNotifierProvider<HiveNotifier<T>> provider;
 
   @override
   Widget get child => super.child;
@@ -25,17 +30,10 @@ class RadioPopupMenuItem<T> extends PopupMenuItem<T> {
 
 class _RadioPopupMenuItemState<T>
     extends PopupMenuItemState<T, RadioPopupMenuItem<T>> {
-  T groupValue;
-
-  @override
-  void initState() {
-    super.initState();
-    groupValue = widget.groupValue;
-  }
 
   @override
   void handleTap() {
-    setState(() => groupValue = widget.value);
+    context.read(widget.provider).changeState(widget.value);
     super.handleTap();
   }
 
@@ -46,12 +44,14 @@ class _RadioPopupMenuItemState<T>
       style: ListTileStyle.list,
       child: ListTile(
         enabled: widget.enabled,
-        trailing: Radio<T>(
-          value: widget.value,
-          groupValue: groupValue,
-          toggleable: true,
-          onChanged: widget.enabled ? (T newValue) => handleTap() : null,
-        ),
+        trailing: Consumer(builder: (_, watch, __) {
+          final groupValue = watch(widget.provider.state);
+          return Radio<T>(
+            value: widget.value,
+            groupValue: groupValue,
+            onChanged: widget.enabled ? (T newValue) => handleTap() : null,
+          );
+        }),
         title: widget.child,
       ),
     );

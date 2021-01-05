@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/model/filter.dart';
 
-final _orderBy = ScopedProvider<bool>((watch) =>
-  watch(filterProviderCopy).state.isAscendant,
-  name: 'Order By'
+final _orderBy = ScopedProvider<bool>(
+  (watch) => watch(filterProviderCopy).state.isAscendant,
+  name: 'Order By',
 );
 
-class OrderByWidget extends ConsumerWidget{
+class OrderByWidget extends ConsumerWidget {
   const OrderByWidget({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
+    final S translate = S.of(context);
     final bool _isAscendant = watch(_orderBy);
     final ThemeData theme = Theme.of(context);
     final Color _accentColor = theme.accentColor;
@@ -23,36 +25,43 @@ class OrderByWidget extends ConsumerWidget{
       children: <Widget>[
         Expanded(
           child: OutlinedButton.icon(
-            style: _isAscendant ? OutlinedButton.styleFrom(
-              primary: _accentTextThemeColor,
-              backgroundColor: _accentColor
-            ) : null,
-            onPressed: () {
-              if(_isAscendant) return;
-              final StateController<Filter> filter = context.read(filterProviderCopy);
-              filter.state = filter.state.copyWith(isAscendant: true);
-            },
-            icon: const Icon(Icons.arrow_upward, size: 20),
-            label: const Flexible(child: FittedBox(child: const Text('Ascending (A-Z)'))),
-          )
+          style: _isAscendant
+            ? OutlinedButton.styleFrom(
+                primary: _accentTextThemeColor, backgroundColor: _accentColor)
+            : null,
+          onPressed: () {
+            if (_isAscendant) return;
+            final StateController<Filter> filter =
+                context.read(filterProviderCopy);
+            filter.state = filter.state.copyWith(isAscendant: true);
+          },
+          icon: const Icon(Icons.arrow_upward, size: 20),
+          label: Flexible(
+            child: FittedBox(child: Text(translate.ascending))),
+          ),
         ),
         Expanded(
           child: OutlinedButton.icon(
-            style: !_isAscendant ? OutlinedButton.styleFrom(
-              primary: _accentTextThemeColor,
-              backgroundColor: _accentColor
-            ) : null,
+            style: !_isAscendant
+              ? OutlinedButton.styleFrom(
+                  primary: _accentTextThemeColor,
+                  backgroundColor: _accentColor)
+              : null,
             onPressed: () {
-              if(!_isAscendant) return;
-              final StateController<Filter> filter = context.read(filterProviderCopy);
+              if (!_isAscendant) return;
+              final StateController<Filter> filter =
+                  context.read(filterProviderCopy);
               filter.state = filter.state.copyWith(isAscendant: false);
             },
             icon: const Icon(Icons.arrow_downward, size: 20),
-            label: const Flexible(child: FittedBox(child: Text('Descending (Z-A)'),))
-          )
+            label: Flexible(
+              child: FittedBox(
+                child: Text(translate.descending),
+              ),
+            ),
+          ),
         ),
       ],
     );
   }
 }
-

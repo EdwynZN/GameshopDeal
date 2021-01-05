@@ -24,15 +24,15 @@ class PriceWidget extends ConsumerWidget {
               TextSpan(
                 text: '\$${deal.normalPrice}\n',
                 style: Theme.of(context).textTheme.subtitle2.copyWith(
-                      decoration: TextDecoration.lineThrough,
-                      color: Colors.red,
-                    ),
+                  decoration: TextDecoration.lineThrough,
+                  color: Colors.red,
+                ),
               ),
               TextSpan(
                 text: '\$${deal.salePrice}',
                 style: Theme.of(context).textTheme.subtitle2.copyWith(
-                      color: discountColor,
-                    ),
+                  color: discountColor,
+                ),
               ),
             ]),
             maxLines: 2,

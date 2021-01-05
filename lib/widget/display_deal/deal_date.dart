@@ -1,32 +1,33 @@
 import 'package:flutter_riverpod/all.dart';
+import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart' show singleDeal;
 import 'package:flutter/material.dart';
 
 class DealDate extends ConsumerWidget {
   const DealDate({Key key}) : super(key: key);
 
-  String _difference(Duration difference){
+  String _difference(S translate, int mEpoch) {
+    final DateTime change = DateTime.fromMillisecondsSinceEpoch(mEpoch * 1000);
+    final difference = DateTime.now().difference(change);
     if (difference.inDays >= 365)
-      return '${difference.inDays ~/ 365}y';
+      return translate.change_in_years(difference.inDays ~/ 365);
     else if (difference.inDays >= 30)
-      return '${difference.inDays ~/ 30}mo';
+      return translate.change_in_months(difference.inDays ~/ 30);
     else if (difference.inHours >= 24)
-      return '${(difference.inHours / 24).ceil()}d';
+      return translate.change_in_days((difference.inHours / 24).ceil());
     else if (difference.inMinutes >= 60)
-      return '${(difference.inMinutes / 60).ceil()}h';
-    else
-      return '${difference.inMinutes}m ago';
+      return translate.change_in_hours((difference.inMinutes / 60).ceil());
+    else if (difference.inMinutes >= 1) 
+      return translate.change_in_minutes(difference.inMinutes);
+    else return translate.now;
   }
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
+    final S translate = S.of(context);
     final deal = watch(singleDeal);
-    assert(deal != null);
-    final int lastChange = deal.lastChange;
-    final DateTime change =
-      DateTime.fromMillisecondsSinceEpoch(lastChange * 1000);
-    final difference = DateTime.now().difference(change);
-    String time = _difference(difference);
+    assert(deal != null && deal.lastChange != null);
+    String time = _difference(translate, deal.lastChange);
     return Text(
       ' · $time',
       style: Theme.of(context).textTheme.overline,

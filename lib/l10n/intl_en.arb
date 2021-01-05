@@ -1,0 +1,296 @@
+{
+    "@@locale": "en",
+    "@@context": "Gameshop Deals",
+    "@@author": "Dartz",
+    "@@last_modified": "2021-01-02T11:40:48.886",
+    "feedback": "Send feedback",
+    "@feedback": {
+        "type": "text",
+        "description": "Send feedback"
+    },
+    "help": "Help",
+    "@help": {
+        "type": "text",
+        "description": "Help"
+    },
+    "deal_view": "Deal view",
+    "@deal_view": {
+        "type": "text",
+        "description": "Deal view"
+    },
+    "choose_deal_view": "{view, select, List {List} Detail {Detail} Compact {Compact} Swipe {Swipe} other {List}}",
+    "@choose_deal_view": {
+        "type": "multiple choice",
+        "description": "DealView enum",
+        "placeholder": {
+            "view": {
+                "example": "List",
+                "description": "enum that defines the way to show the deals"
+            }
+        }
+    },
+    "sortBy": "Sort By",
+    "@sortBy": {
+        "type": "text",
+        "description": "Sort By"
+    },
+    "sort_tooltip": "{sort, select, Deal_Rating {On a scale from 0 to 10, it factors in price, percent off, metacritic, release date, price history, etc} Title {Title} Savings {Savings} Price {Price} Metacritic {Metacritic} Reviews {Reviews} Release {Release} Store {Store} Recent {How recently a deal was found} other {On a scale from 0 to 10, it factors in price, percent off, metacritic, release date, price history, etc}}",
+    "@sort_tooltip": {
+        "type": "multiple choice",
+        "description": "SortBy tooltip, useful to explain how deal rating works"
+    },
+    "sort": "{sort, select, Deal_Rating {Deal Rating} Title {Title} Savings {Savings} Price {Price} Metacritic {Metacritic} Reviews {Reviews} Release {Release} Store {Store} Recent {Recent} other {Deal Rating}}",
+    "@sort": {
+        "type": "multiple choice",
+        "description": "SortBy enum"
+    },
+    "choose_theme": "Choose theme",
+    "@choose_theme": {
+        "type": "text",
+        "description": "Choose theme"
+    },
+    "light": "Light",
+    "@light": {
+        "type": "text",
+        "description": "Light Theme"
+    },
+    "dark": "Dark",
+    "@dark": {
+        "type": "text",
+        "description": "Dark Theme"
+    },
+    "system": "System",
+    "@system": {
+        "type": "text",
+        "description": "System Default Theme"
+    },
+    "themeMode": "{mode, select, system {System} light {Light} dark {Dark} other {System}}",
+    "@themeMode": {
+        "type": "multiple choice",
+        "description": "ThemeMode enum",
+        "placeholder": {
+            "mode": {
+                "example": "ThemeMode.system",
+                "description": "ThemeMode enum defined by flutter"
+            }
+        }
+    },
+    "settings": "Settings",
+    "@settings": {
+        "type": "text",
+        "description": "settings option"
+    },
+    "search_tooltip": "Search",
+    "@search_tooltip": {
+        "type": "text",
+        "description": "Search tooltip"
+    },
+    "filter_tooltip": "Open filter menu",
+    "@filter_tooltip": {
+        "type": "text",
+        "description": "filter menu tooltip"
+    },
+    "filter": "Filters",
+    "@filter": {
+        "type": "text",
+        "description": "Filter text"
+    },
+    "restart_tooltip": "Restart",
+    "@restart_tooltip": {
+        "type": "text",
+        "description": "Tooltip indiciating the restart of the filter to the default values"
+    },
+    "up_tooltip": "Up",
+    "@up_tooltip": {
+        "type": "text",
+        "context": "HomeScreen: Floating Action Button",
+        "description": "button to go to the beginning of the list"
+    },
+    "price_range": "Price Range",
+    "@price_range": {
+        "type": "text",
+        "description": "Price Range Slider title"
+    },
+    "dollar_currency": "{money, plural, zero{free} one{1 dollar} many{{money} dollars}}",
+    "@dollar_currency": {
+        "type": "text",
+        "description": "dollar currency",
+        "placeholders": {
+            "money": {
+                "example": "12",
+                "description": "cost presented with dollar currency symbol"
+            }
+        }
+    },
+    "steam_rating": "Steam Rating",
+    "@steam_rating": {
+        "type": "text",
+        "description": "Steam Rating title"
+    },
+    "stores": "Stores",
+    "@stores": {
+        "type": "text",
+        "description": "Stores title"
+    },
+    "all_stores_tooltip": "All Stores",
+    "@all_stores_tooltip": {
+        "type": "text",
+        "description": "tooltip for all stores chip"
+    },
+    "all_choice": "All",
+    "@all_choice": {
+        "type": "text",
+        "description": "text to apply for the chip that selects all"
+    },
+    "apply_filter": "Apply",
+    "@apply_filter": {
+        "type": "text",
+        "description": "Apply button to save filter changes"
+    },
+    "on_sale": "On sale",
+    "@on_sale": {
+        "type": "text",
+        "description": "On sale title"
+    },
+    "on_sale_tooltip": "On sale",
+    "@on_sale_tooltip": {
+        "type": "text",
+        "description": "On sale tooltip"
+    },
+    "retail_discount": "Retail discount",
+    "@retail_discount": {
+        "type": "text",
+        "description": "Retail discount title"
+    },
+    "retail_discount_tooltip": "Games with a current retail price <$29",
+    "@retail_discount_tooltip": {
+        "type": "text",
+        "description": "Games that are already discounted at local stores"
+    },
+    "steamworks": "SteamWorks",
+    "@steamworks": {
+        "type": "text",
+        "description": "Steamworks title, that means games that are in the steam store"
+    },
+    "steamworks_tooltip": "Games registered in Steam, regardless the store",
+    "@steamworks_tooltip": {
+        "type": "text",
+        "description": "Games that are in the Steam Store"
+    },
+    "any_metacritic": "Any score",
+    "@any_metacritic": {
+        "type": "text",
+        "description": "Any score"
+    },
+    "any_rating": "Any",
+    "@any_rating": {
+        "type": "text",
+        "description": "Any rating"
+    },
+    "ascending": "Ascending (A-Z)",
+    "@ascending": {
+        "type": "text",
+        "description": "Ascending order"
+    },
+    "descending": "Descending (Z-A)",
+    "@descending": {
+        "type": "text",
+        "description": "Descending order"
+    },
+    "no_date": "To be released",
+    "@no_date": {
+        "type": "text",
+        "description": "no release date, so 'to be released' is displayed"
+    },
+    "release": "Released on: {date}",
+    "@release": {
+        "type": "text",
+        "description": "displays the date when it is released",
+        "placeholder": {
+            "date": {
+                "example": "Feb 21, 2019",
+                "description": "date in a short format"
+            }
+        }
+    },
+    "change_in_years": "{change}y ago",
+    "@change_in_years": {
+        "type": "text",
+        "description": "last time a date changed in years",
+        "placeholder": {
+            "change": {
+                "example": "2",
+                "description": "number of years since last change"
+            }
+        }
+    },
+    "change_in_months": "{change}mo ago",
+    "@change_in_months": {
+        "type": "text",
+        "description": "last time a date changed in months",
+        "placeholder": {
+            "change": {
+                "example": "12",
+                "description": "number of months since last change"
+            }
+        }
+    },
+    "change_in_days": "{change}d ago",
+    "@change_in_days": {
+        "type": "text",
+        "description": "last time a date changed in days",
+        "placeholder": {
+            "change": {
+                "example": "31",
+                "description": "number of days since last change"
+            }
+        }
+    },
+    "change_in_hours": "{change}h ago",
+    "@change_in_hours": {
+        "type": "text",
+        "description": "last time a date changed in hours",
+        "placeholder": {
+            "change": {
+                "example": "24",
+                "description": "number of hours since last change"
+            }
+        }
+    },
+    "change_in_minutes": "{change}m ago",
+    "@change_in_minutes": {
+        "type": "text",
+        "description": "last time a date changed in minutes",
+        "placeholder": {
+            "change": {
+                "example": "30",
+                "description": "number of minutes since last change"
+            }
+        }
+    },
+    "now": "now",
+    "@now": {
+        "type": "text",
+        "description": "now or less than a minute since last change"
+    },
+    "cache_title": "Clear cache",
+    "@cache_title": {
+        "type": "text",
+        "description": "clear cache"
+    },
+    "cache_dialog_title": "Are you sure?",
+    "@cache_dialog_title": {
+        "type": "text",
+        "description": "dialog asking if the user is sure to delete the cache"
+    },
+    "cache_dialog_content": "This action can't be undone",
+    "@cache_dialog_content": {
+        "type": "text",
+        "description": "content dialog describing the action cannot be undone"
+    },
+    "cache_snackbar_cleared": "Cache cleared",
+    "@cache_snackbar_cleared": {
+        "type": "text",
+        "description": "cache has been deleted from the disk"
+    }
+  }
