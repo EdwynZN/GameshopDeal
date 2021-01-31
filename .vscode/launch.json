@@ -7,7 +7,8 @@
         {
             "name": "gameshop_deals",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "flutterMode": "release"
         }
     ]
 }

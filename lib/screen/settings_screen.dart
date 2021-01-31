@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/cache_manager_provider.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
+import 'package:gameshop_deals/riverpod/search_provider.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -32,9 +33,9 @@ class SettingsScreen extends StatelessWidget {
                 )),
                 const _CardSettings(child: const _ClearCacheWidget()),
                 const _CardSettings(
-                    child: ListTile(
-                  leading: const Icon(Icons.contact_support_outlined),
-                  title: const Text('About'),
+                    child: const AboutListTile(
+                  icon: const Icon(Icons.contact_support_outlined),
+                  applicationName: 'Gameshop',
                 )),
               ]),
             ),
@@ -61,37 +62,48 @@ class _ClearCacheWidget extends StatelessWidget {
       onTap: () async {
         bool clear = await showDialog<bool>(
           context: context,
-          child: AlertDialog(
-            title: Text(translate.cache_dialog_title),
-            content: Text(translate.cache_dialog_content),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text(
-                    MaterialLocalizations.of(context).cancelButtonLabel),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: Text(MaterialLocalizations.of(context).okButtonLabel),
-              ),
-            ],
-          ),
+          child: const _CacheDialog(),
         );
         if (clear ?? false) {
           ScaffoldState scaffold = Scaffold.of(context, nullOk: true);
           await context
-            .read(cacheManagerFamilyProvider(cacheKeyDeals))
-            .emptyCache();
+              .read(cacheManagerFamilyProvider(cacheKeyDeals))
+              .emptyCache();
           await context
-            .read(cacheManagerFamilyProvider(cacheKeyStores))
-            .emptyCache();
+              .read(cacheManagerFamilyProvider(cacheKeyStores))
+              .emptyCache();
+          final box = await context.read(searchBox.future);
+          if (box.isOpen && box.isNotEmpty) await box.clear();
           if (scaffold?.mounted ?? false) {
             scaffold?.hideCurrentSnackBar();
-            scaffold
-              ?.showSnackBar(SnackBar(content: Text(translate.cache_snackbar_cleared)));
+            scaffold?.showSnackBar(
+                SnackBar(content: Text(translate.cache_snackbar_cleared)));
           }
         }
       },
+    );
+  }
+}
+
+class _CacheDialog extends StatelessWidget {
+  const _CacheDialog({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final S translate = S.of(context);
+    return AlertDialog(
+      title: Text(translate.cache_dialog_title),
+      content: Text(translate.cache_dialog_content),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(true),
+          child: Text(MaterialLocalizations.of(context).okButtonLabel),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(false),
+          child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+        ),
+      ],
     );
   }
 }

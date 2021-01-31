@@ -29,7 +29,7 @@ class DealDate extends ConsumerWidget {
     assert(deal != null && deal.lastChange != null);
     String time = _difference(translate, deal.lastChange);
     return Text(
-      ' · $time',
+      time,
       style: Theme.of(context).textTheme.overline,
       overflow: TextOverflow.clip,
       softWrap: true,

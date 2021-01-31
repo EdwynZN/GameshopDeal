@@ -1,15 +1,17 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gameshop_deals/generated/l10n.dart';
+import 'package:gameshop_deals/model/deal_view_enum.dart';
+import 'package:gameshop_deals/model/filter.dart';
+import 'package:gameshop_deals/riverpod/deal_provider.dart'
+    show dealPageProvider;
 import 'package:gameshop_deals/riverpod/display_provider.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/riverpod/theme_provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/utils/routes_constants.dart';
 import 'package:gameshop_deals/widget/dialog_preference_provider.dart';
 import 'package:gameshop_deals/widget/radio_popup_menu_item.dart';
-import 'package:flutter/foundation.dart';
-import 'package:gameshop_deals/model/filter.dart';
-import 'package:gameshop_deals/model/deal_view_enum.dart';
-import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/widget/search_delegate.dart';
 
 /*
@@ -70,17 +72,21 @@ class CustomAppBarShape extends ContinuousRectangleBorder {
 }
  */
 final _sortByProvider = ScopedProvider<SortBy>(
-  (watch) => watch(filterProvider).state.sortBy,
+  (watch) => watch(filterProvider(watch(titleProvider))).state.sortBy,
   name: 'Sort By',
 );
 
-class HomeAppBar extends StatelessWidget {
-  const HomeAppBar({Key key}) : super(key: key);
+class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
+  @override
+  final Size preferredSize;
+
+  const HomeAppBar({Key key})
+      : preferredSize = const Size.fromHeight(56.0),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SliverAppBar(
-      pinned: true,
+    return AppBar(
       primary: true,
       title: Consumer(
         builder: (context, watch, _) {
@@ -97,20 +103,102 @@ class HomeAppBar extends StatelessWidget {
   }
 }
 
-class _SearchButton extends StatelessWidget {
-  const _SearchButton({Key key}) : super(key: key);
+class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
+  @override
+  final Size preferredSize;
+
+  const SearchAppBar({Key key})
+      : preferredSize = const Size.fromHeight(56.0),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    return AppBar(
+      primary: true,
+      leading: BackButton(
+        onPressed: () => Navigator.of(context, rootNavigator: true).maybePop(),
+      ),
+      title: Consumer(
+        builder: (context, watch, _) {
+          final title = watch(titleProvider);
+          return Text(title, overflow: TextOverflow.fade,);
+        },
+      ),
+      actions: const <Widget>[
+        const _SearchButton(),
+        const _FilterButton(),
+        const _MoreSettings(),
+      ],
+    );
+  }
+}
+
+class HomeSliverAppBar extends StatelessWidget {
+  const HomeSliverAppBar({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverAppBar(
+      pinned: true,
+      primary: true,
+      forceElevated: true,
+      title: Consumer(
+        builder: (context, watch, _) {
+          final S translate = S.of(context);
+          return Text(translate.sort(watch(_sortByProvider)));
+        },
+      ),
+      actions: const <Widget>[
+        const _SearchButton(),
+        const _FilterButton(),
+        const _MoreSettings(),
+      ],
+    );
+  }
+}
+
+class SearchSliverAppBar extends StatelessWidget {
+  const SearchSliverAppBar({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverAppBar(
+      pinned: true,
+      primary: true,
+      forceElevated: true,
+      leading: BackButton(
+        onPressed: () => Navigator.of(context, rootNavigator: true).maybePop(),
+      ),
+      title: Consumer(
+        builder: (context, watch, _) {
+          final title = watch(titleProvider);
+          return Text(title);
+        },
+      ),
+      actions: const <Widget>[
+        const _SearchButton(),
+        const _FilterButton(),
+      ],
+    );
+  }
+}
+
+class _SearchButton extends ConsumerWidget {
+  const _SearchButton({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, ScopedReader watch) {
+    final title = watch(titleProvider);
     return IconButton(
       icon: const Icon(Icons.search_rounded),
       onPressed: () async {
         final result = await showSearch<String>(
-            context: context, delegate: AppSearchDelegate<String>());
-        if (result != null) {
-          final filter = context.read(filterProvider).state.copyWith(title: result);
-          Navigator.of(context).pushNamed(searchRoute, arguments: filter);
-          print(result);
+          context: context,
+          delegate: AppSearchDelegate(),
+        );
+        if (result != null && result != title) {
+          Navigator.of(context, rootNavigator: true)
+              .pushNamed(searchRoute, arguments: result);
         }
       },
       tooltip: MaterialLocalizations.of(context).searchFieldLabel,
@@ -147,10 +235,12 @@ class __MoreSettingsState extends State<_MoreSettings> {
         PopupMenuItem<int>(child: Text(translate.settings), value: 2),
         PopupMenuItem<int>(child: Text(translate.feedback), value: 3),
         PopupMenuItem<int>(child: Text(translate.help), value: 4),
+        PopupMenuItem<int>(child: Text(translate.refresh), value: 5),
       ],
     );
   }
 
+  // ignore: unused_element
   Future<void> _postView() {
     final double size = Theme.of(context).appBarTheme.iconTheme.size ?? 24;
     Offset offset =
@@ -174,6 +264,7 @@ class __MoreSettingsState extends State<_MoreSettings> {
     );
   }
 
+  // ignore: unused_element
   Future<void> _theme() {
     final double size = Theme.of(context).appBarTheme.iconTheme.size ?? 24;
     Offset offset =
@@ -189,7 +280,7 @@ class __MoreSettingsState extends State<_MoreSettings> {
         ),
         for (ThemeMode mode in ThemeMode.values)
           RadioPopupMenuItem<ThemeMode>(
-            child: Text(translate.themeMode(mode)),
+            child: Text(translate.themeMode(mode), maxLines: 1,),
             value: mode,
             provider: themeProvider,
           ),
@@ -197,6 +288,7 @@ class __MoreSettingsState extends State<_MoreSettings> {
     );
   }
 
+  // ignore: unused_element
   Future<void> _postViewDialog() async {
     final DealView mode = await showDialog<DealView>(
       context: context,
@@ -208,36 +300,48 @@ class __MoreSettingsState extends State<_MoreSettings> {
     if (mode != null) context.read(displayProvider).changeState(mode);
   }
 
+  // ignore: unused_element
   Future<void> _themeDialog() async {
     final ThemeMode mode = await showDialog<ThemeMode>(
       context: context,
       builder: (_) => PreferenceDialog<ThemeMode>(
-          title: translate.choose_theme,
-          provider: themeProvider,
-          values: ThemeMode.values),
+        title: translate.choose_theme,
+        provider: themeProvider,
+        values: ThemeMode.values,
+      ),
     );
     if (mode != null) context.read(themeProvider).changeState(mode);
   }
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      tooltip: MaterialLocalizations.of(context).moreButtonTooltip,
-      icon: const Icon(Icons.more_vert_outlined),
-      onPressed: () async {
-        int selectedOption = await _selectedOption();
-        if (!mounted) return;
-        switch (selectedOption) {
-          case 0:
-            _postViewDialog();
-            break;
-          case 1:
-            _themeDialog();
-            break;
-          case 2:
-            Navigator.pushNamed(context, settingsRoute);
-            break;
-        }
+    return Consumer(
+      child: const Icon(Icons.more_vert_outlined),
+      builder: (context, watch, child) {
+        final title = watch(titleProvider);
+        return IconButton(
+          tooltip: MaterialLocalizations.of(context).moreButtonTooltip,
+          icon: child,
+          onPressed: () async {
+            int selectedOption = await _selectedOption();
+            if (!mounted) return;
+            switch (selectedOption) {
+              case 0:
+                _postView();
+                break;
+              case 1:
+                _theme();
+                break;
+              case 2:
+                Navigator.of(context, rootNavigator: true)
+                  .pushNamed(settingsRoute);
+                break;
+              case 5:
+                context.refresh(dealPageProvider(title));
+                break;
+            }
+          },
+        );
       },
     );
   }

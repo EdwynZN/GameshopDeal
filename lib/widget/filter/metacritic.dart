@@ -4,9 +4,12 @@ import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/model/filter.dart';
 
-final _metaScore = ScopedProvider<double>(
-    (watch) => watch(filterProviderCopy).state.metacritic.toDouble(),
-    name: 'Metacritic Score');
+final _metaScore = ScopedProvider<double>((watch) {
+    final title = watch(titleProvider);
+    return watch(filterProviderCopy(title)).state.metacritic.toDouble();
+  },
+  name: 'Metacritic Score',
+);
 
 class MetacriticFilter extends ConsumerWidget {
   const MetacriticFilter({Key key}) : super(key: key);
@@ -14,12 +17,13 @@ class MetacriticFilter extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final S translate = S.of(context);
+    final title = watch(titleProvider);
     final double metacritic = watch(_metaScore);
     return Slider.adaptive(
       value: metacritic,
       onChanged: (newValue) {
         final StateController<Filter> filter =
-            context.read(filterProviderCopy);
+            context.read(filterProviderCopy(title));
         filter.state = filter.state.copyWith(metacritic: newValue.toInt());
       },
       min: 0,

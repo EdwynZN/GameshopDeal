@@ -5,9 +5,10 @@ import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/model/filter.dart';
 import 'package:flutter/foundation.dart';
 
-final _sortByProvider = ScopedProvider<SortBy>(
-    (watch) => watch(filterProviderCopy).state.sortBy,
-    name: 'Sort By');
+final _sortByProvider = ScopedProvider<SortBy>((watch) {
+  final title = watch(titleProvider);
+  return watch(filterProviderCopy(title)).state.sortBy;
+}, name: 'Sort By');
 
 class SortByWidget extends ConsumerWidget {
   const SortByWidget({Key key}) : super(key: key);
@@ -15,6 +16,7 @@ class SortByWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final S translate = S.of(context);
+    final title = watch(titleProvider);
     final SortBy sortOrder = watch(_sortByProvider);
     return Wrap(
       spacing: 8,
@@ -27,7 +29,7 @@ class SortByWidget extends ConsumerWidget {
             selected: sortOrder == sort,
             onSelected: (val) {
               final StateController<Filter> filter =
-                  context.read(filterProviderCopy);
+                  context.read(filterProviderCopy(title));
               filter.state = filter.state.copyWith(sortBy: sort);
             },
           )

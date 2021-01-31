@@ -9,15 +9,20 @@ class Metacritic extends ConsumerWidget {
   Widget build(BuildContext context, ScopedReader watch) {
     final deal = watch(singleDeal);
     assert(deal != null);
+    final int metaScore = int.tryParse(deal.metacriticScore);
     return Row(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.baseline,
       children: <Widget>[
         const CircleAvatar(
           radius: 6,
           backgroundImage: const AssetImage('assets/thumbnails/metacritic.png'),
         ),
-        Text(' ${deal.metacriticScore}%'),
+        Text(
+          ' ${metaScore}%',
+          style: Theme.of(context).textTheme.overline.copyWith(
+            //color: textColor,
+          ),        
+        ),
       ],
     );
   }

@@ -4,8 +4,10 @@ import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/model/filter.dart';
 
-final _orderBy = ScopedProvider<bool>(
-  (watch) => watch(filterProviderCopy).state.isAscendant,
+final _orderBy = ScopedProvider<bool>((watch) {
+    final title = watch(titleProvider);
+    return watch(filterProviderCopy(title)).state.isAscendant;
+  },
   name: 'Order By',
 );
 
@@ -15,6 +17,7 @@ class OrderByWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final S translate = S.of(context);
+    final title = watch(titleProvider);
     final bool _isAscendant = watch(_orderBy);
     final ThemeData theme = Theme.of(context);
     final Color _accentColor = theme.accentColor;
@@ -32,7 +35,7 @@ class OrderByWidget extends ConsumerWidget {
           onPressed: () {
             if (_isAscendant) return;
             final StateController<Filter> filter =
-                context.read(filterProviderCopy);
+                context.read(filterProviderCopy(title));
             filter.state = filter.state.copyWith(isAscendant: true);
           },
           icon: const Icon(Icons.arrow_upward, size: 20),
@@ -50,7 +53,7 @@ class OrderByWidget extends ConsumerWidget {
             onPressed: () {
               if (!_isAscendant) return;
               final StateController<Filter> filter =
-                  context.read(filterProviderCopy);
+                  context.read(filterProviderCopy(title));
               filter.state = filter.state.copyWith(isAscendant: false);
             },
             icon: const Icon(Icons.arrow_downward, size: 20),

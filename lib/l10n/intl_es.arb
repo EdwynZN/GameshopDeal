@@ -3,22 +3,27 @@
     "@@context": "Gameshop Deals",
     "@@author": "Dartz",
     "@@last_modified": "2021-01-02T11:40:48.886",
+    "refresh": "Actualizar",
+    "@refresh": {
+        "type": "texto",
+        "description": "Actualizar ofertas presentes"
+    },
     "feedback": "Retroalimentación",
     "@feedback": {
-        "type": "text",
+        "type": "texto",
         "description": "Retroalimentación"
     },
     "help": "Ayuda",
     "@help": {
-        "type": "text",
+        "type": "texto",
         "description": "Ayuda"
     },
     "deal_view": "Vista de ofertas",
     "@deal_view": {
-        "type": "text",
+        "type": "texto",
         "description": "Vista de ofertas"
     },
-    "choose_deal_view": "{view, select, List {Lista} Detail {Detalle} Compact {Compacta} Swipe {Página} other {Lista}}",
+    "choose_deal_view": "{view, select, List {Lista} Grid {Cuadrícula} Detail {Detalle} Compact {Compacta} Swipe {Página} other {Lista}}",
     "@choose_deal_view": {
         "type": "opción múltiple",
         "description": "enum de la vista de ofertas",
@@ -31,7 +36,7 @@
     },
     "sortBy": "Ordenar por",
     "@sortBy": {
-        "type": "text",
+        "type": "texto",
         "description": "Ordenar por categoría"
     },
     "sort_tooltip": "{sort, select, Deal_Rating {En una escala del 0 al 10, toma en cuenta precio, descuento, metacritic, historial de oferta, etc} Title {Título} Savings {Oferta} Price {Precio} Metacritic {Metacritic} Reviews {Reseñas} Release {Lanzamiento} Store {Tienda} Recent {Que tan reciente fue publicado la oferta} other {En una escala del 0 al 10, toma en cuenta precio, descuento, metacritic, historial de oferta, etc}}",
@@ -46,22 +51,22 @@
     },
     "choose_theme": "Escoger tema",
     "@choose_theme": {
-        "type": "text",
+        "type": "texto",
         "description": "Escoger tema"
     },
     "light": "Claro",
     "@light": {
-        "type": "text",
+        "type": "texto",
         "description": "Tema claro"
     },
     "dark": "Oscuro",
     "@dark": {
-        "type": "text",
+        "type": "texto",
         "description": "Tema oscuro"
     },
     "system": "Predeterminado",
     "@system": {
-        "type": "text",
+        "type": "texto",
         "description": "Tema Predeterminado"
     },
     "themeMode": "{mode, select, system {Predeterminado} light {Claro} dark {Oscuro} other {Predeterminado}}",
@@ -77,43 +82,38 @@
     },
     "settings": "Opciones",
     "@settings": {
-        "type": "text",
+        "type": "texto",
         "description": "Opciones"
-    },
-    "search_tooltip": "Buscar",
-    "@search_tooltip": {
-        "type": "text",
-        "description": "Sugerencia para buscar"
     },
     "filter_tooltip": "Abrir menu de filtros",
     "@filter_tooltip": {
-        "type": "text",
+        "type": "texto",
         "description": "Sugerencia de abrir menu de filtros"
     },
     "filter": "Filtros",
     "@filter": {
-        "type": "text",
+        "type": "texto",
         "description": "Filtro"
     },
     "restart_tooltip": "Reiniciar",
     "@restart_tooltip": {
-        "type": "text",
+        "type": "texto",
         "description": "Sugerencia indicando que el filtro se reiniciara a sus valores anteriores"
     },
     "up_tooltip": "Arriba",
     "@up_tooltip": {
-        "type": "text",
+        "type": "texto",
         "context": "HomeScreen: Floating Action Button",
         "description": "botón para regresar al inicio de la lista de ofertas"
     },
     "price_range": "Rango de precios",
     "@price_range": {
-        "type": "text",
+        "type": "texto",
         "description": "Price Range Slider title"
     },
-    "dollar_currency": "{money, plural, zero{gratis} one{1 dólar} many{{money} dolares}}",
+    "dollar_currency": "{money, plural, zero{gratis} one{1 dólar} other{{money} dolares}}",
     "@dollar_currency": {
-        "type": "text",
+        "type": "texto",
         "description": "precio en dolares",
         "placeholders": {
             "money": {
@@ -124,87 +124,109 @@
     },
     "steam_rating": "Valoración de Steam",
     "@steam_rating": {
-        "type": "text",
+        "type": "texto",
         "description": "Valoración de Steam"
     },
     "stores": "Tiendas",
     "@stores": {
-        "type": "text",
+        "type": "texto",
         "description": "Tiendas"
     },
     "all_stores_tooltip": "Todas las tiendas",
     "@all_stores_tooltip": {
-        "type": "text",
+        "type": "texto",
         "description": "Sugerencia para todas las tiendas"
     },
     "all_choice": "Todas",
     "@all_choice": {
-        "type": "text",
+        "type": "texto",
         "description": "texto dentro del chip expecificando todas las tiendas"
     },
     "apply_filter": "Guardar",
     "@apply_filter": {
-        "type": "text",
+        "type": "texto",
         "description": "Bot'on para guardar filtro"
     },
     "on_sale": "En venta",
     "@on_sale": {
-        "type": "text",
+        "type": "texto",
         "description": "Títulos en venta o pre venta"
     },
     "on_sale_tooltip": "En venta",
     "@on_sale_tooltip": {
-        "type": "text",
+        "type": "texto",
         "description": "Sugerencia de títulos en venta o pre venta"
     },
     "retail_discount": "Descuento en tienda",
     "@retail_discount": {
-        "type": "text",
+        "type": "texto",
         "description": "Descuento en tienda física"
     },
     "retail_discount_tooltip": "Juegos con precio menores a 29 dolares en tiendas",
     "@retail_discount_tooltip": {
-        "type": "text",
+        "type": "texto",
         "description": "Games that are already discounted at local stores"
     },
     "steamworks": "SteamWorks",
     "@steamworks": {
-        "type": "text",
+        "type": "texto",
         "description": "Títulos que se encuentran en la tienda de steam, independientemente de la tienda"
     },
     "steamworks_tooltip": "Juegos registrados en steam, independientemente de la tienda",
     "@steamworks_tooltip": {
-        "type": "text",
+        "type": "texto",
         "description": "Títulos que se encuentran en la tienda de steam"
     },
     "any_metacritic": "Cualquier valoración",
     "@any_metacritic": {
-        "type": "text",
+        "type": "texto",
         "description": "Cualquier valoración"
     },
     "any_rating": "Cualquier valoración",
     "@any_rating": {
-        "type": "text",
+        "type": "texto",
         "description": "Cualquier valoración"
     },
     "ascending": "Ascendente (A-Z)",
     "@ascending": {
-        "type": "text",
+        "type": "texto",
         "description": "Orden ascendente"
     },
     "descending": "Descendente (Z-A)",
     "@descending": {
-        "type": "text",
+        "type": "texto",
         "description": "Orden descendente"
     },
-    "no_date": "Proximamente",
+    "review": "{review, select, Overwhelmingly_Negative {Extremadamente Negativo} Very_Negative {Muy Negativo} Negative {Negativo} Mostly_Negative {Mayormente Negativo} Mixed {Mixtas} Mostly_Positive {Mayormente Positivo} Positive {Positivo} Very_Positive {Muy Positivo} Overwhelmingly_Positive {Extremadamente Positivo} other {Desconocido}}",
+    "@review": {
+        "type": "opción múltiple",
+        "description": "texto representando las reseñas del juego",
+        "placeholders": {
+            "review": {
+                "description": "reseñas de steam",
+                "example": "Overwhelmingly_Negative"
+            }
+        }
+    },
+    "no_date": "N/A",
     "@no_date": {
-        "type": "text",
+        "type": "texto",
         "description": "Sin fecha de lanzamiento, por lo que se muestra 'Proximamente'"
     },
-    "release": "Lanzado en: {date}",
+    "future_release": "Próximamente: {date}",
+    "@future_release": {
+        "type": "texto",
+        "description": "fecha prxima a ser lanzado el juego",
+        "placeholder": {
+            "date": {
+                "example": "Feb 21, 2024",
+                "description": "date in a short format"
+            }
+        }
+    },
+    "release": "Lanzado e1: {date}",
     "@release": {
-        "type": "text",
+        "type": "texto",
         "description": "Fecha de lanzamiento",
         "placeholder": {
             "date": {
@@ -215,7 +237,7 @@
     },
     "change_in_years": "hace {change}a",
     "@change_in_years": {
-        "type": "text",
+        "type": "texto",
         "description": "última vez que cambio la fecha en años",
         "placeholder": {
             "change": {
@@ -224,9 +246,9 @@
             }
         }
     },
-    "change_in_months": "hace {change}me",
+    "change_in_months": "hace {change}m",
     "@change_in_months": {
-        "type": "text",
+        "type": "texto",
         "description": "última vez que cambio la fecha en meses",
         "placeholder": {
             "change": {
@@ -237,7 +259,7 @@
     },
     "change_in_days": "hace {change}d",
     "@change_in_days": {
-        "type": "text",
+        "type": "texto",
         "description": "última vez que cambio la fecha en días",
         "placeholder": {
             "change": {
@@ -248,7 +270,7 @@
     },
     "change_in_hours": "hace {change}h",
     "@change_in_hours": {
-        "type": "text",
+        "type": "texto",
         "description": "última vez que cambio la fecha en horas",
         "placeholder": {
             "change": {
@@ -257,9 +279,9 @@
             }
         }
     },
-    "change_in_minutes": "hace {change}m",
+    "change_in_minutes": "hace {change}min",
     "@change_in_minutes": {
-        "type": "text",
+        "type": "texto",
         "description": "última vez que cambio la fecha en minutos",
         "placeholder": {
             "change": {
@@ -270,27 +292,63 @@
     },
     "now": "ahora",
     "@now": {
-        "type": "text",
+        "type": "texto",
         "description": "ahora o unos segundos desde el último cambio"
     },
     "cache_title": "Borrar cache",
     "@cache_title": {
-        "type": "text",
+        "type": "texto",
         "description": "Borrar cache"
     },
     "cache_dialog_title": "Estas seguro?",
     "@cache_dialog_title": {
-        "type": "text",
+        "type": "texto",
         "description": "Dialógo preguntando si esta seguro que desea borrar la cache"
     },
     "cache_dialog_content": "Esta acción no se puede deshacer",
     "@cache_dialog_content": {
-        "type": "text",
+        "type": "texto",
         "description": "contenido del dialógo"
     },
     "cache_snackbar_cleared": "Cache borrado",
     "@cache_snackbar_cleared": {
-        "type": "text",
+        "type": "texto",
         "description": "La memoria cache ha sido eliminada del almacenamiento"
+    },
+    "clear_tooltip": "Borrar",
+    "@clear_tooltip": {
+        "type": "texto",
+        "description": "Borrar"
+    },
+    "recent_searches": "Busquedas recientes",
+    "@recent_searches": {
+        "type": "texto",
+        "description": "Busquedas recientes"
+    },
+    "suggested_searches": "Sugerencias",
+    "@suggested_searches": {
+        "type": "texto",
+        "description": "Sugerencias"
+    },
+    "title_search": "Buscar '{query}'",
+    "@title_search": {
+        "type": "texto",
+        "description": "Buscar por nombre",
+        "placeholder": {
+            "query": {
+                "example": "LEGO Batman",
+                "description": "Título del juego"
+            }
+        }
+    },
+    "save_deal": "Guardar oferta",
+    "@save_deal": {
+        "type": "texto",
+        "description": "Botón para guardar la oferta"
+    },
+    "go_to_deal": "Ir a oferta",
+    "@go_to_deal": {
+        "type": "texto",
+        "description": "Botón para ir a la oferta"
     }
   }

@@ -9,7 +9,7 @@ abstract class ThemeRepository{
     subtitle2: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.w500, letterSpacing: 0.1),
     bodyText1: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.normal, letterSpacing: 0.5),
     bodyText2: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.normal, letterSpacing: 0.25),
-    overline: TextStyle(color: Colors.black87, fontSize: 10, fontWeight: FontWeight.normal, letterSpacing: 1.5),
+    overline: TextStyle(color: Colors.black87, fontSize: 11, fontWeight: FontWeight.normal, letterSpacing: 1.0, height: 1.5),
     button: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.w500, letterSpacing: 1.25),
     headline1: TextStyle(color: Colors.black87, fontSize: 28, fontWeight: FontWeight.w300, letterSpacing: -1.5),
     headline2: TextStyle(color: Colors.black87, fontSize: 26, fontWeight: FontWeight.w300, letterSpacing: -0.5),
@@ -23,7 +23,7 @@ abstract class ThemeRepository{
     subtitle2: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w500, letterSpacing: 0.1),
     bodyText1: TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.normal, letterSpacing: 0.5),
     bodyText2: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.normal, letterSpacing: 0.25),
-    overline: TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.normal, letterSpacing: 1.5),
+    overline: TextStyle(color: Colors.white70, fontSize: 11, fontWeight: FontWeight.normal, letterSpacing: 1.0, height: 1.5),
     button: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w500, letterSpacing: 1.25),
     headline1: TextStyle(color: Colors.white70, fontSize: 28, fontWeight: FontWeight.w300, letterSpacing: -1.5),
     headline2: TextStyle(color: Colors.white70, fontSize: 26, fontWeight: FontWeight.w300, letterSpacing: -0.5),
@@ -83,6 +83,10 @@ class ThemeImpl extends ThemeRepository{
       ),
       unselectedWidgetColor: Colors.black87,
       dividerColor: color,
+      dividerTheme: DividerThemeData(
+        color: color,
+        space: 1.0,
+      ),
       scaffoldBackgroundColor: Colors.grey[300],
       accentColor: accentColor[700],
       accentIconTheme: IconThemeData(color: _brightnessAccentTextTheme == Brightness.dark ? Colors.white : Colors.black),
@@ -96,9 +100,8 @@ class ThemeImpl extends ThemeRepository{
       canvasColor: Colors.grey[300],
       primarySwatch: color,
       primaryColor: color,
-      cursorColor: Colors.black12,
+      cursorColor: Colors.white10,
       backgroundColor: color[100],
-      highlightColor: color[200],
       selectedRowColor: color[200],
       cardColor: Colors.grey[300],
       cardTheme: CardTheme(
@@ -109,7 +112,10 @@ class ThemeImpl extends ThemeRepository{
       ),
       textTheme: _darkAccentTextTheme,
       primaryTextTheme: _brightnessPrimaryColor == Brightness.dark ? _lightAccentTextTheme : _darkAccentTextTheme,
-      accentTextTheme: _brightnessAccentTextTheme == Brightness.dark ? _lightAccentTextTheme : _darkAccentTextTheme,
+      accentTextTheme: _lightAccentTextTheme.apply(
+        displayColor: _brightnessAccentTextTheme == Brightness.dark ? Colors.white : Colors.black,
+        bodyColor: _brightnessAccentTextTheme == Brightness.dark ? Colors.white : Colors.black,
+      ),
       bottomAppBarTheme: BottomAppBarTheme(
           color: Colors.transparent,
           elevation: 0.0
@@ -193,6 +199,8 @@ class ThemeImpl extends ThemeRepository{
         elevation: 0.0,
         backgroundColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+        modalBackgroundColor: Colors.grey[300],
+        modalElevation: 8.0,
       ),
       chipTheme: ChipThemeData(
         checkmarkColor: _brightnessPrimaryColor == Brightness.dark ? Colors.white70 : Colors.black87,
@@ -232,6 +240,7 @@ class ThemeImpl extends ThemeRepository{
     dark ??= 2;
     final Brightness _brightness = Brightness.dark;
     final Color _accentColor = _brightness == Brightness.dark ? Colors.white : Colors.black;
+    final Brightness _brightnessAccentColor = ThemeData.estimateBrightnessForColor(_darkAccentColor);
     switch(dark){
       case 0:
         _darkTheme = ThemeData(
@@ -419,16 +428,20 @@ class ThemeImpl extends ThemeRepository{
             brightness: _brightness,
             elevation: 0.0,
             color: Colors.grey[900],
-            textTheme: _lightAccentTextTheme.apply(),
+            textTheme: _lightAccentTextTheme,
             iconTheme: const IconThemeData(color: Colors.white70),
           ),
           brightness: Brightness.dark,
           unselectedWidgetColor: Colors.white70,
-          dividerColor: Colors.grey[800],
+          dividerColor: _darkAccentColor.withOpacity(0.75),
+          dividerTheme: DividerThemeData(
+            color: _darkAccentColor.withOpacity(0.75),
+            space: 1.0,
+          ),
           scaffoldBackgroundColor: Colors.grey[900],
           accentColor: _darkAccentColor,
           accentIconTheme: IconThemeData(color: _accentColor),
-          accentColorBrightness: _brightness,
+          //accentColorBrightness: _brightnessAccentColor,
           primaryIconTheme: const IconThemeData(color: Colors.white70),
           iconTheme: const IconThemeData(color: Colors.white70),
           floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -451,7 +464,10 @@ class ThemeImpl extends ThemeRepository{
           ),
           textTheme: _lightAccentTextTheme,
           primaryTextTheme: _lightAccentTextTheme,
-          accentTextTheme: _brightness == Brightness.dark ? _lightAccentTextTheme : _darkAccentTextTheme,
+          accentTextTheme: _lightAccentTextTheme.apply(
+            displayColor: _brightnessAccentColor == Brightness.dark ? Colors.white : Colors.black,
+            bodyColor: _brightnessAccentColor == Brightness.dark ? Colors.white : Colors.black,
+          ),
           bottomAppBarTheme: BottomAppBarTheme(
               color: Colors.transparent,
               elevation: 0.0
@@ -535,6 +551,8 @@ class ThemeImpl extends ThemeRepository{
             elevation: 0.0,
             backgroundColor: Colors.transparent,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+            modalBackgroundColor: Colors.grey[900],
+            modalElevation: 8.0,
           ),
           chipTheme: ChipThemeData(
             checkmarkColor: _brightness == Brightness.dark ? Colors.white70 : Colors.black87,

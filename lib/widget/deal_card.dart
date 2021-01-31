@@ -248,7 +248,6 @@ class _StoreAvatar extends ConsumerWidget {
     final Deal deal = watch(singleDeal);
     assert(deal != null);
     //final Deal deal = watch(singleDealProvider(watch(indexDeal)));
-    final bool score = deal.metacriticScore != '0';
     final int store = int.tryParse(deal.storeId);
     final brightness = ThemeData.estimateBrightnessForColor(
         Theme.of(context).scaffoldBackgroundColor);
@@ -263,31 +262,6 @@ class _StoreAvatar extends ConsumerWidget {
       color: Theme.of(context).scaffoldBackgroundColor,
       colorBlendMode: blend,
       imageUrl: 'https://www.cheapshark.com/img/stores/icons/${store - 1}.png',
-    );
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        if (store != null)
-          Padding(
-            padding: const EdgeInsetsDirectional.only(end: 8),
-            child: CachedNetworkImage(
-              cacheManager: watch(cacheManagerFamilyProvider(cacheKeyStores)),
-              height: 16,
-              color: Theme.of(context).scaffoldBackgroundColor,
-              colorBlendMode: blend,
-              imageUrl:
-                  'https://www.cheapshark.com/img/stores/banners/${store - 1}.png',
-            ),
-          ),
-        if (score) ...<Widget>[
-          const CircleAvatar(
-            radius: 8,
-            backgroundImage:
-                const AssetImage('assets/thumbnails/metacritic.png'),
-          ),
-          Text('· ${deal.metacriticScore}%'),
-        ],
-      ],
     );
   }
 }

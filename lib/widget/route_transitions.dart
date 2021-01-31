@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/screen/detail_screen.dart';
 import 'package:gameshop_deals/screen/home_screen.dart';
 import 'package:gameshop_deals/screen/filter_screen.dart';
@@ -19,11 +20,17 @@ class Routes {
         return VerticalSlideRoute(
             builder: (_) => FilterScreen(), settings: settings);
       case homeRoute:
-        return materialRoute(child: const MyHomePage(), settings: settings);
+        return materialRoute(
+          child: const MyHomePage(),
+          settings: settings,
+        );
       case settingsRoute:
         return materialRoute(child: const SettingsScreen(), settings: settings);
       case searchRoute:
-        return materialRoute(child: SearchScreen(filter: settings.arguments), settings: settings);
+        return SlideRoute(
+          builder: (_) => SearchScreen(title: settings.arguments as String),
+          settings: settings,
+        );
       case detailRoute:
         return materialRoute(
           child: ProviderScope(
@@ -38,27 +45,56 @@ class Routes {
         return materialRoute(child: const MyHomePage(), settings: settings);
     }
   }
+
+  static Route<dynamic> getSearchRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case filterRoute:
+        return VerticalSlideRoute(
+            builder: (_) => FilterScreen(), settings: settings);
+      case detailRoute:
+        return materialRoute(
+          child: ProviderScope(
+            overrides: [
+              indexDeal.overrideWithValue(settings.arguments as int),
+            ],
+            child: const DetailDealScreen(),
+          ),
+          settings: settings,
+        );
+      case homeRoute:
+      default:
+        return materialRoute(
+          child: Consumer(builder: (context, watch, _) {
+            final title = watch(titleProvider);
+            return MyHomePage.Search(title: title);
+          }),
+          settings: settings,
+        );
+    }
+  }
 }
 
 CupertinoPageRoute cupertinoRoute(
     {Widget child, RouteSettings settings, bool fullscreenDialog = false}) {
   return CupertinoPageRoute(
-      settings: settings,
-      fullscreenDialog: fullscreenDialog,
-      builder: (ctx) => AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle(
-            statusBarIconBrightness:
-                Theme.of(ctx).appBarTheme.brightness == Brightness.light
-                    ? Brightness.dark
-                    : Brightness.light,
-            systemNavigationBarIconBrightness:
-                Theme.of(ctx).appBarTheme.brightness == Brightness.light
-                    ? Brightness.dark
-                    : Brightness.light,
-            statusBarColor: Theme.of(ctx).appBarTheme.color,
-            systemNavigationBarColor: Theme.of(ctx).appBarTheme.color,
-          ),
-          child: child));
+    settings: settings,
+    fullscreenDialog: fullscreenDialog,
+    builder: (ctx) => AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarIconBrightness:
+            Theme.of(ctx).appBarTheme.brightness == Brightness.light
+                ? Brightness.dark
+                : Brightness.light,
+        systemNavigationBarIconBrightness:
+            Theme.of(ctx).appBarTheme.brightness == Brightness.light
+                ? Brightness.dark
+                : Brightness.light,
+        statusBarColor: Theme.of(ctx).appBarTheme.color,
+        systemNavigationBarColor: Theme.of(ctx).appBarTheme.color,
+      ),
+      child: child,
+    ),
+  );
 }
 
 MaterialPageRoute materialRoute(

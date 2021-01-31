@@ -10,10 +10,10 @@ import 'package:gameshop_deals/model/filter.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart' show cheapsharkUrl;
 
-final _storesProvider = ScopedProvider<Set<int>>(
-  (watch) => watch(filterProviderCopy).state.storeID,
-  name: 'Stores ID',
-);
+final _storesProvider = ScopedProvider<Set<int>>((watch) {
+  final title = watch(titleProvider);
+  return watch(filterProviderCopy(title)).state.storeID;
+}, name: 'Stores ID');
 
 class StoreWidget extends ConsumerWidget {
   const StoreWidget({Key key}) : super(key: key);
@@ -21,6 +21,7 @@ class StoreWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final S translate = S.of(context);
+    final title = watch(titleProvider);
     final Set<int> storesSelected = watch(_storesProvider);
     final stores = watch(storesProvider);
     return stores.when(
@@ -42,7 +43,7 @@ class StoreWidget extends ConsumerWidget {
               selected: storesSelected.isEmpty,
               onSelected: (val) {
                 final StateController<Filter> filter =
-                    context.read(filterProviderCopy);
+                    context.read(filterProviderCopy(title));
                 filter.state = filter.state.copyWith(storeID: <int>{});
               },
               label: Text(translate.all_choice),
@@ -65,7 +66,7 @@ class StoreWidget extends ConsumerWidget {
                 selected: storesSelected.contains(int.tryParse(store.storeId)),
                 onSelected: (val) {
                   final StateController<Filter> filter =
-                      context.read(filterProviderCopy);
+                      context.read(filterProviderCopy(title));
                   Set<int> set = Set<int>.from(storesSelected);
                   if (val)
                     set.add(int.tryParse(store.storeId));

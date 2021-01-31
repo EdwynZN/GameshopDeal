@@ -35,6 +35,16 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
+  /// `Refresh`
+  String get refresh {
+    return Intl.message(
+      'Refresh',
+      name: 'refresh',
+      desc: 'Refresh current deals',
+      args: [],
+    );
+  }
+
   /// `Send feedback`
   String get feedback {
     return Intl.message(
@@ -65,12 +75,13 @@ class S {
     );
   }
 
-  /// `{view, select, List {List} Detail {Detail} Compact {Compact} Swipe {Swipe} other {List}}`
+  /// `{view, select, List {List} Grid {Grid} Detail {Detail} Compact {Compact} Swipe {Swipe} other {List}}`
   String choose_deal_view(Object view) {
     return Intl.select(
       view,
       {
         'List': 'List',
+        'Grid': 'Grid',
         'Detail': 'Detail',
         'Compact': 'Compact',
         'Swipe': 'Swipe',
@@ -202,16 +213,6 @@ class S {
     );
   }
 
-  /// `Search`
-  String get search_tooltip {
-    return Intl.message(
-      'Search',
-      name: 'search_tooltip',
-      desc: 'Search tooltip',
-      args: [],
-    );
-  }
-
   /// `Open filter menu`
   String get filter_tooltip {
     return Intl.message(
@@ -262,13 +263,13 @@ class S {
     );
   }
 
-  /// `{money, plural, zero{free} one{1 dollar} many{{money} dollars}}`
+  /// `{money, plural, zero{free} one{1 dollar} other{{money} dollars}}`
   String dollar_currency(num money) {
     return Intl.plural(
       money,
       zero: 'free',
       one: '1 dollar',
-      many: '$money dollars',
+      other: '$money dollars',
       name: 'dollar_currency',
       desc: 'dollar currency',
       args: [money],
@@ -425,13 +426,45 @@ class S {
     );
   }
 
-  /// `To be released`
+  /// `{review, select, Overwhelmingly_Negative {Overwhelmingly Negative} Very_Negative {Very Negative} Negative {Negative} Mostly_Negative {Mostly Negative} Mixed {Mixed} Mostly_Positive {Mostly Positive} Positive {Positive} Very_Positive {Very Positive} Overwhelmingly_Positive {Overwhelmingly Positive} other {Unknown}}`
+  String review(Object review) {
+    return Intl.select(
+      review,
+      {
+        'Overwhelmingly_Negative': 'Overwhelmingly Negative',
+        'Very_Negative': 'Very Negative',
+        'Negative': 'Negative',
+        'Mostly_Negative': 'Mostly Negative',
+        'Mixed': 'Mixed',
+        'Mostly_Positive': 'Mostly Positive',
+        'Positive': 'Positive',
+        'Very_Positive': 'Very Positive',
+        'Overwhelmingly_Positive': 'Overwhelmingly Positive',
+        'other': 'Unknown',
+      },
+      name: 'review',
+      desc: 'String representing the reviews of the game',
+      args: [review],
+    );
+  }
+
+  /// `N/A`
   String get no_date {
     return Intl.message(
-      'To be released',
+      'N/A',
       name: 'no_date',
       desc: 'no release date, so \'to be released\' is displayed',
       args: [],
+    );
+  }
+
+  /// `Releases: {date}`
+  String future_release(Object date) {
+    return Intl.message(
+      'Releases: $date',
+      name: 'future_release',
+      desc: 'displays the date when it will be released',
+      args: [date],
     );
   }
 
@@ -541,6 +574,66 @@ class S {
       'Cache cleared',
       name: 'cache_snackbar_cleared',
       desc: 'cache has been deleted from the disk',
+      args: [],
+    );
+  }
+
+  /// `Clear`
+  String get clear_tooltip {
+    return Intl.message(
+      'Clear',
+      name: 'clear_tooltip',
+      desc: 'Clear',
+      args: [],
+    );
+  }
+
+  /// `Recent searches`
+  String get recent_searches {
+    return Intl.message(
+      'Recent searches',
+      name: 'recent_searches',
+      desc: 'Recent searches',
+      args: [],
+    );
+  }
+
+  /// `Suggested searches`
+  String get suggested_searches {
+    return Intl.message(
+      'Suggested searches',
+      name: 'suggested_searches',
+      desc: 'Suggested searches',
+      args: [],
+    );
+  }
+
+  /// `Search for '{query}'`
+  String title_search(Object query) {
+    return Intl.message(
+      'Search for \'$query\'',
+      name: 'title_search',
+      desc: 'Search by name',
+      args: [query],
+    );
+  }
+
+  /// `Save Deal`
+  String get save_deal {
+    return Intl.message(
+      'Save Deal',
+      name: 'save_deal',
+      desc: 'Save Deal text button',
+      args: [],
+    );
+  }
+
+  /// `Go to Deal`
+  String get go_to_deal {
+    return Intl.message(
+      'Go to Deal',
+      name: 'go_to_deal',
+      desc: 'Go to Deal text button',
       args: [],
     );
   }

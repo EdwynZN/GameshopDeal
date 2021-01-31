@@ -4,18 +4,24 @@ import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/model/filter.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
 
-final _onSaleProvider = ScopedProvider<bool>(
-  (watch) => watch(filterProviderCopy).state.onSale,
+final _onSaleProvider = ScopedProvider<bool>((watch) {
+    final title = watch(titleProvider);
+    return watch(filterProviderCopy(title)).state.onSale;
+  },
   name: 'On Sale',
 );
 
-final _retailProvider = ScopedProvider<bool>(
-  (watch) => watch(filterProviderCopy).state.onlyRetail,
+final _retailProvider = ScopedProvider<bool>((watch) {
+    final title = watch(titleProvider);
+    return watch(filterProviderCopy(title)).state.onlyRetail;
+  },
   name: 'Only Retail',
 );
 
-final _steamWorksProvider = ScopedProvider<bool>(
-  (watch) => watch(filterProviderCopy).state.steamWorks,
+final _steamWorksProvider = ScopedProvider<bool>((watch) {
+    final title = watch(titleProvider);
+    return watch(filterProviderCopy(title)).state.steamWorks;
+  },
   name: 'SteamWorks',
 );
 
@@ -42,13 +48,14 @@ class _OnSaleFilterWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final S translate = S.of(context);
+    final title = watch(titleProvider);
     final bool sale = watch(_onSaleProvider);
     return FilterChip(
       label: Text(translate.on_sale),
       tooltip: translate.on_sale_tooltip,
       selected: sale,
       onSelected: (value) {
-        final StateController<Filter> filter = context.read(filterProviderCopy);
+        final StateController<Filter> filter = context.read(filterProviderCopy(title));
         filter.state = filter.state.copyWith(onSale: value);
       },
     );
@@ -61,13 +68,14 @@ class _RetailWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final S translate = S.of(context);
+    final title = watch(titleProvider);
     final bool retail = watch(_retailProvider);
     return FilterChip(
       label: Text(translate.retail_discount),
       tooltip: translate.retail_discount_tooltip,
       selected: retail,
       onSelected: (value) {
-        final StateController<Filter> filter = context.read(filterProviderCopy);
+        final StateController<Filter> filter = context.read(filterProviderCopy(title));
         filter.state = filter.state.copyWith(onlyRetail: value);
       },
     );
@@ -80,13 +88,14 @@ class _SteamWorksWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final S translate = S.of(context);
+    final title = watch(titleProvider);
     final bool steamWorks = watch(_steamWorksProvider);
     return FilterChip(
       label: Text(translate.steamworks),
       tooltip: translate.steamworks_tooltip,
       selected: steamWorks,
       onSelected: (value) {
-        final StateController<Filter> filter = context.read(filterProviderCopy);
+        final StateController<Filter> filter = context.read(filterProviderCopy(title));
         filter.state = filter.state.copyWith(steamWorks: value);
       },
     );

@@ -12,8 +12,7 @@ abstract class GameLookup with _$GameLookup {
   const factory GameLookup({
     @HiveField(0) Info info,
     @JsonKey(name: 'cheapestPriceEver')
-    @HiveField(1)
-        CheapestPrice cheapestPrice,
+    @HiveField(1) CheapestPrice cheapestPrice,
     @HiveField(2) List<Deal> deals,
   }) = _GameLookup;
 
@@ -37,81 +36,3 @@ abstract class Info with _$Info {
 
   factory Info.fromJson(Map<String, dynamic> json) => _$InfoFromJson(json);
 }
-
-/* 
-@HiveType(typeId: 1, adapterName: 'GameLookup')
-class GameLookup extends Equatable{
-  @HiveField(0)
-  final Info info;
-  @HiveField(1)
-  final CheapestPrice cheapestPrice;
-  @HiveField(2)
-  final List<Deal> deals;
-
-  GameLookup({
-    this.info,
-    this.cheapestPrice,
-    this.deals,
-  });
-
-  factory GameLookup.fromJson(Map<String, dynamic> json) => GameLookup(
-    info: json["info"] == false ? null : Info.fromJson(json["info"]),
-    cheapestPrice: CheapestPrice.fromJson(json["cheapestPriceEver"]),
-    deals: List<Deal>.from(json["deals"].map((x) => Deal.fromJson(x))),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "info": info.toJson(),
-    "cheapestPriceEver": cheapestPrice.toJson(),
-    "deals": List<dynamic>.from(deals.map((x) => x.toJson())),
-  };
-
-  @override
-  bool get stringify => true;
-
-  @override
-  List<Object> get props => [
-    info,
-    cheapestPrice,
-    deals
-  ];
-}
-
-@HiveType(typeId: 2, adapterName: 'Info')
-class Info extends Equatable{
-  @HiveField(0)
-  final String title;
-  @HiveField(1)
-  final String steamAppId;
-  @HiveField(2)
-  final String thumb;
-
-  Info({
-    this.title,
-    this.steamAppId,
-    this.thumb,
-  });
-
-  factory Info.fromJson(Map<String, dynamic> json) => Info(
-    title: json["title"]?.trim(),
-    steamAppId: json["steamAppID"],
-    thumb: json["thumb"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "title": title,
-    "steamAppID": steamAppId,
-    "thumb": thumb,
-  };
-
-  @override
-  bool get stringify => true;
-
-  @override
-  List<Object> get props => [
-    title,
-    steamAppId,
-    thumb
-  ];
-}
- */

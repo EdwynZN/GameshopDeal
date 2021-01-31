@@ -47,27 +47,29 @@ class _PreferenceDialogState<T> extends State<PreferenceDialog<T>> {
       titlePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       actionsPadding: EdgeInsets.zero,
       contentPadding: EdgeInsets.zero,
-      content: SingleChildScrollView(
-        child: Column(
-          children: [
-            for (T obj in widget.values)
-              RadioListTile(
-                value: obj,
-                groupValue: value,
-                title: Text(_translatedTitle(obj)),
-                onChanged: (newValue) => setState(() => value = newValue),
-              ),
-          ],
+      content: Scrollbar(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              for (T obj in widget.values)
+                RadioListTile(
+                  value: obj,
+                  groupValue: value,
+                  title: Text(_translatedTitle(obj)),
+                  onChanged: (newValue) => setState(() => value = newValue),
+                ),
+            ],
+          ),
         ),
       ),
       actions: <Widget>[
         TextButton(
-          onPressed: () => Navigator.of(context).pop<T>(),
-          child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-        ),
-        TextButton(
           onPressed: () => Navigator.of(context).pop<T>(value),
           child: Text(MaterialLocalizations.of(context).okButtonLabel),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop<T>(),
+          child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
         ),
       ],
     );

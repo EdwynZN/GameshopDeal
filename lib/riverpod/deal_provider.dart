@@ -7,50 +7,53 @@ import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/riverpod/repository_provider.dart';
 import 'package:gameshop_deals/model/game_lookup.dart';
+import 'package:gameshop_deals/model/filter.dart';
 
 final singleDeal = ScopedProvider<Deal>(null);
 
 final storesProvider = FutureProvider.autoDispose<List<Store>>((ref) {
   final cancelToken = CancelToken();
-  final DioCacheManager dioCacheManager = DioCacheManager(CacheConfig());
-  final dio = ref.watch(dioProvider)
-    ..interceptors.add(dioCacheManager.interceptor);
-  final Options _cacheOptions =
-      buildCacheOptions(Duration(days: 3), maxStale: const Duration(days: 30));
+  final DioCacheManager dioCacheManager =
+      DioCacheManager(CacheConfig(defaultRequestMethod: 'GET'));
+  final dio = Dio()..interceptors.add(dioCacheManager.interceptor);
+  final Options _cacheOptions = buildCacheOptions(const Duration(days: 3),
+      maxStale: const Duration(days: 30), forceRefresh: true);
+
   ref.onDispose(() {
     cancelToken.cancel();
     dio..interceptors.remove(dioCacheManager.interceptor);
+    dio.close();
   });
+
   ref.maintainState = true;
 
-  return ref.watch(cheapSharkProvider).getStores(_cacheOptions, cancelToken);
+  return DiscountApi(dio).getStores(_cacheOptions, cancelToken);
 }, name: 'StoresProvider');
 
 final singleStoreProvider =
     Provider.autoDispose.family<Store, String>((ref, id) {
-  return ref.watch(storesProvider).maybeWhen(
-    orElse: () => null,
-    data: (s) =>
-      s.firstWhere((element) => element.storeId == id, orElse: () => null),
-  );
+  return ref
+      .watch(storesProvider)
+      .data
+      ?.value
+      ?.firstWhere((element) => element.storeId == id, orElse: () => null);
 }, name: 'SingleStore');
 
-final dealPageProvider =
-    StateNotifierProvider.autoDispose<_DealListPagination>((ref) {
+final dealPageProvider = StateNotifierProvider.autoDispose
+    .family<_DealListPagination, String>((ref, title) {
   final CancelToken cancelToken = CancelToken();
-  final Map<String, dynamic> param =
-    Map<String, dynamic>.of(ref.watch(filterProvider).state.parameters);
+  final Filter filter = ref.watch(filterProvider(title)).state;
   ref.onDispose(cancelToken.cancel);
 
   final DiscountApi api = ref.watch(cheapSharkProvider);
-  return _DealListPagination(param, api, cancelToken)..retrievePage();
+  return _DealListPagination(filter, api, cancelToken);
 }, name: 'dealList');
 
-final dealsProvider =
-    StateNotifierProvider.autoDispose<StateController<List<Deal>>>((ref) {
+final dealsProvider = StateNotifierProvider.autoDispose
+    .family<StateController<List<Deal>>, String>((ref, title) {
   final notifier = StateController<List<Deal>>(const <Deal>[]);
 
-  final dealList = ref.watch(dealPageProvider);
+  final dealList = ref.watch(dealPageProvider(title));
   final pageListener = dealList.addListener((value) {
     if (value.data != null)
       notifier.state = List<Deal>.from(notifier.state)
@@ -74,25 +77,41 @@ final dealsOfGameProvider =
   return ref.watch(gameDealLookupProvider(id)).whenData((value) => value.deals);
 }, name: 'Deals of Game Lookup');
 
-
 class _DealListPagination extends StateNotifier<AsyncValue<List<Deal>>> {
-  final Map<String, dynamic> parameters;
+  final Filter filter;
+  final Map<String, dynamic> _parameters;
   final DiscountApi _api;
   final CancelToken cancelToken;
-  _DealListPagination(this.parameters, this._api, this.cancelToken)
-      : super(AsyncValue.loading());
+  _DealListPagination(this.filter, this._api, this.cancelToken)
+      : _parameters = Map<String, dynamic>.of(filter.parameters),
+        super(AsyncValue.loading()) {
+    _parameters.putIfAbsent('pageNumber', () => 0);
+    _fetch();
+  }
+
+  bool _lastPage = false;
 
   Future<void> retrievePage() async {
-    // if(!(state is AsyncError)) parameters.update('pageNumber', (value) => ++value, ifAbsent: () => 0);
-    state.maybeMap(
-      error: (_) => null,
-      orElse: () => parameters.update('pageNumber', (value) => ++value,
-        ifAbsent: () => 0),
-    );
-    //if (!(state is AsyncLoading)) state = AsyncValue.loading();
-    if (state is! AsyncLoading) state = AsyncValue.loading();
-    // state = await AsyncValue.guard(() => Future.delayed(const Duration(seconds: 3), () => discountApi
-    //   .getDealsFromFilter(parameters, cancelToken)));
-    state = await AsyncValue.guard(() => _api.getDeals(parameters, cancelToken));
+    if (state is AsyncLoading || _lastPage)
+      return;
+    else if (state is AsyncData)
+      _parameters.update('pageNumber', (value) => ++value, ifAbsent: () => 0);
+    state = AsyncValue.loading();
+    await _fetch();
+  }
+
+  Future<void> _fetch() async {
+    final fetch =
+        await AsyncValue.guard(() => _api.getDeals(_parameters, cancelToken));
+    if (mounted) state = fetch;
+  }
+
+  bool get isLastPage {
+    if (_lastPage) return _lastPage;
+    if (state is AsyncData &&
+        (state.data.value?.length ?? filter.pageSize) < filter.pageSize) {
+      _lastPage = true;
+    }
+    return _lastPage;
   }
 }

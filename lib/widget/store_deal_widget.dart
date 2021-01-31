@@ -17,12 +17,12 @@ class StoreDealGrid extends ConsumerWidget {
     assert(deal != null);
     return ElevatedButton(
       style: Theme.of(context).elevatedButtonTheme.style.copyWith(
-            padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.zero),
-            backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-              if (states.contains(MaterialState.disabled)) return null;
-              return Theme.of(context).cardColor;
-            }),
-          ),
+        padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.zero),
+        backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+          if (states.contains(MaterialState.disabled)) return null;
+          return Theme.of(context).cardColor;
+        }),
+      ),
       onPressed: () async {
         String _dealLink =
             'https://www.cheapshark.com/redirect?dealID=${deal.dealId}';
@@ -42,13 +42,11 @@ class StoreDealGrid extends ConsumerWidget {
           children: <Widget>[
             Expanded(
               child: ConstrainedBox(
-                  constraints: BoxConstraints(minWidth: 56.0, maxHeight: 48),
-                  child: StoreAvatarBanner()),
+                constraints: BoxConstraints(minWidth: 56.0, maxHeight: 48),
+                child: StoreAvatarBanner(),
+              ),
             ),
-            Padding(
-              padding: const EdgeInsetsDirectional.only(top: 8.0),
-              child: PriceWidget(),
-            ),
+            const PriceWidget(),
           ],
         ),
       ),
@@ -61,9 +59,6 @@ class StoreDealTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    ExpansionTile(
-      
-    );
     final deal = watch(singleDeal);
     assert(deal != null);
     return DecoratedBox(
@@ -89,10 +84,7 @@ class StoreDealTile extends ConsumerWidget {
             alignment: Alignment.centerLeft,
           ),
         ),
-        trailing: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12.0),
-          child: PriceWidget(),
-        ),
+        trailing: const PriceWidget(),
       ),
     );
   }

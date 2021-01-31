@@ -13,5 +13,8 @@ const String cacheKeyStores = 'stores';
 /// Cache Key for Deals
 const String cacheKeyDeals = 'deals';
 
+/// Cache Key for Deals
+const String searchHistoryKey = 'SearchHistory';
+
 /// CheapShark url
 const String cheapsharkUrl = 'https://www.cheapshark.com';

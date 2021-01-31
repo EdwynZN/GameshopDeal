@@ -3,6 +3,11 @@
     "@@context": "Gameshop Deals",
     "@@author": "Dartz",
     "@@last_modified": "2021-01-02T11:40:48.886",
+    "refresh": "Refresh",
+    "@refresh": {
+        "type": "text",
+        "description": "Refresh current deals"
+    },
     "feedback": "Send feedback",
     "@feedback": {
         "type": "text",
@@ -18,7 +23,7 @@
         "type": "text",
         "description": "Deal view"
     },
-    "choose_deal_view": "{view, select, List {List} Detail {Detail} Compact {Compact} Swipe {Swipe} other {List}}",
+    "choose_deal_view": "{view, select, List {List} Grid {Grid} Detail {Detail} Compact {Compact} Swipe {Swipe} other {List}}",
     "@choose_deal_view": {
         "type": "multiple choice",
         "description": "DealView enum",
@@ -80,11 +85,6 @@
         "type": "text",
         "description": "settings option"
     },
-    "search_tooltip": "Search",
-    "@search_tooltip": {
-        "type": "text",
-        "description": "Search tooltip"
-    },
     "filter_tooltip": "Open filter menu",
     "@filter_tooltip": {
         "type": "text",
@@ -111,7 +111,7 @@
         "type": "text",
         "description": "Price Range Slider title"
     },
-    "dollar_currency": "{money, plural, zero{free} one{1 dollar} many{{money} dollars}}",
+    "dollar_currency": "{money, plural, zero{free} one{1 dollar} other{{money} dollars}}",
     "@dollar_currency": {
         "type": "text",
         "description": "dollar currency",
@@ -197,10 +197,32 @@
         "type": "text",
         "description": "Descending order"
     },
-    "no_date": "To be released",
+    "review": "{review, select, Overwhelmingly_Negative {Overwhelmingly Negative} Very_Negative {Very Negative} Negative {Negative} Mostly_Negative {Mostly Negative} Mixed {Mixed} Mostly_Positive {Mostly Positive} Positive {Positive} Very_Positive {Very Positive} Overwhelmingly_Positive {Overwhelmingly Positive} other {Unknown}}",
+    "@review": {
+        "type": "multiple choice",
+        "description": "String representing the reviews of the game",
+        "placeholders": {
+            "review": {
+                "description": "reviews from steam",
+                "example": "Overwhelmingly_Negative"
+            }
+        }
+    },
+    "no_date": "N/A",
     "@no_date": {
         "type": "text",
         "description": "no release date, so 'to be released' is displayed"
+    },
+    "future_release": "Releases: {date}",
+    "@future_release": {
+        "type": "text",
+        "description": "displays the date when it will be released",
+        "placeholder": {
+            "date": {
+                "example": "Feb 21, 2024",
+                "description": "date in a short format"
+            }
+        }
     },
     "release": "Released on: {date}",
     "@release": {
@@ -292,5 +314,41 @@
     "@cache_snackbar_cleared": {
         "type": "text",
         "description": "cache has been deleted from the disk"
+    },
+    "clear_tooltip": "Clear",
+    "@clear_tooltip": {
+        "type": "text",
+        "description": "Clear"
+    },
+    "recent_searches": "Recent searches",
+    "@recent_searches": {
+        "type": "text",
+        "description": "Recent searches"
+    },
+    "suggested_searches": "Suggested searches",
+    "@suggested_searches": {
+        "type": "text",
+        "description": "Suggested searches"
+    },
+    "title_search": "Search for '{query}'",
+    "@title_search": {
+        "type": "text",
+        "description": "Search by name",
+        "placeholder": {
+            "query": {
+                "example": "LEGO Batman",
+                "description": "Title game"
+            }
+        }
+    },
+    "save_deal": "Save Deal",
+    "@save_deal": {
+        "type": "text",
+        "description": "Save Deal text button"
+    },
+    "go_to_deal": "Go to Deal",
+    "@go_to_deal": {
+        "type": "text",
+        "description": "Go to Deal text button"
     }
   }

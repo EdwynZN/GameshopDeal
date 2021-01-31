@@ -32,29 +32,19 @@ class FilterPage extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
-        Container(
+        DecoratedBox(
           decoration: BoxDecoration(
             border: Border(
               bottom:
-                  BorderSide(width: 1, color: Theme.of(context).dividerColor),
+                BorderSide(width: 1, color: Theme.of(context).dividerColor),
             ),
           ),
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-            leading: CloseButton(),
+            leading: const CloseButton(),
             title: Text(translate.filter,
-                style: Theme.of(context).textTheme.headline3),
-            trailing: IconButton(
-              icon: Icon(Icons.refresh),
-              tooltip: translate.restart_tooltip,
-              onPressed: () {
-                final StateController<Filter> filterCopy =
-                    context.read(filterProviderCopy);
-                final StateController<Filter> filter =
-                    context.read(filterProvider);
-                filterCopy.state = filter.state;
-              },
-            ),
+              style: Theme.of(context).textTheme.headline3),
+            trailing: const _RestartButton(),
           ),
         ),
         Expanded(
@@ -120,17 +110,39 @@ class FilterPage extends StatelessWidget {
   }
 }
 
-class _ApplyButton extends StatelessWidget {
+class _RestartButton extends ConsumerWidget {
+  const _RestartButton({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, ScopedReader watch) {
+    final title = watch(titleProvider);
+    final S translate = S.of(context);
+    return IconButton(
+      icon: Icon(Icons.refresh),
+      tooltip: translate.restart_tooltip,
+      onPressed: () {
+        final StateController<Filter> filterCopy =
+            context.read(filterProviderCopy(title));
+        final StateController<Filter> filter =
+            context.read(filterProvider(title));
+        filterCopy.state = filter.state;
+      },
+    );
+  }
+}
+
+class _ApplyButton extends ConsumerWidget {
   const _ApplyButton({Key key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ScopedReader watch) {
+    final title = watch(titleProvider);
     final S translate = S.of(context);
     return ElevatedButton(
       onPressed: () {
         final StateController<Filter> filterCopy =
-          context.read(filterProviderCopy);
-        final StateController<Filter> filter = context.read(filterProvider);
+          context.read(filterProviderCopy(title));
+        final StateController<Filter> filter = context.read(filterProvider(title));
         if (filter.state == filterCopy.state) return;
         filter.state = filterCopy.state.copyWith();
         Navigator.maybePop(context);

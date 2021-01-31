@@ -1,37 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/all.dart';
-import 'package:gameshop_deals/riverpod/deal_provider.dart';
+import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/riverpod/search_provider.dart';
 
-final suggestions =
-    Provider.autoDispose.family<List<String>, String>((ref, query) {
-  final deals = ref.watch(dealsProvider.state);
-  final exp = RegExp(query, caseSensitive: false);
-  return deals
-      .map((e) => e.title)
-      .where((element) => element.contains(exp))
-      .toList();
-}, name: 'Suggestions');
-
-/* final results = Provider.autoDispose.family<List<String>, String>((ref, query) {
-  final deals = ref.watch(dealsProvider.state);
-  final exp = RegExp(query, caseSensitive: false);
-  return deals
-      .map((e) => e.title)
-      .where((element) => element.contains(exp))
-      .toList();
-}, name: 'Results'); */
-
-class AppSearchDelegate<T> extends SearchDelegate<T> {
-  AppSearchDelegate() : super(
-    searchFieldLabel: 'Title',
-    keyboardType: TextInputType.text
-  );
+class AppSearchDelegate extends SearchDelegate<String> {
+  AppSearchDelegate() : super(keyboardType: TextInputType.text);
 
   @override
-  void showResults(BuildContext context) {
-    if(query.isNotEmpty) super.showResults(context);
+  void showResults(BuildContext context) async {
+    final String trimmed = query.trim();
+    if (trimmed.isNotEmpty) {
+      final box = await context.read(searchBox.future);
+      if (box != null && box.isOpen) {
+        final exp = RegExp('\^$trimmed\$', caseSensitive: false);
+        final exist = box.values.any((e) => exp.hasMatch(e));
+        if (!exist) await box.add(trimmed);
+      }
+      close(context, trimmed);
+    }
   }
 
   @override
@@ -50,11 +37,16 @@ class AppSearchDelegate<T> extends SearchDelegate<T> {
 
   @override
   List<Widget> buildActions(BuildContext context) => <Widget>[
-    CloseButton(onPressed: () {
-      query = '';
-      showSuggestions(context);
-    })
-  ];
+        IconButton(
+          icon: const Icon(Icons.close),
+          tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
+          //tooltip: S.of(context).clear_tooltip,
+          onPressed: () {
+            query = '';
+            showSuggestions(context);
+          },
+        )
+      ];
 
   @override
   Widget buildLeading(BuildContext context) => BackButton();
@@ -62,51 +54,59 @@ class AppSearchDelegate<T> extends SearchDelegate<T> {
   @override
   Widget buildSuggestions(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
-      final suggestionsList = watch(suggestions(query));
-      return ListView.builder(
-        itemCount: suggestionsList.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            onTap: () => query = suggestionsList[index],
-            title: Text(suggestionsList[index]),
-          );
-        },
+      final S translate = S.of(context);
+      final String trimmed = query.trim();
+      final list = watch(suggestions(trimmed));
+      return CustomScrollView(
+        slivers: [
+          if (trimmed.isEmpty)
+            SliverPadding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
+              sliver: SliverToBoxAdapter(
+                child: Text(
+                  translate.recent_searches,
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+              ),
+            ),
+          if (trimmed.isNotEmpty) ...[
+            SliverToBoxAdapter(
+              child: ListTile(
+                onTap: () => showResults(context),
+                leading: const Icon(Icons.search_rounded),
+                title: Text(translate.title_search(trimmed)),
+              ),
+            ),
+            SliverPadding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+              sliver: SliverToBoxAdapter(
+                child: Text(
+                  translate.suggested_searches,
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+              ),
+            ),
+          ],
+          SliverFixedExtentList(
+            itemExtent: 56.0,
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return ListTile(
+                  onTap: () => close(context, list[index]),
+                  leading: const Icon(Icons.saved_search),
+                  title: Text(list[index]),
+                );
+              },
+              childCount: list.length,
+            ),
+          ),
+        ],
       );
     });
   }
 
   @override
-  Widget buildResults(BuildContext context) {
-    return Consumer(builder: (context, watch, _) {
-      final resultsList = watch(results(query));
-      return resultsList.when(
-        loading: () => const LinearProgressIndicator(),
-        error: (e, _) {
-          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-            Scaffold.of(context, nullOk: true)?.showSnackBar(SnackBar(
-              content: Text(e.toString()),
-              duration: const Duration(minutes: 1),
-            ));
-          });
-          return Center(
-            child: OutlinedButton(
-              child: const Text('Error fetching the deals'),
-              onPressed: () => context.refresh(results(query)),
-            ),
-          );
-        },
-        data: (list) {
-          return ListView.builder(
-            itemCount: list.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                onTap: () => close(context, list[index] as T),
-                title: Text(list[index]),
-              );
-            },
-          );
-        },
-      );
-    });
-  }
+  Widget buildResults(BuildContext context) => const SizedBox();
 }

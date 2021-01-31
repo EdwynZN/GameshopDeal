@@ -9,8 +9,14 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:gameshop_deals/model/theme_mode_adapter_enum.dart';
 import 'package:gameshop_deals/model/deal_view_enum.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class Logger extends ProviderObserver {
+  @override
+  void didDisposeProvider(ProviderBase provider) {
+    print('disposed: ${provider.name}');
+  }
+
   @override
   void didUpdateProvider(ProviderBase provider, Object newValue) {
     print('''
@@ -40,12 +46,16 @@ class Logger extends ProviderObserver {
   }
 }
 
-void main() async {
-  //WidgetsFlutterBinding.ensureInitialized();
+Future<void> _initHive() async {
   await Hive.initFlutter();
   Hive.registerAdapter<ThemeMode>(ThemeModeAdapter());
   Hive.registerAdapter<DealView>(DealVieweAdapter());
   await Hive.openBox<dynamic>('preferences');
+}
+
+void main() async {
+  //WidgetsFlutterBinding.ensureInitialized();
+  await _initHive();
   runApp(
     ProviderScope(
       //observers: [Logger()],
@@ -61,22 +71,29 @@ class GameShop extends ConsumerWidget {
   Widget build(BuildContext context, ScopedReader watch) {
     final themeMode = watch(themeProvider.state);
     final themeData = watch(themeProvider);
-    return MaterialApp(
-      localizationsDelegates: [
-        S.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: S.delegate.supportedLocales,
-      debugShowCheckedModeBanner: false,
-      darkTheme: themeData.darkTheme,
-      theme: themeData.lightTheme,
-      // theme: ThemeData.light(),
-      // darkTheme: ThemeData.dark(),
-      themeMode: themeMode,
-      onGenerateRoute: Routes.getRoute,
-      initialRoute: homeRoute,
+    return RefreshConfiguration(
+      enableLoadingWhenFailed: false,
+      autoLoad: true,
+      headerBuilder: () => WaterDropMaterialHeader(
+        backgroundColor: themeData.lightTheme.appBarTheme.color,
+      ),
+      //enableScrollWhenRefreshCompleted: true,
+      child: MaterialApp(
+        localizationsDelegates: [
+          S.delegate,
+          RefreshLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
+        debugShowCheckedModeBanner: false,
+        darkTheme: themeData.darkTheme,
+        theme: themeData.lightTheme,
+        themeMode: themeMode,
+        onGenerateRoute: Routes.getRoute,
+        initialRoute: homeRoute,
+      ),
     );
   }
 }

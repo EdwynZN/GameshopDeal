@@ -1,20 +1,41 @@
 import 'package:flutter_riverpod/all.dart';
-import 'package:dio/dio.dart';
-import 'package:gameshop_deals/riverpod/filter_provider.dart';
-import 'package:gameshop_deals/riverpod/repository_provider.dart';
+import 'package:hive/hive.dart';
+import 'package:gameshop_deals/utils/preferences_constants.dart';
 
-final results =
-    FutureProvider.autoDispose.family<List<String>, String>((ref, query) async {
-  final cancelToken = CancelToken();
-  ref.onDispose(cancelToken.cancel);
+final searchSyncBox = Provider.autoDispose<Box<String>>((ref) {
+  Box<String> box;
 
-  final parameters =
-      ref.watch(filterProvider).state.copyWith(title: query).parameters;
-  if (parameters.isEmpty) return const <String>[];
-  final games =
-    await ref.watch(cheapSharkProvider).getGames(parameters, cancelToken);
+  if (Hive.isBoxOpen(searchHistoryKey)) box = Hive.box<String>(searchHistoryKey);
 
-  ref.maintainState = true;
+  ref.onDispose(() async => await box?.close());
 
-  return games.map((e) => e.externalName).toList();
-}, name: 'Results');
+  return box;
+}, name: 'Sync Search Hivebox');
+
+final searchBox = FutureProvider.autoDispose<Box<String>>((ref) async {
+  Box<String> box;
+
+  if (Hive.isBoxOpen(searchHistoryKey))
+    box = Hive.box<String>(searchHistoryKey);
+  else
+    box = await Hive.openBox<String>(searchHistoryKey);
+
+  ref.onDispose(() async => await box?.close());
+
+  return box;
+}, name: 'Search Hivebox');
+
+final suggestions =
+    Provider.autoDispose.family<List<String>, String>((ref, query) {
+  final asyncBox = ref.watch(searchBox).data;
+  Box<String> box;
+
+  if (asyncBox != null) box = asyncBox.value;
+
+  if (box == null || !box.isOpen || box.length == 0) return const <String>[];
+
+  if (query.isEmpty) return box.values.toList();
+
+  final exp = RegExp(query, caseSensitive: false);
+  return box.values.where((element) => element.contains(exp)).toList();
+}, name: 'Suggestions');
