@@ -507,7 +507,8 @@ class _BottomSheetButtonsDeal extends ConsumerWidget {
             ),
           ),
         Wrap(
-          alignment: WrapAlignment.spaceAround,
+          spacing: 8.0,
+          alignment: WrapAlignment.spaceEvenly,
           children: [
             TextButton.icon(
               icon: const Icon(Icons.remove_red_eye),
@@ -529,17 +530,32 @@ class _BottomSheetButtonsDeal extends ConsumerWidget {
               },
             ),
             if (steamAppId != null)
-              TextButton.icon(
-                icon: const Icon(Icons.dashboard_customize),
-                label: const Text('PC Wiki'),
-                onPressed: () async {
-                  final Uri _pcGamingWikiUri = Uri.http('pcgamingwiki.com',
-                      '/api/appid.php', {'appid': steamAppId});
-                  if (await canLaunch(_pcGamingWikiUri.toString())) {
-                    await launch(_pcGamingWikiUri.toString());
-                  } 
-                },
-              ),
+              ...[
+                TextButton.icon(
+                  icon: const Icon(Icons.rate_review),
+                  label: Text(translate.review_tooltip),
+                  onPressed: () async {
+                    final Uri _steamLink = Uri.https(
+                      'store.steampowered.com',
+                      '/app/${deal.steamAppId}',
+                    );
+                    if (await canLaunch(_steamLink.toString())) {
+                      await launch(_steamLink.toString());
+                    } 
+                  },
+                ),
+                TextButton.icon(
+                  icon: const Icon(Icons.computer),
+                  label: const Text('PC Wiki'),
+                  onPressed: () async {
+                    final Uri _pcGamingWikiUri = Uri.http('pcgamingwiki.com',
+                        '/api/appid.php', {'appid': steamAppId});
+                    if (await canLaunch(_pcGamingWikiUri.toString())) {
+                      await launch(_pcGamingWikiUri.toString());
+                    } 
+                  },
+                ),
+              ],
             if (metacriticLink != null)
               TextButton.icon(
                 icon: CircleAvatar(

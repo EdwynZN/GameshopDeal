@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+import 'package:gameshop_deals/generated/l10n.dart';
+
+const double _strokePaint = 3.0;
+
 class AnimatedRadial extends StatefulWidget {
   final String percentage;
 
-  const AnimatedRadial({Key key, this.percentage}) : super(key: key);
+  const AnimatedRadial({Key key, @required this.percentage}) : super(key: key);
 
   @override
   _AnimatedRadialState createState() => _AnimatedRadialState();
@@ -13,7 +17,9 @@ class AnimatedRadial extends StatefulWidget {
 class _AnimatedRadialState extends State<AnimatedRadial>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
+  S translate;
   double _percentage;
+  String _text;
 
   @override
   void initState() {
@@ -29,18 +35,26 @@ class _AnimatedRadialState extends State<AnimatedRadial>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    translate = S.of(context);
+    _text = _percentage == 0 ? translate.no_score : '${widget.percentage}%';
+  }
+
+  @override
   void didUpdateWidget(covariant AnimatedRadial oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.percentage != oldWidget.percentage) {
       _percentage = (double.tryParse(widget.percentage) ?? 0) / 100;
+      _text = _percentage == 0 ? translate.no_score : '${widget.percentage}%';
       if (_controller.value != _percentage) _controller.animateTo(_percentage);
     }
   }
 
   @override
   void dispose() {
-    super.dispose();
     _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -52,7 +66,7 @@ class _AnimatedRadialState extends State<AnimatedRadial>
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Text(
-            '${widget.percentage}%',
+            _text,
             style: Theme.of(context).textTheme.button,
           ),
         ),
@@ -91,17 +105,18 @@ class _RadialProgression extends CustomPainter {
   _RadialProgression(this.listenable)
       : progressLine = Paint()
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.5,
+          ..strokeWidth = _strokePaint,
         line = Paint()
           ..color = Colors.grey[700]
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.5,
+          ..strokeWidth = _strokePaint,
         super(repaint: listenable);
 
   @override
   void paint(Canvas canvas, Size size) {
     Offset center = Offset(size.width / 2, size.height / 2);
-    double radius = min(size.width / 2, size.height / 2) - 2.5;
+    double radius = min(size.width / 2, size.height / 2) - _strokePaint;
+    assert(radius > 0);
     canvas
       ..drawCircle(center, radius, line)
       ..drawArc(

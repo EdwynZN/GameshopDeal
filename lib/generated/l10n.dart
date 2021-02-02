@@ -35,6 +35,16 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
+  /// `Rate me`
+  String get rate_me {
+    return Intl.message(
+      'Rate me',
+      name: 'rate_me',
+      desc: 'Rate Gameshop Deal in AppStore / Play Store',
+      args: [],
+    );
+  }
+
   /// `Refresh`
   String get refresh {
     return Intl.message(
@@ -253,6 +263,26 @@ class S {
     );
   }
 
+  /// `First`
+  String get first_tooltip {
+    return Intl.message(
+      'First',
+      name: 'first_tooltip',
+      desc: 'button to go to the beginning of the list',
+      args: [],
+    );
+  }
+
+  /// `Last`
+  String get last_tooltip {
+    return Intl.message(
+      'Last',
+      name: 'last_tooltip',
+      desc: 'button to go to the last deal of the list',
+      args: [],
+    );
+  }
+
   /// `Price Range`
   String get price_range {
     return Intl.message(
@@ -445,6 +475,26 @@ class S {
       name: 'review',
       desc: 'String representing the reviews of the game',
       args: [review],
+    );
+  }
+
+  /// `Review`
+  String get review_tooltip {
+    return Intl.message(
+      'Review',
+      name: 'review_tooltip',
+      desc: 'Review title to display in a button',
+      args: [],
+    );
+  }
+
+  /// `N/A`
+  String get no_score {
+    return Intl.message(
+      'N/A',
+      name: 'no_score',
+      desc: 'no score available, so \'N/A\' is displayed',
+      args: [],
     );
   }
 

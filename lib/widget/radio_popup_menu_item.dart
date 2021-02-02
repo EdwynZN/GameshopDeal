@@ -40,8 +40,9 @@ class _RadioPopupMenuItemState<T>
   @override
   Widget buildChild() {
     return ListTileTheme(
-      contentPadding: EdgeInsets.zero,
-      style: ListTileStyle.list,
+      contentPadding: EdgeInsetsDirectional.zero,
+      dense: true,
+      style: ListTileStyle.drawer,
       child: ListTile(
         enabled: widget.enabled,
         trailing: Consumer(builder: (_, watch, __) {

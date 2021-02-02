@@ -97,6 +97,10 @@ class AppSearchDelegate extends SearchDelegate<String> {
                   onTap: () => close(context, list[index]),
                   leading: const Icon(Icons.saved_search),
                   title: Text(list[index]),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.north_west_outlined),
+                    onPressed: () => query = list[index],
+                  ),
                 );
               },
               childCount: list.length,

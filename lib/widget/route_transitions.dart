@@ -292,28 +292,30 @@ class SlideRoute<T> extends PageRoute<T> {
       Animation<double> secondaryAnimation, Widget child) {
     final double maxWidth = MediaQuery.of(context).size.width;
     return AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle(
-          statusBarIconBrightness:
-              Theme.of(context).appBarTheme.brightness == Brightness.light
-                  ? Brightness.dark
-                  : Brightness.light,
-          systemNavigationBarIconBrightness:
-              Theme.of(context).appBarTheme.brightness == Brightness.light
-                  ? Brightness.dark
-                  : Brightness.light,
-          statusBarColor: Theme.of(context).appBarTheme.color,
-          systemNavigationBarColor: Theme.of(context).appBarTheme.color,
+      value: SystemUiOverlayStyle(
+        statusBarIconBrightness:
+            Theme.of(context).appBarTheme.brightness == Brightness.light
+                ? Brightness.dark
+                : Brightness.light,
+        systemNavigationBarIconBrightness:
+            Theme.of(context).appBarTheme.brightness == Brightness.light
+                ? Brightness.dark
+                : Brightness.light,
+        statusBarColor: Theme.of(context).appBarTheme.color,
+        systemNavigationBarColor: Theme.of(context).appBarTheme.color,
+      ),
+      child: SlideTransition(
+        position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
+            .animate(animation),
+        child: GestureDetector(
+          child: child,
+          onHorizontalDragUpdate: (DragUpdateDetails details) =>
+              _handleDragUpdate(details, maxWidth),
+          onHorizontalDragEnd: (DragEndDetails details) =>
+              _handleDragEnd(details, maxWidth),
         ),
-        child: SlideTransition(
-            position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-                .animate(animation),
-            child: GestureDetector(
-              child: child,
-              onHorizontalDragUpdate: (DragUpdateDetails details) =>
-                  _handleDragUpdate(details, maxWidth),
-              onHorizontalDragEnd: (DragEndDetails details) =>
-                  _handleDragEnd(details, maxWidth),
-            )));
+      ),
+    );
   }
 
   void _handleDragUpdate(DragUpdateDetails details, double maxWidth) {
@@ -333,7 +335,6 @@ class SlideRoute<T> extends PageRoute<T> {
       animateForward = flingVelocity <= 0;
     else
       animateForward = controller.value > 0.8;
-
     if (animateForward) {
       controller.fling(velocity: math.max(2.0, -flingVelocity));
     } else {

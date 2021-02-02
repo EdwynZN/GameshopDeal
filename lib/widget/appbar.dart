@@ -241,7 +241,7 @@ class __MoreSettingsState extends State<_MoreSettings> {
   }
 
   // ignore: unused_element
-  Future<void> _postView() {
+  Future<void> _postViewMenu() {
     final double size = Theme.of(context).appBarTheme.iconTheme.size ?? 24;
     Offset offset =
         context.size.centerRight(Size.square(size).center(Offset.zero));
@@ -265,7 +265,7 @@ class __MoreSettingsState extends State<_MoreSettings> {
   }
 
   // ignore: unused_element
-  Future<void> _theme() {
+  Future<void> _themeMenu() {
     final double size = Theme.of(context).appBarTheme.iconTheme.size ?? 24;
     Offset offset =
         context.size.centerRight(Size.square(size).center(Offset.zero));
@@ -327,10 +327,10 @@ class __MoreSettingsState extends State<_MoreSettings> {
             if (!mounted) return;
             switch (selectedOption) {
               case 0:
-                _postView();
+                _postViewMenu();
                 break;
               case 1:
-                _theme();
+                _themeMenu();
                 break;
               case 2:
                 Navigator.of(context, rootNavigator: true)

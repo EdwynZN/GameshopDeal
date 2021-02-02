@@ -3,6 +3,11 @@
     "@@context": "Gameshop Deals",
     "@@author": "Dartz",
     "@@last_modified": "2021-01-02T11:40:48.886",
+    "rate_me": "Calificame",
+    "@rate_me": {
+        "type": "texto",
+        "description": "Califica Gameshop Deal en AppStore / Play Store"
+    },
     "refresh": "Actualizar",
     "@refresh": {
         "type": "texto",
@@ -106,6 +111,18 @@
         "context": "HomeScreen: Floating Action Button",
         "description": "botón para regresar al inicio de la lista de ofertas"
     },
+    "first_tooltip": "Primero",
+    "@first_tooltip": {
+        "type": "text",
+        "context": "PageView: NavigationBar Button",
+        "description": "button to go to the beginning of the list"
+    },
+    "last_tooltip": "Último",
+    "@last_tooltip": {
+        "type": "text",
+        "context": "PageView: NavigationBar Button",
+        "description": "button to go to the last deal of the list"
+    },
     "price_range": "Rango de precios",
     "@price_range": {
         "type": "texto",
@@ -208,10 +225,20 @@
             }
         }
     },
+    "review_tooltip": "Reseña",
+    "@review_tooltip": {
+        "type": "texto",
+        "description": "Título del botón de reseña"
+    },
+    "no_score": "N/A",
+    "@no_score": {
+        "type": "texto",
+        "description": "no hay puntuación disponible, por lo que se muestra No Aplica 'N/A'"
+    },
     "no_date": "N/A",
     "@no_date": {
         "type": "texto",
-        "description": "Sin fecha de lanzamiento, por lo que se muestra 'Proximamente'"
+        "description": "Sin fecha de lanzamiento, por lo que se muestra 'N/A'"
     },
     "future_release": "Próximamente: {date}",
     "@future_release": {

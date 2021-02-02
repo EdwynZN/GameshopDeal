@@ -3,6 +3,11 @@
     "@@context": "Gameshop Deals",
     "@@author": "Dartz",
     "@@last_modified": "2021-01-02T11:40:48.886",
+    "rate_me": "Rate me",
+    "@rate_me": {
+        "type": "text",
+        "description": "Rate Gameshop Deal in AppStore / Play Store"
+    },
     "refresh": "Refresh",
     "@refresh": {
         "type": "text",
@@ -106,6 +111,18 @@
         "context": "HomeScreen: Floating Action Button",
         "description": "button to go to the beginning of the list"
     },
+    "first_tooltip": "First",
+    "@first_tooltip": {
+        "type": "text",
+        "context": "PageView: NavigationBar Button",
+        "description": "button to go to the beginning of the list"
+    },
+    "last_tooltip": "Last",
+    "@last_tooltip": {
+        "type": "text",
+        "context": "PageView: NavigationBar Button",
+        "description": "button to go to the last deal of the list"
+    },
     "price_range": "Price Range",
     "@price_range": {
         "type": "text",
@@ -207,6 +224,16 @@
                 "example": "Overwhelmingly_Negative"
             }
         }
+    },
+    "review_tooltip": "Review",
+    "@review_tooltip": {
+        "type": "text",
+        "description": "Review title to display in a button"
+    },
+    "no_score": "N/A",
+    "@no_score": {
+        "type": "text",
+        "description": "no score available, so 'N/A' is displayed"
     },
     "no_date": "N/A",
     "@no_date": {

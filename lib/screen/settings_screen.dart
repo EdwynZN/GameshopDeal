@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/cache_manager_provider.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
-import 'package:gameshop_deals/riverpod/search_provider.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
+import 'package:hive/hive.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key key}) : super(key: key);
@@ -72,7 +72,7 @@ class _ClearCacheWidget extends StatelessWidget {
           await context
               .read(cacheManagerFamilyProvider(cacheKeyStores))
               .emptyCache();
-          final box = await context.read(searchBox.future);
+          final box = await Hive.openBox<String>(searchHistoryKey);
           if (box.isOpen && box.isNotEmpty) await box.clear();
           if (scaffold?.mounted ?? false) {
             scaffold?.hideCurrentSnackBar();

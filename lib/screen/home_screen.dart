@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,18 +31,22 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  /* final ScrollController _scrollController = TrackingScrollController(
+    keepScrollOffset: false
+  ); */
   final ScrollController _scrollController =
       ScrollController(keepScrollOffset: false);
-  /* final ScrollController _scrollController =
-      PageController(); */
+  final PageController _pageController = PageController(keepPage: false);
   bool isTablet, isPageView = false;
   ProviderSubscription<DealView> _subscription;
   ProviderContainer _container;
   RefreshController _refreshController = RefreshController();
+  S translate;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    translate = S.of(context);
     isTablet ??= MediaQuery.of(context).size.shortestSide >= 700;
     final container = ProviderScope.containerOf(context);
     if (container != _container) {
@@ -68,6 +73,26 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  String errorRequestMessage(AsyncError e) {
+    if (e.error is DioError) {
+      DioError error = e.error as DioError;
+      switch (error.type) {
+        case DioErrorType.CANCEL:
+          return translate.cache_snackbar_cleared;
+        case DioErrorType.DEFAULT:
+          return 'error.message: ${error.error.osError.message}';
+        case DioErrorType.RESPONSE:
+          return error.response.statusCode.toString();
+        case DioErrorType.CONNECT_TIMEOUT:
+        case DioErrorType.RECEIVE_TIMEOUT:
+        case DioErrorType.SEND_TIMEOUT:
+        default:
+          return error.message + '${error.type}';
+      }
+    }
+    return e.error;
+  }
+
   @override
   void dispose() {
     _subscription?.close();
@@ -92,11 +117,14 @@ class _MyHomePageState extends State<MyHomePage> {
               }
               _refreshController.loadFailed();
               if (ModalRoute.of(context).isCurrent) {
-                Scaffold.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('${deal.error}'),
-                  ),
-                );
+                String message = errorRequestMessage(deal);
+                Scaffold.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    SnackBar(
+                      content: Text(message),
+                    ),
+                  );
               }
             } else if (deal is AsyncData) {
               if (_refreshController.isRefresh)
@@ -111,10 +139,12 @@ class _MyHomePageState extends State<MyHomePage> {
           },
           provider: dealPageProvider(widget.title).state,
           child: isPageView
-              ? const PageDeal()
+              ? PageDeal(controller: _pageController)
               : PrimaryScrollController(
                   controller: _scrollController,
                   child: Scrollbar(
+                    thickness: 3.0,
+                    radius: Radius.circular(3.0),
                     child: SmartRefresher(
                       controller: _refreshController,
                       primary: true,
@@ -144,6 +174,80 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         floatingActionButton:
             isPageView ? null : _FAB(controller: _scrollController),
+        bottomNavigationBar:
+            !isPageView ? null : PageVisualizer(controller: _pageController),
+      ),
+    );
+  }
+}
+
+class _PageVisualizer extends StatefulWidget {
+  final PageController controller;
+  const _PageVisualizer({Key key, this.controller}) : super(key: key);
+
+  @override
+  __PageVisualizerState createState() => __PageVisualizerState();
+}
+
+class __PageVisualizerState extends State<_PageVisualizer> {
+  int _currentPage;
+
+  @override
+  void initState() {
+    super.initState();
+    if ((widget.controller?.hasClients ?? false) &&
+        (widget.controller?.page != null ?? false)) {
+      _currentPage = widget.controller.page.round() + 1;
+    } else {
+      _currentPage = widget.controller.initialPage + 1;
+    }
+    widget.controller?.addListener(_updatePagination);
+  }
+
+  @override
+  void didUpdateWidget(covariant _PageVisualizer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.controller != oldWidget.controller) {
+      oldWidget.controller?.removeListener(_updatePagination);
+      widget.controller?.addListener(_updatePagination);
+    }
+  }
+
+  void _updatePagination() {
+    int currentPage;
+    if ((widget.controller?.hasClients ?? false) &&
+        (widget.controller?.page != null ?? false)) {
+      currentPage = widget.controller.page.round() + 1;
+      if (currentPage != _currentPage)
+        setState(() => _currentPage = currentPage);
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    widget.controller?.removeListener(_updatePagination);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      type: MaterialType.transparency,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Consumer(
+          builder: (context, watch, child) {
+            final title = watch(titleProvider);
+            final maxPage = watch(dealsProvider(title).state).length;
+            return Text(
+              ' $_currentPage / $maxPage ',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.subtitle1.apply(
+                backgroundColor: Theme.of(context).canvasColor,
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -185,7 +289,6 @@ class __FABState extends State<_FAB> with SingleTickerProviderStateMixin {
   }
 
   void _scrollAnimationListener() {
-    //print(widget.scrollController.offset);
     if ((widget.controller?.hasClients ?? false) && !_controller.isAnimating) {
       switch (widget.controller.position.userScrollDirection) {
         case ScrollDirection.forward:
@@ -224,32 +327,6 @@ class __FABState extends State<_FAB> with SingleTickerProviderStateMixin {
             child: child,
           );
         },
-      ),
-    );
-  }
-}
-
-class EndLinearProgressIndicator extends ConsumerWidget {
-  const EndLinearProgressIndicator({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final title = watch(titleProvider);
-    final deals = watch(dealPageProvider(title).state);
-    return deals.when(
-      data: (_) => const SizedBox(height: 4.0),
-      loading: () => const Align(
-        alignment: Alignment.topCenter,
-        child: const LinearProgressIndicator(),
-      ),
-      error: (e, stack) => Center(
-        child: OutlinedButton(
-          child: Text(RefreshLocalizations.of(context)
-              .currentLocalization
-              .loadFailedText),
-          onPressed: () async =>
-              context.read(dealPageProvider(title)).retrievePage(),
-        ),
       ),
     );
   }

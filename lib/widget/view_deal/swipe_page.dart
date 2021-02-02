@@ -8,6 +8,7 @@ import 'package:gameshop_deals/widget/radial_progression.dart';
 import 'package:gameshop_deals/widget/store_deal_widget.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart'
     hide storesProvider, singleStoreProvider;
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PageDeal extends ConsumerWidget {
@@ -75,6 +76,10 @@ class _SwipePage extends StatelessWidget {
         ),
         const SliverToBoxAdapter(child: Divider()),
         const _DealListWidget(),
+        /* const SliverFillRemaining(
+          hasScrollBody: false,
+          child: const SizedBox(height: 80.0),
+        ), */
       ],
     );
   }
@@ -167,113 +172,111 @@ class _Stats extends ConsumerWidget {
     final S translate = S.of(context);
     final deal = watch(singleDeal);
     assert(deal != null);
+    List<Widget> widgets = <Widget>[
+      if (deal.steamAppId != null && deal.steamRatingPercent != null)
+        Expanded(
+          child: ElevatedButton(
+            style: Theme.of(context).elevatedButtonTheme.style.copyWith(
+              backgroundColor:
+                  MaterialStateProperty.resolveWith<Color>((states) {
+                if (states.contains(MaterialState.disabled)) return null;
+                return Theme.of(context).cardColor;
+              }),
+            ),
+            onPressed: () async {
+              final Uri _steamLink = Uri.https(
+                'store.steampowered.com',
+                '/app/${deal.steamAppId}',
+              );
+              print(_steamLink.toString());
+              if (await canLaunch(_steamLink.toString())) {
+                await launch(
+                  _steamLink.toString(),
+                );
+              } else {
+                Scaffold.of(context).showSnackBar(
+                  SnackBar(content: Text('Error Launching url')),
+                );
+              }
+            },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AnimatedRadial(percentage: deal.steamRatingPercent),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    translate
+                        .review(deal.steamRatingText?.replaceAll(' ', '_')),
+                    overflow: TextOverflow.fade,
+                    textAlign: TextAlign.center,
+                    softWrap: false,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      if (deal.metacriticLink != null && deal.metacriticScore != null)
+        Expanded(
+          child: ElevatedButton(
+            style: Theme.of(context).elevatedButtonTheme.style.copyWith(
+              backgroundColor:
+                  MaterialStateProperty.resolveWith<Color>((states) {
+                if (states.contains(MaterialState.disabled)) return null;
+                return Theme.of(context).cardColor;
+              }),
+            ),
+            onPressed: () async {
+              final Uri _metacriticLink = Uri.http(
+                'www.metacritic.com',
+                deal.metacriticLink,
+              );
+              if (await canLaunch(_metacriticLink.toString())) {
+                await launch(
+                  _metacriticLink.toString(),
+                  forceWebView: true,
+                );
+              } else {
+                Scaffold.of(context).showSnackBar(
+                  SnackBar(content: Text('Error Launching url')),
+                );
+              }
+            },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AnimatedRadial(percentage: deal.metacriticScore),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        radius: IconTheme.of(context).size / 2.4,
+                        backgroundImage: const AssetImage(
+                            'assets/thumbnails/metacritic.png'),
+                      ),
+                      SizedBox(width: 8.0),
+                      Flexible(
+                        child: const Text(
+                          'Metacritic',
+                          overflow: TextOverflow.fade,
+                          softWrap: false,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+    ];
+    if (widgets.length == 2) widgets.insert(1, const SizedBox(width: 8.0));
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        if (deal.steamAppId != null && deal.steamRatingPercent != null)
-          Expanded(
-            child: ElevatedButton(
-              style: Theme.of(context).elevatedButtonTheme.style.copyWith(
-                backgroundColor:
-                    MaterialStateProperty.resolveWith<Color>((states) {
-                  if (states.contains(MaterialState.disabled)) return null;
-                  return Theme.of(context).cardColor;
-                }),
-              ),
-              onPressed: () async {
-                final Uri _metacriticLink = Uri.https(
-                  'store.steampowered.com',
-                  '/app/${deal.steamAppId}',
-                );
-                print(_metacriticLink.toString());
-                if (await canLaunch(_metacriticLink.toString())) {
-                  await launch(
-                    _metacriticLink.toString(),
-                  );
-                } else {
-                  Scaffold.of(context).showSnackBar(
-                    SnackBar(content: Text('Error Launching url')),
-                  );
-                }
-              },
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AnimatedRadial(percentage: deal.steamRatingPercent),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      //translate.sort(SortBy.Reviews),
-                      translate.review(deal.steamRatingText.replaceAll(' ', '_')),
-                      overflow: TextOverflow.fade,
-                      textAlign: TextAlign.center,
-                      softWrap: false,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        if (deal.metacriticLink != null && deal.metacriticScore != null) ...[
-          const SizedBox(
-            width: 8.0,
-          ),
-          Expanded(
-            child: ElevatedButton(
-              style: Theme.of(context).elevatedButtonTheme.style.copyWith(
-                backgroundColor:
-                    MaterialStateProperty.resolveWith<Color>((states) {
-                  if (states.contains(MaterialState.disabled)) return null;
-                  return Theme.of(context).cardColor;
-                }),
-              ),
-              onPressed: () async {
-                final Uri _metacriticLink = Uri.http(
-                  'www.metacritic.com',
-                  deal.metacriticLink,
-                );
-                if (await canLaunch(_metacriticLink.toString())) {
-                  await launch(
-                    _metacriticLink.toString(),
-                    forceWebView: true,
-                  );
-                } else {
-                  Scaffold.of(context).showSnackBar(
-                    SnackBar(content: Text('Error Launching url')),
-                  );
-                }
-              },
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AnimatedRadial(percentage: deal.metacriticScore),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircleAvatar(
-                          radius: IconTheme.of(context).size / 2.4,
-                          backgroundImage: const AssetImage(
-                              'assets/thumbnails/metacritic.png'),
-                        ),
-                        SizedBox(width: 8.0),
-                        Flexible(
-                          child: const Text(
-                            'Metacritic',
-                            overflow: TextOverflow.fade,
-                            softWrap: false,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ]
-      ],
+      children: widgets,
     );
   }
 }
@@ -287,7 +290,7 @@ class _ButtonsDeal extends ConsumerWidget {
     final deal = watch(singleDeal);
     assert(deal != null);
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Expanded(
           child: OutlinedButton.icon(
@@ -304,14 +307,11 @@ class _ButtonsDeal extends ConsumerWidget {
             },
           ),
         ),
-        if (deal.steamAppId != null)
-          ...[
-            const SizedBox(
-              width: 8.0,
-            ),
-            Expanded(
+        if (deal.steamAppId != null) ...[
+          const SizedBox(width: 8.0),
+          Expanded(
             child: OutlinedButton.icon(
-              icon: const Icon(Icons.dashboard_customize),
+              icon: const Icon(Icons.computer),
               label: const Text('PC Wiki'),
               onPressed: () async {
                 final Uri _pcGamingWikiUri = Uri.http('pcgamingwiki.com',
@@ -383,20 +383,144 @@ class EndLinearProgressIndicator extends ConsumerWidget {
     final title = watch(titleProvider);
     final deals = watch(dealPageProvider(title).state);
     return deals.when(
-      data: (_) => const SizedBox(
-        height: 4.0,
-      ),
+      data: (_) => const SizedBox(height: 4.0),
       loading: () => const Align(
         alignment: Alignment.topCenter,
         child: const LinearProgressIndicator(),
       ),
       error: (e, stack) => Center(
-        heightFactor: 3.0,
         child: OutlinedButton(
-          child: const Text('Error fetching the deals'),
+          child: Text(
+            RefreshLocalizations.of(context).currentLocalization.loadFailedText,
+          ),
           onPressed: () async =>
               context.read(dealPageProvider(title)).retrievePage(),
         ),
+      ),
+    );
+  }
+}
+
+class PageVisualizer extends StatefulWidget {
+  final PageController controller;
+  const PageVisualizer({Key key, this.controller}) : super(key: key);
+
+  @override
+  _PageVisualizerState createState() => _PageVisualizerState();
+}
+
+class _PageVisualizerState extends State<PageVisualizer> {
+  int _currentPage;
+  S translate;
+
+  @override
+  void initState() {
+    super.initState();
+    if ((widget.controller?.hasClients ?? false) &&
+        (widget.controller?.page != null ?? false)) {
+      _currentPage = widget.controller.page.round();
+    } else {
+      _currentPage = widget.controller.initialPage;
+    }
+    widget.controller?.addListener(_updatePagination);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    translate = S.of(context);
+  }
+
+  @override
+  void didUpdateWidget(covariant PageVisualizer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.controller != oldWidget.controller) {
+      oldWidget.controller?.removeListener(_updatePagination);
+      widget.controller?.addListener(_updatePagination);
+    }
+  }
+
+  void _updatePagination() {
+    if ((widget.controller?.hasClients ?? false) &&
+        widget.controller?.page != null) {
+      int currentPage = widget.controller.page.round();
+      if (currentPage != _currentPage) {
+        setState(() => _currentPage = currentPage);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    widget.controller?.removeListener(_updatePagination);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      type: MaterialType.transparency,
+      child: Consumer(
+        builder: (context, watch, child) {
+          final title = watch(titleProvider);
+          final deals = watch(dealsProvider(title).state);
+          final maxPage = deals.length;
+          final isEmpty = deals.isEmpty;
+          String label;
+          if (maxPage != 0 && _currentPage < maxPage)
+            label = '${_currentPage + 1}: ${deals[_currentPage]?.title ?? ''}';
+          _currentPage = _currentPage.clamp(0, isEmpty ? 0 : maxPage - 1);
+          String current = '${_currentPage + 1}';
+          current = current.padLeft(2, ' ').padLeft(3, ' ');
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              children: [
+                IconButton(
+                  tooltip: translate.first_tooltip,
+                  icon: Icon(
+                    Icons.skip_previous_outlined,
+                    size: DefaultTextStyle.of(context).style.fontSize,
+                  ),
+                  onPressed: () => widget.controller.hasClients
+                      ? widget.controller.jumpToPage(0)
+                      : null,
+                ),
+                Text(current),
+                Expanded(
+                  child: SizedBox(
+                    height: DefaultTextStyle.of(context).style.fontSize,
+                    child: Slider.adaptive(
+                      min: 0.0,
+                      max: isEmpty ? 0.0 : (maxPage - 1).toDouble(),
+                      divisions: isEmpty ? null : maxPage - 1,
+                      value: isEmpty ? 0.0 : _currentPage.toDouble(),
+                      label: label,
+                      onChanged: (newValue) {
+                        setState(() => _currentPage = newValue.round());
+                      },
+                      onChangeEnd: (newValue) {
+                        if (newValue != widget.controller.page &&
+                            newValue < maxPage)
+                          widget.controller.jumpToPage((newValue).round());
+                      },
+                    ),
+                  ),
+                ),
+                Text('${isEmpty ? 1 : maxPage}'),
+                IconButton(
+                  tooltip: translate.last_tooltip,
+                  iconSize: DefaultTextStyle.of(context).style.fontSize,
+                  icon: const Icon(Icons.skip_next_outlined),
+                  onPressed: () => widget.controller.hasClients
+                      ? widget.controller
+                          .jumpToPage(isEmpty ? 0 : (maxPage - 1))
+                      : null,
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
