@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 
 enum DealView{List, Grid, Detail, Compact, Swipe}
 
-class DealVieweAdapter extends TypeAdapter<DealView> {
+class DealViewAdapter extends TypeAdapter<DealView> {
   @override
   final int typeId = 8;
 
@@ -51,7 +51,7 @@ class DealVieweAdapter extends TypeAdapter<DealView> {
   @override
   bool operator ==(Object other) =>
     identical(this, other) ||
-    other is DealVieweAdapter &&
+    other is DealViewAdapter &&
       runtimeType == other.runtimeType &&
       typeId == other.typeId;
 }

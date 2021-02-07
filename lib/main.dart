@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
+import 'package:gameshop_deals/model/cheapest_price.dart';
+import 'package:gameshop_deals/model/deal.dart';
+import 'package:gameshop_deals/model/filter.dart';
+import 'package:gameshop_deals/model/game_lookup.dart';
+import 'package:gameshop_deals/model/sort_by_enum.dart';
 import 'package:gameshop_deals/widget/route_transitions.dart';
 import 'package:gameshop_deals/utils/routes_constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,7 +54,13 @@ class Logger extends ProviderObserver {
 Future<void> _initHive() async {
   await Hive.initFlutter();
   Hive.registerAdapter<ThemeMode>(ThemeModeAdapter());
-  Hive.registerAdapter<DealView>(DealVieweAdapter());
+  Hive.registerAdapter<DealView>(DealViewAdapter());
+  Hive.registerAdapter<GameLookup>(GameLookupAdapter());
+  Hive.registerAdapter<Info>(InfoAdapter());
+  Hive.registerAdapter<CheapestPrice>(CheapestPriceAdapter());
+  Hive.registerAdapter<Deal>(DealAdapter());
+  Hive.registerAdapter<SortBy>(SortByAdapter());
+  Hive.registerAdapter<Filter>(FilterAdapter());
   await Hive.openBox<dynamic>('preferences');
 }
 

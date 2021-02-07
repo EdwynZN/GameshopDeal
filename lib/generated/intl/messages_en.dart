@@ -31,21 +31,23 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static m5(view) => "${Intl.select(view, {'List': 'List', 'Grid': 'Grid', 'Detail': 'Detail', 'Compact': 'Compact', 'Swipe': 'Swipe', 'other': 'List', })}";
 
-  static m6(money) => "${Intl.plural(money, zero: 'free', one: '1 dollar', other: '${money} dollars')}";
+  static m6(error, message) => "${Intl.select(error, {'CANCEL': 'Request has been canceled', 'CONNECT_TIMEOUT': 'Connection Timeout: very slow connection', 'RECEIVE_TIMEOUT': 'Server took too long to respond', 'SEND_TIMEOUT': 'Send Timeout, might want to try with a better connection', 'other': '${message}', })}";
 
-  static m7(date) => "Releases: ${date}";
+  static m7(money) => "${Intl.plural(money, zero: 'free', one: '1 dollar', other: '${money} dollars')}";
 
-  static m8(date) => "Released on: ${date}";
+  static m8(date) => "Releases: ${date}";
 
-  static m9(review) => "${Intl.select(review, {'Overwhelmingly_Negative': 'Overwhelmingly Negative', 'Very_Negative': 'Very Negative', 'Negative': 'Negative', 'Mostly_Negative': 'Mostly Negative', 'Mixed': 'Mixed', 'Mostly_Positive': 'Mostly Positive', 'Positive': 'Positive', 'Very_Positive': 'Very Positive', 'Overwhelmingly_Positive': 'Overwhelmingly Positive', 'other': 'Unknown', })}";
+  static m9(date) => "Released on: ${date}";
 
-  static m10(sort) => "${Intl.select(sort, {'Deal_Rating': 'Deal Rating', 'Title': 'Title', 'Savings': 'Savings', 'Price': 'Price', 'Metacritic': 'Metacritic', 'Reviews': 'Reviews', 'Release': 'Release', 'Store': 'Store', 'Recent': 'Recent', 'other': 'Deal Rating', })}";
+  static m10(review) => "${Intl.select(review, {'Overwhelmingly_Negative': 'Overwhelmingly Negative', 'Very_Negative': 'Very Negative', 'Negative': 'Negative', 'Mostly_Negative': 'Mostly Negative', 'Mixed': 'Mixed', 'Mostly_Positive': 'Mostly Positive', 'Positive': 'Positive', 'Very_Positive': 'Very Positive', 'Overwhelmingly_Positive': 'Overwhelmingly Positive', 'other': '${review}', })}";
 
-  static m11(sort) => "${Intl.select(sort, {'Deal_Rating': 'On a scale from 0 to 10, it factors in price, percent off, metacritic, release date, price history, etc', 'Title': 'Title', 'Savings': 'Savings', 'Price': 'Price', 'Metacritic': 'Metacritic', 'Reviews': 'Reviews', 'Release': 'Release', 'Store': 'Store', 'Recent': 'How recently a deal was found', 'other': 'On a scale from 0 to 10, it factors in price, percent off, metacritic, release date, price history, etc', })}";
+  static m11(sort) => "${Intl.select(sort, {'Deal_Rating': 'Deal Rating', 'Title': 'Title', 'Savings': 'Savings', 'Price': 'Price', 'Metacritic': 'Metacritic', 'Reviews': 'Reviews', 'Release': 'Release', 'Store': 'Store', 'Recent': 'Recent', 'other': 'Deal Rating', })}";
 
-  static m12(mode) => "${Intl.select(mode, {'system': 'System', 'light': 'Light', 'dark': 'Dark', 'other': 'System', })}";
+  static m12(sort) => "${Intl.select(sort, {'Deal_Rating': 'On a scale from 0 to 10, it factors in price, percent off, metacritic, release date, price history, etc', 'Title': 'Title', 'Savings': 'Savings', 'Price': 'Price', 'Metacritic': 'Metacritic', 'Reviews': 'Reviews', 'Release': 'Release', 'Store': 'Store', 'Recent': 'How recently a deal was found', 'other': 'On a scale from 0 to 10, it factors in price, percent off, metacritic, release date, price history, etc', })}";
 
-  static m13(query) => "Search for \'${query}\'";
+  static m13(mode) => "${Intl.select(mode, {'system': 'System', 'light': 'Light', 'dark': 'Dark', 'other': 'System', })}";
+
+  static m14(query) => "Search for \'${query}\'";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
@@ -67,15 +69,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "choose_deal_view" : m5,
     "choose_theme" : MessageLookupByLibrary.simpleMessage("Choose theme"),
     "clear_tooltip" : MessageLookupByLibrary.simpleMessage("Clear"),
+    "connection_error" : MessageLookupByLibrary.simpleMessage("No Internet connection"),
     "dark" : MessageLookupByLibrary.simpleMessage("Dark"),
     "deal_view" : MessageLookupByLibrary.simpleMessage("Deal view"),
     "descending" : MessageLookupByLibrary.simpleMessage("Descending (Z-A)"),
-    "dollar_currency" : m6,
+    "dio_error" : m6,
+    "dollar_currency" : m7,
     "feedback" : MessageLookupByLibrary.simpleMessage("Send feedback"),
     "filter" : MessageLookupByLibrary.simpleMessage("Filters"),
     "filter_tooltip" : MessageLookupByLibrary.simpleMessage("Open filter menu"),
     "first_tooltip" : MessageLookupByLibrary.simpleMessage("First"),
-    "future_release" : m7,
+    "future_release" : m8,
     "go_to_deal" : MessageLookupByLibrary.simpleMessage("Go to Deal"),
     "help" : MessageLookupByLibrary.simpleMessage("Help"),
     "last_tooltip" : MessageLookupByLibrary.simpleMessage("Last"),
@@ -89,25 +93,26 @@ class MessageLookup extends MessageLookupByLibrary {
     "rate_me" : MessageLookupByLibrary.simpleMessage("Rate me"),
     "recent_searches" : MessageLookupByLibrary.simpleMessage("Recent searches"),
     "refresh" : MessageLookupByLibrary.simpleMessage("Refresh"),
-    "release" : m8,
+    "release" : m9,
+    "remove_deal" : MessageLookupByLibrary.simpleMessage("Remove Deal"),
     "restart_tooltip" : MessageLookupByLibrary.simpleMessage("Restart"),
     "retail_discount" : MessageLookupByLibrary.simpleMessage("Retail discount"),
     "retail_discount_tooltip" : MessageLookupByLibrary.simpleMessage("Games with a current retail price <\$29"),
-    "review" : m9,
+    "review" : m10,
     "review_tooltip" : MessageLookupByLibrary.simpleMessage("Review"),
     "save_deal" : MessageLookupByLibrary.simpleMessage("Save Deal"),
     "settings" : MessageLookupByLibrary.simpleMessage("Settings"),
-    "sort" : m10,
+    "sort" : m11,
     "sortBy" : MessageLookupByLibrary.simpleMessage("Sort By"),
-    "sort_tooltip" : m11,
+    "sort_tooltip" : m12,
     "steam_rating" : MessageLookupByLibrary.simpleMessage("Steam Rating"),
     "steamworks" : MessageLookupByLibrary.simpleMessage("SteamWorks"),
     "steamworks_tooltip" : MessageLookupByLibrary.simpleMessage("Games registered in Steam, regardless the store"),
     "stores" : MessageLookupByLibrary.simpleMessage("Stores"),
     "suggested_searches" : MessageLookupByLibrary.simpleMessage("Suggested searches"),
     "system" : MessageLookupByLibrary.simpleMessage("System"),
-    "themeMode" : m12,
-    "title_search" : m13,
+    "themeMode" : m13,
+    "title_search" : m14,
     "up_tooltip" : MessageLookupByLibrary.simpleMessage("Up")
   };
 }

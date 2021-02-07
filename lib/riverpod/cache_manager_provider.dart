@@ -14,7 +14,6 @@ final cacheManagerFamilyProvider =
         stalePeriod: const Duration(days: 7),
         maxNrOfCacheObjects: 600,
         fileService: DioFileService(dioClient: dioInstance)
-        // fileService: HttpFileService(),
         ),
   );
 }, name: 'Cache Manager');

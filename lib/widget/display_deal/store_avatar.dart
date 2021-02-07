@@ -20,7 +20,11 @@ class StoreAvatarIcon extends ConsumerWidget {
     final deal = watch(singleDeal);
     assert(deal != null);
     final store = watch(singleStoreProvider(deal.storeId));
-    if (store == null) return const SizedBox.shrink();
+    if (store == null) 
+    return Icon(
+      Icons.local_grocery_store_outlined,
+      size: iconSize,
+    );
     final brightness = ThemeData.estimateBrightnessForColor(
         Theme.of(context).scaffoldBackgroundColor);
     BlendMode blend =
@@ -34,7 +38,14 @@ class StoreAvatarIcon extends ConsumerWidget {
       width: iconSize,
       memCacheWidth: iconSize.ceil(),
       colorBlendMode: blend,
-      errorWidget: (context, url, error) => const SizedBox.shrink(),
+      errorWidget: (_, __, ___) => Icon(
+        Icons.error_outline,
+        size: iconSize,
+      ),
+      placeholder: (_, __) => Icon(
+        Icons.local_grocery_store_outlined,
+        size: iconSize,
+      ),
       imageUrl: cheapsharkUrl + store.images.icon,
     );
   }

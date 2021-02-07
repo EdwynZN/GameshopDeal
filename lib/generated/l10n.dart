@@ -456,7 +456,7 @@ class S {
     );
   }
 
-  /// `{review, select, Overwhelmingly_Negative {Overwhelmingly Negative} Very_Negative {Very Negative} Negative {Negative} Mostly_Negative {Mostly Negative} Mixed {Mixed} Mostly_Positive {Mostly Positive} Positive {Positive} Very_Positive {Very Positive} Overwhelmingly_Positive {Overwhelmingly Positive} other {Unknown}}`
+  /// `{review, select, Overwhelmingly_Negative {Overwhelmingly Negative} Very_Negative {Very Negative} Negative {Negative} Mostly_Negative {Mostly Negative} Mixed {Mixed} Mostly_Positive {Mostly Positive} Positive {Positive} Very_Positive {Very Positive} Overwhelmingly_Positive {Overwhelmingly Positive} other {{review}}}`
   String review(Object review) {
     return Intl.select(
       review,
@@ -470,7 +470,7 @@ class S {
         'Positive': 'Positive',
         'Very_Positive': 'Very Positive',
         'Overwhelmingly_Positive': 'Overwhelmingly Positive',
-        'other': 'Unknown',
+        'other': '$review',
       },
       name: 'review',
       desc: 'String representing the reviews of the game',
@@ -678,12 +678,49 @@ class S {
     );
   }
 
+  /// `Remove Deal`
+  String get remove_deal {
+    return Intl.message(
+      'Remove Deal',
+      name: 'remove_deal',
+      desc: 'Remove Deal text button',
+      args: [],
+    );
+  }
+
   /// `Go to Deal`
   String get go_to_deal {
     return Intl.message(
       'Go to Deal',
       name: 'go_to_deal',
       desc: 'Go to Deal text button',
+      args: [],
+    );
+  }
+
+  /// `{error, select, CANCEL{Request has been canceled} CONNECT_TIMEOUT{Connection Timeout: very slow connection} RECEIVE_TIMEOUT{Server took too long to respond} SEND_TIMEOUT{Send Timeout, might want to try with a better connection} other{{message}}}`
+  String dio_error(Object error, Object message) {
+    return Intl.select(
+      error,
+      {
+        'CANCEL': 'Request has been canceled',
+        'CONNECT_TIMEOUT': 'Connection Timeout: very slow connection',
+        'RECEIVE_TIMEOUT': 'Server took too long to respond',
+        'SEND_TIMEOUT': 'Send Timeout, might want to try with a better connection',
+        'other': '$message',
+      },
+      name: 'dio_error',
+      desc: 'DioErrorType',
+      args: [error, message],
+    );
+  }
+
+  /// `No Internet connection`
+  String get connection_error {
+    return Intl.message(
+      'No Internet connection',
+      name: 'connection_error',
+      desc: 'error mesage displaying when there is no internet connection',
       args: [],
     );
   }

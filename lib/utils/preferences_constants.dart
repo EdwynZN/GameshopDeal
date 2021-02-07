@@ -18,3 +18,12 @@ const String searchHistoryKey = 'SearchHistory';
 
 /// CheapShark url
 const String cheapsharkUrl = 'https://www.cheapshark.com';
+
+/// PCWiki url
+const String metacriticUrl = 'metacritic.com';
+
+/// PCWiki url
+const String pcWikiUrl = 'pcgamingwiki.com';
+
+/// Steam url
+const String steamUrl = 'store.steampowered.com';

@@ -171,7 +171,7 @@ class VerticalSlideRoute<T> extends PageRoute<T> {
   bool get barrierDismissible => true;
 
   @override
-  Duration get transitionDuration => const Duration(milliseconds: 400);
+  Duration get transitionDuration => const Duration(milliseconds: 300);
 
   @override
   bool get maintainState => true;
@@ -273,7 +273,7 @@ class SlideRoute<T> extends PageRoute<T> {
   bool get barrierDismissible => true;
 
   @override
-  Duration get transitionDuration => const Duration(milliseconds: 400);
+  Duration get transitionDuration => const Duration(milliseconds: 300);
 
   @override
   bool get maintainState => true;

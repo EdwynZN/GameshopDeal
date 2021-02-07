@@ -3,6 +3,77 @@
 part of 'filter.dart';
 
 // **************************************************************************
+// TypeAdapterGenerator
+// **************************************************************************
+
+class FilterAdapter extends TypeAdapter<_$_Filter> {
+  @override
+  final int typeId = 9;
+
+  @override
+  _$_Filter read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return _$_Filter(
+      storeID: (fields[0] as List)?.cast<int>().toSet(),
+      pageSize: fields[1] as int,
+      sortBy: fields[2] as SortBy,
+      isAscendant: fields[3] as bool,
+      lowerPrice: fields[4] as int,
+      upperPrice: fields[5] as int,
+      metacritic: fields[6] as int,
+      steamRating: fields[7] as int,
+      steamAppId: (fields[8] as List)?.cast<String>().toSet(),
+      onlyRetail: fields[9] as bool,
+      steamWorks: fields[10] as bool,
+      onSale: fields[11] as bool,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, _$_Filter obj) {
+    writer
+      ..writeByte(12)
+      ..writeByte(0)
+      ..write(obj.storeID?.toList())
+      ..writeByte(1)
+      ..write(obj.pageSize)
+      ..writeByte(2)
+      ..write(obj.sortBy)
+      ..writeByte(3)
+      ..write(obj.isAscendant)
+      ..writeByte(4)
+      ..write(obj.lowerPrice)
+      ..writeByte(5)
+      ..write(obj.upperPrice)
+      ..writeByte(6)
+      ..write(obj.metacritic)
+      ..writeByte(7)
+      ..write(obj.steamRating)
+      ..writeByte(8)
+      ..write(obj.steamAppId?.toList())
+      ..writeByte(9)
+      ..write(obj.onlyRetail)
+      ..writeByte(10)
+      ..write(obj.steamWorks)
+      ..writeByte(11)
+      ..write(obj.onSale);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FilterAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+// **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
@@ -19,11 +90,11 @@ _$_Filter _$_$_FilterFromJson(Map<String, dynamic> json) {
     steamRating: json['steamRating'] as int ?? 0,
     steamAppId:
         (json['steamAppId'] as List)?.map((e) => e as String)?.toSet() ?? {},
-    title: json['title'] as String,
-    exact: _intToBool(json['exact'] as int) ?? false,
     onlyRetail: _intToBool(json['AAA'] as int) ?? false,
     steamWorks: _intToBool(json['steamWorks'] as int) ?? false,
     onSale: _intToBool(json['onSale'] as int) ?? false,
+    title: json['title'] as String,
+    exact: _intToBool(json['exact'] as int) ?? false,
   );
 }
 
@@ -37,11 +108,11 @@ Map<String, dynamic> _$_$_FilterToJson(_$_Filter instance) => <String, dynamic>{
       'metacritic': instance.metacritic,
       'steamRating': instance.steamRating,
       'steamAppId': instance.steamAppId?.toList(),
-      'title': instance.title,
-      'exact': _boolToInt(instance.exact),
       'AAA': _boolToInt(instance.onlyRetail),
       'steamWorks': _boolToInt(instance.steamWorks),
       'onSale': _boolToInt(instance.onSale),
+      'title': instance.title,
+      'exact': _boolToInt(instance.exact),
     };
 
 T _$enumDecode<T>(

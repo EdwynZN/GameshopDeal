@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/model/deal_view_enum.dart';
-import 'package:gameshop_deals/model/filter.dart';
+import 'package:gameshop_deals/model/sort_by_enum.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart'
     show dealPageProvider;
 import 'package:gameshop_deals/riverpod/display_provider.dart';
@@ -87,7 +87,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      primary: true,
+      automaticallyImplyLeading: false,
       title: Consumer(
         builder: (context, watch, _) {
           final S translate = S.of(context);
@@ -232,10 +232,10 @@ class __MoreSettingsState extends State<_MoreSettings> {
       items: [
         PopupMenuItem<int>(child: Text(translate.deal_view), value: 0),
         PopupMenuItem<int>(child: Text(translate.choose_theme), value: 1),
-        PopupMenuItem<int>(child: Text(translate.settings), value: 2),
-        PopupMenuItem<int>(child: Text(translate.feedback), value: 3),
-        PopupMenuItem<int>(child: Text(translate.help), value: 4),
-        PopupMenuItem<int>(child: Text(translate.refresh), value: 5),
+        PopupMenuItem<int>(child: Text(translate.feedback), value: 2),
+        //PopupMenuItem<int>(child: Text(translate.help), value: 4),
+        PopupMenuItem<int>(child: Text(translate.refresh), value: 3),
+        PopupMenuItem<int>(child: Text(translate.settings), value: 4),
       ],
     );
   }
@@ -332,12 +332,12 @@ class __MoreSettingsState extends State<_MoreSettings> {
               case 1:
                 _themeMenu();
                 break;
-              case 2:
+              case 3:
+                context.refresh(dealPageProvider(title));
+                break;
+              case 4:
                 Navigator.of(context, rootNavigator: true)
                   .pushNamed(settingsRoute);
-                break;
-              case 5:
-                context.refresh(dealPageProvider(title));
                 break;
             }
           },

@@ -12,38 +12,79 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: CustomScrollView(
-          slivers: [
-            SliverList(
-              delegate: SliverChildListDelegate.fixed([
-                const _CardSettings(
-                    child: ListTile(
-                  leading: const Icon(Icons.settings_applications_outlined),
-                  title: const Text('General'),
-                )),
-                const _CardSettings(
-                    child: ListTile(
-                  leading: const Icon(Icons.palette_outlined),
-                  title: const Text('Themes'),
-                )),
-                const _CardSettings(
-                    child: ListTile(
-                  leading: const Icon(Icons.notifications_on_outlined),
-                  title: const Text('Notifications'),
-                )),
-                const _CardSettings(child: const _ClearCacheWidget()),
-                const _CardSettings(
-                    child: const AboutListTile(
-                  icon: const Icon(Icons.contact_support_outlined),
-                  applicationName: 'Gameshop',
-                )),
-              ]),
-            ),
-            const SliverFillRemaining(
-              hasScrollBody: false,
-              child: SizedBox(height: 0, child: FlutterLogo()),
-            )
-          ],
+        body: Theme(
+          data: Theme.of(context).copyWith(
+            dividerColor: Colors.transparent,
+          ),
+          child: CustomScrollView(
+            slivers: [
+              SliverList(
+                delegate: SliverChildListDelegate.fixed([
+                  _CardSettings(
+                    child: ExpansionTile(
+                      leading: const Icon(Icons.settings_applications_outlined),
+                      title: const Text('General'),
+                      children: [
+                        for (int i = 0; i < 15; i++)
+                          CheckboxListTile(
+                            dense: true,
+                            value: true,
+                            onChanged: print,
+                            title: const Text('General'),
+                          ),
+                      ],
+                    ),
+                  ),
+                  const _CardSettings(
+                      child: ListTile(
+                    leading: const Icon(Icons.settings_applications_outlined),
+                    title: const Text('General'),
+                  )),
+                  const _CardSettings(
+                      child: ListTile(
+                    leading: const Icon(Icons.palette_outlined),
+                    title: const Text('Themes'),
+                  )),
+                  const _CardSettings(
+                      child: ListTile(
+                    leading: const Icon(Icons.notifications_on_outlined),
+                    title: const Text('Notifications'),
+                  )),
+                  const _CardSettings(child: const _ClearCacheWidget()),
+                  _CardSettings(
+                    child: AboutListTile(
+                      icon: const Icon(Icons.contact_support_outlined),
+                      applicationIcon: CircleAvatar(
+                        radius: IconTheme.of(context).size / 2,
+                        backgroundColor: Colors.transparent,
+                        backgroundImage: const AssetImage('assets/thumbnails/icon_app.png'),
+                      ),
+                      aboutBoxChildren: [
+                        TextButton.icon(
+                          onPressed: () => print('hey'),
+                          icon: const Icon(Icons.privacy_tip_outlined),
+                          label: Text('Privacy Policy'),
+                        ),
+                        TextButton.icon(
+                          onPressed: () => print('hey'),
+                          icon: const Icon(Icons.code_outlined),
+                          label: Text('Github Code'),
+                        ),
+                      ],
+                      applicationName: 'Gameshop',
+                    ),
+                  ),
+                ]),
+              ),
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: SizedBox(
+                  height: 0, 
+                  child: Image.asset('assets/thumbnails/icon_app.png'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

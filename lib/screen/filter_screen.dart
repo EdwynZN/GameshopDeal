@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
+import 'package:gameshop_deals/riverpod/preference_provider.dart';
 import 'package:gameshop_deals/widget/filter/flag_filter.dart';
 import 'package:gameshop_deals/widget/filter/metacritic.dart';
 import 'package:gameshop_deals/widget/filter/price_slider.dart';
@@ -44,7 +45,13 @@ class FilterPage extends StatelessWidget {
             leading: const CloseButton(),
             title: Text(translate.filter,
               style: Theme.of(context).textTheme.headline3),
-            trailing: const _RestartButton(),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const _SaveButton(),
+                const _RestartButton(),
+              ],
+            ),
           ),
         ),
         Expanded(
@@ -110,6 +117,26 @@ class FilterPage extends StatelessWidget {
   }
 }
 
+class _SaveButton extends ConsumerWidget {
+  const _SaveButton({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, ScopedReader watch) {
+    final title = watch(titleProvider);
+    final S translate = S.of(context);
+    return IconButton(
+      icon: const Icon(Icons.save_outlined),
+      tooltip: translate.apply_filter,
+      onPressed: () async {
+        final preferedBox = context.read(preferencesProvider);
+        final StateController<Filter> filterCopy =
+          context.read(filterProviderCopy(title));
+        await preferedBox.put('filter', filterCopy.state);
+      },
+    );
+  }
+}
+
 class _RestartButton extends ConsumerWidget {
   const _RestartButton({Key key}) : super(key: key);
 
@@ -118,7 +145,7 @@ class _RestartButton extends ConsumerWidget {
     final title = watch(titleProvider);
     final S translate = S.of(context);
     return IconButton(
-      icon: Icon(Icons.refresh),
+      icon: const Icon(Icons.refresh),
       tooltip: translate.restart_tooltip,
       onPressed: () {
         final StateController<Filter> filterCopy =

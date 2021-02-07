@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart' show singleDeal;
+import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:gameshop_deals/widget/display_deal/price_widget.dart';
 import 'package:gameshop_deals/widget/display_deal/store_avatar.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -24,8 +25,7 @@ class StoreDealGrid extends ConsumerWidget {
         }),
       ),
       onPressed: () async {
-        String _dealLink =
-            'https://www.cheapshark.com/redirect?dealID=${deal.dealId}';
+        String _dealLink = '${cheapsharkUrl}/redirect?dealID=${deal.dealId}';
         if (await canLaunch(_dealLink)) {
           await launch(_dealLink);
         } else {

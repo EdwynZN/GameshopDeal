@@ -7,6 +7,6 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/gameshop_deal" />
+            android:src="@drawable/splash_icon" />
     </item>
 </layer-list>

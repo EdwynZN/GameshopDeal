@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
-import 'package:gameshop_deals/model/filter.dart';
+import 'package:gameshop_deals/model/sort_by_enum.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart' show singleDeal;
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
+import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:gameshop_deals/utils/routes_constants.dart';
 import 'package:gameshop_deals/widget/display_deal/metacritic.dart';
 import 'package:gameshop_deals/widget/display_deal/price_widget.dart';
+import 'package:gameshop_deals/widget/display_deal/saved_deal_button.dart';
 import 'package:gameshop_deals/widget/display_deal/store_avatar.dart';
 import 'package:gameshop_deals/widget/display_deal/thumb_image.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -258,8 +260,7 @@ class ListDeal extends StatelessWidget {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsetsDirectional.only(
-                  start: 8.0, end: 4),
+              padding: const EdgeInsetsDirectional.only(start: 8.0, end: 4),
               child: _TitleDeal(showStore: showDeal),
             ),
           ),
@@ -510,52 +511,44 @@ class _BottomSheetButtonsDeal extends ConsumerWidget {
           spacing: 8.0,
           alignment: WrapAlignment.spaceEvenly,
           children: [
-            TextButton.icon(
-              icon: const Icon(Icons.remove_red_eye),
-              label: Text(translate.save_deal),
-              onPressed: () {
-                print('saved');
-                Navigator.maybePop(context);
-              },
-            ),
+            const SavedTextDealButton(),
             TextButton.icon(
               icon: StoreAvatarIcon(
                 size: IconTheme.of(context).size / 1.2,
               ),
               label: Text(translate.go_to_deal),
               onPressed: () async {
-                String _dealLink =
-                    'https://www.cheapshark.com/redirect?dealID=${deal.dealId}';
-                if (await canLaunch(_dealLink)) await launch(_dealLink);
+                String _dealLink = '${cheapsharkUrl}/redirect?dealID=${deal.dealId}';
+                if (await canLaunch(_dealLink)) 
+                  await launch(_dealLink);
               },
             ),
-            if (steamAppId != null)
-              ...[
-                TextButton.icon(
-                  icon: const Icon(Icons.rate_review),
-                  label: Text(translate.review_tooltip),
-                  onPressed: () async {
-                    final Uri _steamLink = Uri.https(
-                      'store.steampowered.com',
-                      '/app/${deal.steamAppId}',
-                    );
-                    if (await canLaunch(_steamLink.toString())) {
-                      await launch(_steamLink.toString());
-                    } 
-                  },
-                ),
-                TextButton.icon(
-                  icon: const Icon(Icons.computer),
-                  label: const Text('PC Wiki'),
-                  onPressed: () async {
-                    final Uri _pcGamingWikiUri = Uri.http('pcgamingwiki.com',
-                        '/api/appid.php', {'appid': steamAppId});
-                    if (await canLaunch(_pcGamingWikiUri.toString())) {
-                      await launch(_pcGamingWikiUri.toString());
-                    } 
-                  },
-                ),
-              ],
+            if (steamAppId != null) ...[
+              TextButton.icon(
+                icon: const Icon(Icons.rate_review),
+                label: Text(translate.review_tooltip),
+                onPressed: () async {
+                  final Uri _steamLink = Uri.https(
+                    steamUrl,
+                    '/app/${deal.steamAppId}',
+                  );
+                  if (await canLaunch(_steamLink.toString())) {
+                    await launch(_steamLink.toString());
+                  }
+                },
+              ),
+              TextButton.icon(
+                icon: const Icon(Icons.computer),
+                label: const Text('PC Wiki'),
+                onPressed: () async {
+                  final Uri _pcGamingWikiUri = Uri.https(pcWikiUrl,
+                      '/api/appid.php', {'appid': steamAppId});
+                  if (await canLaunch(_pcGamingWikiUri.toString())) {
+                    await launch(_pcGamingWikiUri.toString());
+                  }
+                },
+              ),
+            ],
             if (metacriticLink != null)
               TextButton.icon(
                 icon: CircleAvatar(
@@ -565,14 +558,13 @@ class _BottomSheetButtonsDeal extends ConsumerWidget {
                 ),
                 label: const Text('Metacritic'),
                 onPressed: () async {
-                  final Uri _metacriticLink = Uri.http(
-                    'www.metacritic.com',
+                  final Uri _metacriticLink = Uri.https(
+                    metacriticUrl,
                     metacriticLink,
                   );
                   if (await canLaunch(_metacriticLink.toString())) {
                     await launch(
                       _metacriticLink.toString(),
-                      forceWebView: true,
                     );
                   }
                 },

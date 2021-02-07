@@ -1,5 +1,7 @@
+import 'package:hive/hive.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'sort_by_enum.dart';
 part 'filter.freezed.dart';
 part 'filter.g.dart';
 
@@ -8,22 +10,22 @@ bool _intToBool(int value) => value == 1;
 
 @freezed
 abstract class Filter with _$Filter {
+  @HiveType(typeId: 9, adapterName: 'FilterAdapter')
   factory Filter({
-    @Default(const <int>{}) @JsonKey(defaultValue: const <int>{}) Set<int> storeID,
-    // @Default(0) @JsonKey(defaultValue: 0) int pageNumber,
-    @Default(60) @JsonKey(defaultValue: 60) int pageSize,
-    @Default(SortBy.Deal_Rating) SortBy sortBy,
-    @Default(false) @JsonKey(name: 'desc', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool) bool isAscendant,
-    @Default(0) @JsonKey(defaultValue: 0) int lowerPrice,
-    @Default(50) @JsonKey(defaultValue: 0) int upperPrice,
-    @Default(0) @JsonKey(defaultValue: 0) int metacritic,
-    @Default(0) @JsonKey(defaultValue: 0) int steamRating,
-    @Default(const <String>{}) @JsonKey(defaultValue: const <String>{}) Set<String> steamAppId,
+    @HiveField(0) @Default(const <int>{}) @JsonKey(defaultValue: const <int>{}) Set<int> storeID,
+    @HiveField(1) @Default(60) @JsonKey(defaultValue: 60) int pageSize,
+    @HiveField(2) @Default(SortBy.Deal_Rating) SortBy sortBy,
+    @HiveField(3) @Default(false) @JsonKey(name: 'desc', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool) bool isAscendant,
+    @HiveField(4) @Default(0) @JsonKey(defaultValue: 0) int lowerPrice,
+    @HiveField(5) @Default(50) @JsonKey(defaultValue: 0) int upperPrice,
+    @HiveField(6) @Default(0) @JsonKey(defaultValue: 0) int metacritic,
+    @HiveField(7) @Default(0) @JsonKey(defaultValue: 0) int steamRating,
+    @HiveField(8) @Default(const <String>{}) @JsonKey(defaultValue: const <String>{}) Set<String> steamAppId,
+    @HiveField(9) @Default(false) @JsonKey(name: 'AAA', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool) bool onlyRetail,
+    @HiveField(10) @Default(false) @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool) bool steamWorks,
+    @HiveField(11) @Default(false) @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool) bool onSale,
     String title,
     @Default(false) @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool) bool exact,
-    @Default(false) @JsonKey(name: 'AAA', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool) bool onlyRetail,
-    @Default(false) @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool) bool steamWorks,
-    @Default(false) @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool) bool onSale,
   }) = _Filter;
 
   @late
@@ -47,16 +49,4 @@ abstract class Filter with _$Filter {
   };
 
   factory Filter.fromJson(Map<String, dynamic> json) => _$FilterFromJson(json);
-}
-
-enum SortBy{
-  Deal_Rating,
-  Title,
-  Savings,
-  Price,
-  Metacritic,
-  Reviews,
-  Release,
-  Store,
-  Recent
 }

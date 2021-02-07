@@ -18,32 +18,44 @@ class _$FilterTearOff {
 
 // ignore: unused_element
   _Filter call(
-      {@JsonKey(defaultValue: const <int>{})
+      {@HiveField(0)
+      @JsonKey(defaultValue: const <int>{})
           Set<int> storeID = const <int>{},
+      @HiveField(1)
       @JsonKey(defaultValue: 60)
           int pageSize = 60,
-      SortBy sortBy = SortBy.Deal_Rating,
+      @HiveField(2)
+          SortBy sortBy = SortBy.Deal_Rating,
+      @HiveField(3)
       @JsonKey(name: 'desc', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           bool isAscendant = false,
+      @HiveField(4)
       @JsonKey(defaultValue: 0)
           int lowerPrice = 0,
+      @HiveField(5)
       @JsonKey(defaultValue: 0)
           int upperPrice = 50,
+      @HiveField(6)
       @JsonKey(defaultValue: 0)
           int metacritic = 0,
+      @HiveField(7)
       @JsonKey(defaultValue: 0)
           int steamRating = 0,
+      @HiveField(8)
       @JsonKey(defaultValue: const <String>{})
           Set<String> steamAppId = const <String>{},
-      String title,
-      @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
-          bool exact = false,
+      @HiveField(9)
       @JsonKey(name: 'AAA', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           bool onlyRetail = false,
+      @HiveField(10)
       @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           bool steamWorks = false,
+      @HiveField(11)
       @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
-          bool onSale = false}) {
+          bool onSale = false,
+      String title,
+      @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
+          bool exact = false}) {
     return _Filter(
       storeID: storeID,
       pageSize: pageSize,
@@ -54,11 +66,11 @@ class _$FilterTearOff {
       metacritic: metacritic,
       steamRating: steamRating,
       steamAppId: steamAppId,
-      title: title,
-      exact: exact,
       onlyRetail: onlyRetail,
       steamWorks: steamWorks,
       onSale: onSale,
+      title: title,
+      exact: exact,
     );
   }
 
@@ -74,40 +86,52 @@ const $Filter = _$FilterTearOff();
 
 /// @nodoc
 mixin _$Filter {
+  @HiveField(0)
   @JsonKey(defaultValue: const <int>{})
-  Set<int> get storeID; // @Default(0) @JsonKey(defaultValue: 0) int pageNumber,
+  Set<int> get storeID;
+  @HiveField(1)
   @JsonKey(defaultValue: 60)
   int get pageSize;
+  @HiveField(2)
   SortBy get sortBy;
+  @HiveField(3)
   @JsonKey(
       name: 'desc',
       defaultValue: false,
       toJson: _boolToInt,
       fromJson: _intToBool)
   bool get isAscendant;
+  @HiveField(4)
   @JsonKey(defaultValue: 0)
   int get lowerPrice;
+  @HiveField(5)
   @JsonKey(defaultValue: 0)
   int get upperPrice;
+  @HiveField(6)
   @JsonKey(defaultValue: 0)
   int get metacritic;
+  @HiveField(7)
   @JsonKey(defaultValue: 0)
   int get steamRating;
+  @HiveField(8)
   @JsonKey(defaultValue: const <String>{})
   Set<String> get steamAppId;
-  String get title;
-  @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
-  bool get exact;
+  @HiveField(9)
   @JsonKey(
       name: 'AAA',
       defaultValue: false,
       toJson: _boolToInt,
       fromJson: _intToBool)
   bool get onlyRetail;
+  @HiveField(10)
   @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
   bool get steamWorks;
+  @HiveField(11)
   @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
   bool get onSale;
+  String get title;
+  @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
+  bool get exact;
 
   Map<String, dynamic> toJson();
   $FilterCopyWith<Filter> get copyWith;
@@ -118,32 +142,44 @@ abstract class $FilterCopyWith<$Res> {
   factory $FilterCopyWith(Filter value, $Res Function(Filter) then) =
       _$FilterCopyWithImpl<$Res>;
   $Res call(
-      {@JsonKey(defaultValue: const <int>{})
+      {@HiveField(0)
+      @JsonKey(defaultValue: const <int>{})
           Set<int> storeID,
+      @HiveField(1)
       @JsonKey(defaultValue: 60)
           int pageSize,
-      SortBy sortBy,
+      @HiveField(2)
+          SortBy sortBy,
+      @HiveField(3)
       @JsonKey(name: 'desc', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           bool isAscendant,
+      @HiveField(4)
       @JsonKey(defaultValue: 0)
           int lowerPrice,
+      @HiveField(5)
       @JsonKey(defaultValue: 0)
           int upperPrice,
+      @HiveField(6)
       @JsonKey(defaultValue: 0)
           int metacritic,
+      @HiveField(7)
       @JsonKey(defaultValue: 0)
           int steamRating,
+      @HiveField(8)
       @JsonKey(defaultValue: const <String>{})
           Set<String> steamAppId,
-      String title,
-      @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
-          bool exact,
+      @HiveField(9)
       @JsonKey(name: 'AAA', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           bool onlyRetail,
+      @HiveField(10)
       @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           bool steamWorks,
+      @HiveField(11)
       @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
-          bool onSale});
+          bool onSale,
+      String title,
+      @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
+          bool exact});
 }
 
 /// @nodoc
@@ -165,11 +201,11 @@ class _$FilterCopyWithImpl<$Res> implements $FilterCopyWith<$Res> {
     Object metacritic = freezed,
     Object steamRating = freezed,
     Object steamAppId = freezed,
-    Object title = freezed,
-    Object exact = freezed,
     Object onlyRetail = freezed,
     Object steamWorks = freezed,
     Object onSale = freezed,
+    Object title = freezed,
+    Object exact = freezed,
   }) {
     return _then(_value.copyWith(
       storeID: storeID == freezed ? _value.storeID : storeID as Set<int>,
@@ -184,13 +220,13 @@ class _$FilterCopyWithImpl<$Res> implements $FilterCopyWith<$Res> {
           steamRating == freezed ? _value.steamRating : steamRating as int,
       steamAppId:
           steamAppId == freezed ? _value.steamAppId : steamAppId as Set<String>,
-      title: title == freezed ? _value.title : title as String,
-      exact: exact == freezed ? _value.exact : exact as bool,
       onlyRetail:
           onlyRetail == freezed ? _value.onlyRetail : onlyRetail as bool,
       steamWorks:
           steamWorks == freezed ? _value.steamWorks : steamWorks as bool,
       onSale: onSale == freezed ? _value.onSale : onSale as bool,
+      title: title == freezed ? _value.title : title as String,
+      exact: exact == freezed ? _value.exact : exact as bool,
     ));
   }
 }
@@ -201,32 +237,44 @@ abstract class _$FilterCopyWith<$Res> implements $FilterCopyWith<$Res> {
       __$FilterCopyWithImpl<$Res>;
   @override
   $Res call(
-      {@JsonKey(defaultValue: const <int>{})
+      {@HiveField(0)
+      @JsonKey(defaultValue: const <int>{})
           Set<int> storeID,
+      @HiveField(1)
       @JsonKey(defaultValue: 60)
           int pageSize,
-      SortBy sortBy,
+      @HiveField(2)
+          SortBy sortBy,
+      @HiveField(3)
       @JsonKey(name: 'desc', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           bool isAscendant,
+      @HiveField(4)
       @JsonKey(defaultValue: 0)
           int lowerPrice,
+      @HiveField(5)
       @JsonKey(defaultValue: 0)
           int upperPrice,
+      @HiveField(6)
       @JsonKey(defaultValue: 0)
           int metacritic,
+      @HiveField(7)
       @JsonKey(defaultValue: 0)
           int steamRating,
+      @HiveField(8)
       @JsonKey(defaultValue: const <String>{})
           Set<String> steamAppId,
-      String title,
-      @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
-          bool exact,
+      @HiveField(9)
       @JsonKey(name: 'AAA', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           bool onlyRetail,
+      @HiveField(10)
       @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           bool steamWorks,
+      @HiveField(11)
       @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
-          bool onSale});
+          bool onSale,
+      String title,
+      @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
+          bool exact});
 }
 
 /// @nodoc
@@ -249,11 +297,11 @@ class __$FilterCopyWithImpl<$Res> extends _$FilterCopyWithImpl<$Res>
     Object metacritic = freezed,
     Object steamRating = freezed,
     Object steamAppId = freezed,
-    Object title = freezed,
-    Object exact = freezed,
     Object onlyRetail = freezed,
     Object steamWorks = freezed,
     Object onSale = freezed,
+    Object title = freezed,
+    Object exact = freezed,
   }) {
     return _then(_Filter(
       storeID: storeID == freezed ? _value.storeID : storeID as Set<int>,
@@ -268,48 +316,61 @@ class __$FilterCopyWithImpl<$Res> extends _$FilterCopyWithImpl<$Res>
           steamRating == freezed ? _value.steamRating : steamRating as int,
       steamAppId:
           steamAppId == freezed ? _value.steamAppId : steamAppId as Set<String>,
-      title: title == freezed ? _value.title : title as String,
-      exact: exact == freezed ? _value.exact : exact as bool,
       onlyRetail:
           onlyRetail == freezed ? _value.onlyRetail : onlyRetail as bool,
       steamWorks:
           steamWorks == freezed ? _value.steamWorks : steamWorks as bool,
       onSale: onSale == freezed ? _value.onSale : onSale as bool,
+      title: title == freezed ? _value.title : title as String,
+      exact: exact == freezed ? _value.exact : exact as bool,
     ));
   }
 }
 
 @JsonSerializable()
+@HiveType(typeId: 9, adapterName: 'FilterAdapter')
 
 /// @nodoc
 class _$_Filter with DiagnosticableTreeMixin implements _Filter {
   _$_Filter(
-      {@JsonKey(defaultValue: const <int>{})
+      {@HiveField(0)
+      @JsonKey(defaultValue: const <int>{})
           this.storeID = const <int>{},
+      @HiveField(1)
       @JsonKey(defaultValue: 60)
           this.pageSize = 60,
-      this.sortBy = SortBy.Deal_Rating,
+      @HiveField(2)
+          this.sortBy = SortBy.Deal_Rating,
+      @HiveField(3)
       @JsonKey(name: 'desc', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           this.isAscendant = false,
+      @HiveField(4)
       @JsonKey(defaultValue: 0)
           this.lowerPrice = 0,
+      @HiveField(5)
       @JsonKey(defaultValue: 0)
           this.upperPrice = 50,
+      @HiveField(6)
       @JsonKey(defaultValue: 0)
           this.metacritic = 0,
+      @HiveField(7)
       @JsonKey(defaultValue: 0)
           this.steamRating = 0,
+      @HiveField(8)
       @JsonKey(defaultValue: const <String>{})
           this.steamAppId = const <String>{},
-      this.title,
-      @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
-          this.exact = false,
+      @HiveField(9)
       @JsonKey(name: 'AAA', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           this.onlyRetail = false,
+      @HiveField(10)
       @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           this.steamWorks = false,
+      @HiveField(11)
       @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
-          this.onSale = false})
+          this.onSale = false,
+      this.title,
+      @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
+          this.exact = false})
       : assert(storeID != null),
         assert(pageSize != null),
         assert(sortBy != null),
@@ -319,24 +380,28 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
         assert(metacritic != null),
         assert(steamRating != null),
         assert(steamAppId != null),
-        assert(exact != null),
         assert(onlyRetail != null),
         assert(steamWorks != null),
-        assert(onSale != null);
+        assert(onSale != null),
+        assert(exact != null);
 
   factory _$_Filter.fromJson(Map<String, dynamic> json) =>
       _$_$_FilterFromJson(json);
 
   @override
+  @HiveField(0)
   @JsonKey(defaultValue: const <int>{})
   final Set<int> storeID;
-  @override // @Default(0) @JsonKey(defaultValue: 0) int pageNumber,
+  @override
+  @HiveField(1)
   @JsonKey(defaultValue: 60)
   final int pageSize;
   @JsonKey(defaultValue: SortBy.Deal_Rating)
   @override
+  @HiveField(2)
   final SortBy sortBy;
   @override
+  @HiveField(3)
   @JsonKey(
       name: 'desc',
       defaultValue: false,
@@ -344,26 +409,27 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
       fromJson: _intToBool)
   final bool isAscendant;
   @override
+  @HiveField(4)
   @JsonKey(defaultValue: 0)
   final int lowerPrice;
   @override
+  @HiveField(5)
   @JsonKey(defaultValue: 0)
   final int upperPrice;
   @override
+  @HiveField(6)
   @JsonKey(defaultValue: 0)
   final int metacritic;
   @override
+  @HiveField(7)
   @JsonKey(defaultValue: 0)
   final int steamRating;
   @override
+  @HiveField(8)
   @JsonKey(defaultValue: const <String>{})
   final Set<String> steamAppId;
   @override
-  final String title;
-  @override
-  @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
-  final bool exact;
-  @override
+  @HiveField(9)
   @JsonKey(
       name: 'AAA',
       defaultValue: false,
@@ -371,11 +437,18 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
       fromJson: _intToBool)
   final bool onlyRetail;
   @override
+  @HiveField(10)
   @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
   final bool steamWorks;
   @override
+  @HiveField(11)
   @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
   final bool onSale;
+  @override
+  final String title;
+  @override
+  @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
+  final bool exact;
 
   bool _didparameters = false;
   Map<String, dynamic> _parameters;
@@ -408,7 +481,7 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Filter(storeID: $storeID, pageSize: $pageSize, sortBy: $sortBy, isAscendant: $isAscendant, lowerPrice: $lowerPrice, upperPrice: $upperPrice, metacritic: $metacritic, steamRating: $steamRating, steamAppId: $steamAppId, title: $title, exact: $exact, onlyRetail: $onlyRetail, steamWorks: $steamWorks, onSale: $onSale, parameters: $parameters)';
+    return 'Filter(storeID: $storeID, pageSize: $pageSize, sortBy: $sortBy, isAscendant: $isAscendant, lowerPrice: $lowerPrice, upperPrice: $upperPrice, metacritic: $metacritic, steamRating: $steamRating, steamAppId: $steamAppId, onlyRetail: $onlyRetail, steamWorks: $steamWorks, onSale: $onSale, title: $title, exact: $exact, parameters: $parameters)';
   }
 
   @override
@@ -425,11 +498,11 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
       ..add(DiagnosticsProperty('metacritic', metacritic))
       ..add(DiagnosticsProperty('steamRating', steamRating))
       ..add(DiagnosticsProperty('steamAppId', steamAppId))
-      ..add(DiagnosticsProperty('title', title))
-      ..add(DiagnosticsProperty('exact', exact))
       ..add(DiagnosticsProperty('onlyRetail', onlyRetail))
       ..add(DiagnosticsProperty('steamWorks', steamWorks))
       ..add(DiagnosticsProperty('onSale', onSale))
+      ..add(DiagnosticsProperty('title', title))
+      ..add(DiagnosticsProperty('exact', exact))
       ..add(DiagnosticsProperty('parameters', parameters));
   }
 
@@ -463,10 +536,6 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
             (identical(other.steamAppId, steamAppId) ||
                 const DeepCollectionEquality()
                     .equals(other.steamAppId, steamAppId)) &&
-            (identical(other.title, title) ||
-                const DeepCollectionEquality().equals(other.title, title)) &&
-            (identical(other.exact, exact) ||
-                const DeepCollectionEquality().equals(other.exact, exact)) &&
             (identical(other.onlyRetail, onlyRetail) ||
                 const DeepCollectionEquality()
                     .equals(other.onlyRetail, onlyRetail)) &&
@@ -474,7 +543,11 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
                 const DeepCollectionEquality()
                     .equals(other.steamWorks, steamWorks)) &&
             (identical(other.onSale, onSale) ||
-                const DeepCollectionEquality().equals(other.onSale, onSale)));
+                const DeepCollectionEquality().equals(other.onSale, onSale)) &&
+            (identical(other.title, title) ||
+                const DeepCollectionEquality().equals(other.title, title)) &&
+            (identical(other.exact, exact) ||
+                const DeepCollectionEquality().equals(other.exact, exact)));
   }
 
   @override
@@ -489,11 +562,11 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
       const DeepCollectionEquality().hash(metacritic) ^
       const DeepCollectionEquality().hash(steamRating) ^
       const DeepCollectionEquality().hash(steamAppId) ^
-      const DeepCollectionEquality().hash(title) ^
-      const DeepCollectionEquality().hash(exact) ^
       const DeepCollectionEquality().hash(onlyRetail) ^
       const DeepCollectionEquality().hash(steamWorks) ^
-      const DeepCollectionEquality().hash(onSale);
+      const DeepCollectionEquality().hash(onSale) ^
+      const DeepCollectionEquality().hash(title) ^
+      const DeepCollectionEquality().hash(exact);
 
   @override
   _$FilterCopyWith<_Filter> get copyWith =>
@@ -507,44 +580,60 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
 
 abstract class _Filter implements Filter {
   factory _Filter(
-      {@JsonKey(defaultValue: const <int>{})
+      {@HiveField(0)
+      @JsonKey(defaultValue: const <int>{})
           Set<int> storeID,
+      @HiveField(1)
       @JsonKey(defaultValue: 60)
           int pageSize,
-      SortBy sortBy,
+      @HiveField(2)
+          SortBy sortBy,
+      @HiveField(3)
       @JsonKey(name: 'desc', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           bool isAscendant,
+      @HiveField(4)
       @JsonKey(defaultValue: 0)
           int lowerPrice,
+      @HiveField(5)
       @JsonKey(defaultValue: 0)
           int upperPrice,
+      @HiveField(6)
       @JsonKey(defaultValue: 0)
           int metacritic,
+      @HiveField(7)
       @JsonKey(defaultValue: 0)
           int steamRating,
+      @HiveField(8)
       @JsonKey(defaultValue: const <String>{})
           Set<String> steamAppId,
-      String title,
-      @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
-          bool exact,
+      @HiveField(9)
       @JsonKey(name: 'AAA', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           bool onlyRetail,
+      @HiveField(10)
       @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           bool steamWorks,
+      @HiveField(11)
       @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
-          bool onSale}) = _$_Filter;
+          bool onSale,
+      String title,
+      @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
+          bool exact}) = _$_Filter;
 
   factory _Filter.fromJson(Map<String, dynamic> json) = _$_Filter.fromJson;
 
   @override
+  @HiveField(0)
   @JsonKey(defaultValue: const <int>{})
   Set<int> get storeID;
-  @override // @Default(0) @JsonKey(defaultValue: 0) int pageNumber,
+  @override
+  @HiveField(1)
   @JsonKey(defaultValue: 60)
   int get pageSize;
   @override
+  @HiveField(2)
   SortBy get sortBy;
   @override
+  @HiveField(3)
   @JsonKey(
       name: 'desc',
       defaultValue: false,
@@ -552,26 +641,27 @@ abstract class _Filter implements Filter {
       fromJson: _intToBool)
   bool get isAscendant;
   @override
+  @HiveField(4)
   @JsonKey(defaultValue: 0)
   int get lowerPrice;
   @override
+  @HiveField(5)
   @JsonKey(defaultValue: 0)
   int get upperPrice;
   @override
+  @HiveField(6)
   @JsonKey(defaultValue: 0)
   int get metacritic;
   @override
+  @HiveField(7)
   @JsonKey(defaultValue: 0)
   int get steamRating;
   @override
+  @HiveField(8)
   @JsonKey(defaultValue: const <String>{})
   Set<String> get steamAppId;
   @override
-  String get title;
-  @override
-  @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
-  bool get exact;
-  @override
+  @HiveField(9)
   @JsonKey(
       name: 'AAA',
       defaultValue: false,
@@ -579,11 +669,18 @@ abstract class _Filter implements Filter {
       fromJson: _intToBool)
   bool get onlyRetail;
   @override
+  @HiveField(10)
   @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
   bool get steamWorks;
   @override
+  @HiveField(11)
   @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
   bool get onSale;
+  @override
+  String get title;
+  @override
+  @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
+  bool get exact;
   @override
   _$FilterCopyWith<_Filter> get copyWith;
 }

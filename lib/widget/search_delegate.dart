@@ -95,7 +95,7 @@ class AppSearchDelegate extends SearchDelegate<String> {
               (context, index) {
                 return ListTile(
                   onTap: () => close(context, list[index]),
-                  leading: const Icon(Icons.saved_search),
+                  leading: const Icon(Icons.history),
                   title: Text(list[index]),
                   trailing: IconButton(
                     icon: const Icon(Icons.north_west_outlined),

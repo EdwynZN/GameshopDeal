@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -31,11 +33,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  /* final ScrollController _scrollController = TrackingScrollController(
-    keepScrollOffset: false
-  ); */
-  final ScrollController _scrollController =
-      ScrollController(keepScrollOffset: false);
+  final ScrollController _scrollController = ScrollController();
   final PageController _pageController = PageController(keepPage: false);
   bool isTablet, isPageView = false;
   ProviderSubscription<DealView> _subscription;
@@ -75,19 +73,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
   String errorRequestMessage(AsyncError e) {
     if (e.error is DioError) {
-      DioError error = e.error as DioError;
-      switch (error.type) {
-        case DioErrorType.CANCEL:
-          return translate.cache_snackbar_cleared;
+      DioError dioError = e.error as DioError;
+      switch (dioError.type) {
         case DioErrorType.DEFAULT:
-          return 'error.message: ${error.error.osError.message}';
+          if (dioError.error is SocketException) {
+            SocketException socketException = dioError.error as SocketException;
+            if (socketException.osError != null && socketException.osError.errorCode ==7) 
+            return translate.connection_error;
+          }
+          return translate.dio_error(dioError.type, dioError.message);
         case DioErrorType.RESPONSE:
-          return error.response.statusCode.toString();
+          return '${dioError.response.statusCode} : ${dioError.response.statusMessage}';
+        case DioErrorType.CANCEL:
         case DioErrorType.CONNECT_TIMEOUT:
         case DioErrorType.RECEIVE_TIMEOUT:
         case DioErrorType.SEND_TIMEOUT:
         default:
-          return error.message + '${error.type}';
+          return translate.dio_error(dioError.type, dioError.message);
       }
     }
     return e.error;
@@ -97,6 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     _subscription?.close();
     _scrollController?.dispose();
+    _pageController?.dispose();
     _refreshController.dispose();
     super.dispose();
   }
@@ -106,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return SafeArea(
       child: Scaffold(
         appBar: widget.search ? const SearchAppBar() : const HomeAppBar(),
-        endDrawer: isTablet ? const FilterScreen() : null,
+        endDrawer: !isTablet ? const FilterScreen() : null,
         body: ProviderListener<AsyncValue>(
           onChange: (context, deal) {
             if (!mounted) return;
@@ -139,8 +142,12 @@ class _MyHomePageState extends State<MyHomePage> {
           },
           provider: dealPageProvider(widget.title).state,
           child: isPageView
-              ? PageDeal(controller: _pageController)
+              ? PageDeal(
+                  controller: _pageController,
+                  key: PageStorageKey('Swipe'),
+                )
               : PrimaryScrollController(
+                  key: PageStorageKey('List'),
                   controller: _scrollController,
                   child: Scrollbar(
                     thickness: 3.0,
@@ -166,7 +173,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       onLoading: () async {
                         final dealPage =
                             context.read(dealPageProvider(widget.title));
-                        if (!dealPage.isLastPage) await dealPage.retrievePage();
+                        if (!dealPage.isLastPage)
+                          await dealPage.retrievePage();
                       },
                     ),
                   ),
@@ -176,78 +184,6 @@ class _MyHomePageState extends State<MyHomePage> {
             isPageView ? null : _FAB(controller: _scrollController),
         bottomNavigationBar:
             !isPageView ? null : PageVisualizer(controller: _pageController),
-      ),
-    );
-  }
-}
-
-class _PageVisualizer extends StatefulWidget {
-  final PageController controller;
-  const _PageVisualizer({Key key, this.controller}) : super(key: key);
-
-  @override
-  __PageVisualizerState createState() => __PageVisualizerState();
-}
-
-class __PageVisualizerState extends State<_PageVisualizer> {
-  int _currentPage;
-
-  @override
-  void initState() {
-    super.initState();
-    if ((widget.controller?.hasClients ?? false) &&
-        (widget.controller?.page != null ?? false)) {
-      _currentPage = widget.controller.page.round() + 1;
-    } else {
-      _currentPage = widget.controller.initialPage + 1;
-    }
-    widget.controller?.addListener(_updatePagination);
-  }
-
-  @override
-  void didUpdateWidget(covariant _PageVisualizer oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.controller != oldWidget.controller) {
-      oldWidget.controller?.removeListener(_updatePagination);
-      widget.controller?.addListener(_updatePagination);
-    }
-  }
-
-  void _updatePagination() {
-    int currentPage;
-    if ((widget.controller?.hasClients ?? false) &&
-        (widget.controller?.page != null ?? false)) {
-      currentPage = widget.controller.page.round() + 1;
-      if (currentPage != _currentPage)
-        setState(() => _currentPage = currentPage);
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    widget.controller?.removeListener(_updatePagination);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      type: MaterialType.transparency,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Consumer(
-          builder: (context, watch, child) {
-            final title = watch(titleProvider);
-            final maxPage = watch(dealsProvider(title).state).length;
-            return Text(
-              ' $_currentPage / $maxPage ',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.subtitle1.apply(
-                backgroundColor: Theme.of(context).canvasColor,
-              ),
-            );
-          },
-        ),
       ),
     );
   }

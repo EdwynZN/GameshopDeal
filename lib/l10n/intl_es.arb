@@ -373,9 +373,34 @@
         "type": "texto",
         "description": "Botón para guardar la oferta"
     },
+    "remove_deal": "Remover oferta",
+    "@remove_deal": {
+        "type": "texto",
+        "description": "Botón para quitar la oferta de la lista de guardados"
+    },
     "go_to_deal": "Ir a oferta",
     "@go_to_deal": {
         "type": "texto",
         "description": "Botón para ir a la oferta"
+    },
+    "dio_error": "{error, select, CANCEL{La petición fue cancelada} CONNECT_TIMEOUT{Tiempo de conexión excedido: Conexión inestable o lenta} RECEIVE_TIMEOUT{El servidor esta tardando en responder} SEND_TIMEOUT{Conexión inestable o lenta} other{{message}}}",
+    "@dio_error": {
+        "type": "DioErrorType",
+        "description": "DioErrorType",
+        "placeholders": {
+            "error": {
+                "example": "DioErrorType.CANCEL",
+                "description": "Enum type of DioErrorType"
+            },
+            "message": {
+                "example": "error message from stacktrace",
+                "description": "Error message from DioError"
+            }
+        }
+    },
+    "connection_error": "Sin Internet",
+    "@connection_error": {
+        "type": "texto",
+        "description": "mensaje de error cuando no hay conexión a internet, esta en modo avión, etc."
     }
   }

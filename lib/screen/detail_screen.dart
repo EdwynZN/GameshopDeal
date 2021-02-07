@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gameshop_deals/riverpod/deal_provider.dart'
-    hide storesProvider, singleStoreProvider;
-import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/widget/deal_widget.dart';
 import 'package:gameshop_deals/widget/view_deal/swipe_page.dart';
 
@@ -14,14 +11,8 @@ class DetailDealScreen extends StatelessWidget {
     return SafeArea(
       child: Consumer(
         builder: (ctx, watch, _) {
-          final String title = watch(titleProvider);
-          final int childCount = watch(dealsProvider(title).state).length;
           final int indexOffset = watch(indexDeal);
-          return _DetailPageView(
-            offset: indexOffset,
-            childCount: childCount,
-            title: title,
-          );
+          return _DetailPageView(offset: indexOffset);
         },
       ),
     );
@@ -30,11 +21,8 @@ class DetailDealScreen extends StatelessWidget {
 
 class _DetailPageView extends StatefulWidget {
   final int offset;
-  final int childCount;
-  final String title;
 
-  const _DetailPageView({Key key, this.offset, this.childCount, this.title})
-      : super(key: key);
+  const _DetailPageView({Key key, this.offset}) : super(key: key);
 
   @override
   __DetailPageViewState createState() => __DetailPageViewState();
@@ -58,9 +46,7 @@ class __DetailPageViewState extends State<_DetailPageView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PageDeal(
-        controller: pageController,
-      ),
+      body: PageDeal(controller: pageController),
       bottomNavigationBar: PageVisualizer(controller: pageController),
     );
   }

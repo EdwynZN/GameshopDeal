@@ -214,7 +214,7 @@
         "type": "text",
         "description": "Descending order"
     },
-    "review": "{review, select, Overwhelmingly_Negative {Overwhelmingly Negative} Very_Negative {Very Negative} Negative {Negative} Mostly_Negative {Mostly Negative} Mixed {Mixed} Mostly_Positive {Mostly Positive} Positive {Positive} Very_Positive {Very Positive} Overwhelmingly_Positive {Overwhelmingly Positive} other {Unknown}}",
+    "review": "{review, select, Overwhelmingly_Negative {Overwhelmingly Negative} Very_Negative {Very Negative} Negative {Negative} Mostly_Negative {Mostly Negative} Mixed {Mixed} Mostly_Positive {Mostly Positive} Positive {Positive} Very_Positive {Very Positive} Overwhelmingly_Positive {Overwhelmingly Positive} other {{review}}}",
     "@review": {
         "type": "multiple choice",
         "description": "String representing the reviews of the game",
@@ -373,9 +373,34 @@
         "type": "text",
         "description": "Save Deal text button"
     },
+    "remove_deal": "Remove Deal",
+    "@remove_deal": {
+        "type": "text",
+        "description": "Remove Deal text button"
+    },
     "go_to_deal": "Go to Deal",
     "@go_to_deal": {
         "type": "text",
         "description": "Go to Deal text button"
+    },
+    "dio_error": "{error, select, CANCEL{Request has been canceled} CONNECT_TIMEOUT{Connection Timeout: very slow connection} RECEIVE_TIMEOUT{Server took too long to respond} SEND_TIMEOUT{Send Timeout, might want to try with a better connection} other{{message}}}",
+    "@dio_error": {
+        "type": "DioErrorType",
+        "description": "DioErrorType",
+        "placeholders": {
+            "error": {
+                "example": "DioErrorType.CANCEL",
+                "description": "Enum type of DioErrorType"
+            },
+            "message": {
+                "example": "error message from stacktrace",
+                "description": "Error message from DioError"
+            }
+        }
+    },
+    "connection_error": "No Internet connection",
+    "@connection_error": {
+        "type": "text",
+        "description": "error mesage displaying when there is no internet connection"
     }
   }

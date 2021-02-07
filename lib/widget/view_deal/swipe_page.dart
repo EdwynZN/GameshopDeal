@@ -3,6 +3,8 @@ import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gameshop_deals/utils/preferences_constants.dart';
+import 'package:gameshop_deals/widget/display_deal/saved_deal_button.dart';
 import 'package:gameshop_deals/widget/display_deal/thumb_image.dart';
 import 'package:gameshop_deals/widget/radial_progression.dart';
 import 'package:gameshop_deals/widget/store_deal_widget.dart';
@@ -185,7 +187,7 @@ class _Stats extends ConsumerWidget {
             ),
             onPressed: () async {
               final Uri _steamLink = Uri.https(
-                'store.steampowered.com',
+                steamUrl,
                 '/app/${deal.steamAppId}',
               );
               print(_steamLink.toString());
@@ -228,15 +230,12 @@ class _Stats extends ConsumerWidget {
               }),
             ),
             onPressed: () async {
-              final Uri _metacriticLink = Uri.http(
-                'www.metacritic.com',
+              final Uri _metacriticLink = Uri.https(
+                metacriticUrl,
                 deal.metacriticLink,
               );
               if (await canLaunch(_metacriticLink.toString())) {
-                await launch(
-                  _metacriticLink.toString(),
-                  forceWebView: true,
-                );
+                await launch(_metacriticLink.toString());
               } else {
                 Scaffold.of(context).showSnackBar(
                   SnackBar(content: Text('Error Launching url')),
@@ -286,27 +285,12 @@ class _ButtonsDeal extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final S translate = S.of(context);
     final deal = watch(singleDeal);
     assert(deal != null);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Expanded(
-          child: OutlinedButton.icon(
-            icon: const Icon(Icons.remove_red_eye),
-            label: Flexible(
-              child: Text(
-                translate.save_deal,
-                overflow: TextOverflow.fade,
-                softWrap: false,
-              ),
-            ),
-            onPressed: () {
-              print('saved');
-            },
-          ),
-        ),
+        Expanded(child: const SavedDealButton(),),
         if (deal.steamAppId != null) ...[
           const SizedBox(width: 8.0),
           Expanded(
@@ -314,7 +298,7 @@ class _ButtonsDeal extends ConsumerWidget {
               icon: const Icon(Icons.computer),
               label: const Text('PC Wiki'),
               onPressed: () async {
-                final Uri _pcGamingWikiUri = Uri.http('pcgamingwiki.com',
+                final Uri _pcGamingWikiUri = Uri.https(pcWikiUrl,
                     '/api/appid.php', {'appid': deal.steamAppId});
                 if (await canLaunch(_pcGamingWikiUri.toString())) {
                   await launch(_pcGamingWikiUri.toString());
