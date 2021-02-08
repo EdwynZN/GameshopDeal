@@ -70,8 +70,7 @@ class SavedTextDealButton extends ConsumerWidget {
   Widget build(BuildContext context, ScopedReader watch) {
     final S translate = S.of(context);
     final deal = watch(singleDeal);
-    assert(
-        deal != null && deal.gameId != null, 'A deal ought to have a gameId');
+    assert(deal != null && deal.gameId != null, 'A deal ought to have a gameId');
     final savedDeal = watch(savedStreamProvider(deal.gameId));
     return savedDeal.maybeWhen(
       orElse: () =>
@@ -83,7 +82,7 @@ class SavedTextDealButton extends ConsumerWidget {
       data: (isSaved) {
         if (!isSaved) {
           return TextButton.icon(
-            icon: const Icon(Icons.remove_red_eye),
+            icon: const Icon(Icons.remove_red_eye_outlined),
             label: Flexible(
               child: Text(
                 translate.save_deal,
@@ -108,7 +107,7 @@ class SavedTextDealButton extends ConsumerWidget {
           );
         }
         return TextButton.icon(
-          icon: const Icon(Icons.compass_calibration_rounded),
+          icon: const Icon(Icons.remove_red_eye),
           label: Flexible(
             child: Text(
               translate.remove_deal,

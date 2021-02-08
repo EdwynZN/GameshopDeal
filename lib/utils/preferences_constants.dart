@@ -1,29 +1,32 @@
 /// ThemeMode Preferences (Light or Dark)
-const String sharedThemeMode = 'ThemeMode';
-
-/// Light Theme Preferences
-const String sharedLightTheme = 'lightColor';
-
-/// Dark Theme Preferences
-const String sharedDarkTheme = 'darkColor';
+const String themeModeKey = 'ThemeMode';
 
 /// Cache Key for Stores
-const String cacheKeyStores = 'stores';
+const String cacheKeyStores = 'Stores';
 
 /// Cache Key for Deals
-const String cacheKeyDeals = 'deals';
+const String cacheKeyDeals = 'Deals';
 
-/// Cache Key for Deals
-const String searchHistoryKey = 'SearchHistory';
+/// Hive Box for SearchHistory
+const String searchHistoryHiveBox = 'SearchHistory';
+
+/// Hive Key for Filter in HiveBox Preferences
+const String filterKey = 'Filter';
+
+/// Hive Key for Deal View in HiveBox Preferences
+const String viewKey = 'DealView';
+
+/// Preference Key for Deals in HiveBox Preferences
+const String preferenceKey = 'Preference';
 
 /// CheapShark url
 const String cheapsharkUrl = 'https://www.cheapshark.com';
 
-/// PCWiki url
-const String metacriticUrl = 'metacritic.com';
+/// Metacritic url
+const String metacriticUrl = 'www.metacritic.com';
 
 /// PCWiki url
-const String pcWikiUrl = 'pcgamingwiki.com';
+const String pcWikiUrl = 'www.pcgamingwiki.com';
 
 /// Steam url
 const String steamUrl = 'store.steampowered.com';

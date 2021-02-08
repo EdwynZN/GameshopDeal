@@ -40,7 +40,6 @@ class AppSearchDelegate extends SearchDelegate<String> {
         IconButton(
           icon: const Icon(Icons.close),
           tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
-          //tooltip: S.of(context).clear_tooltip,
           onPressed: () {
             query = '';
             showSuggestions(context);
@@ -61,12 +60,24 @@ class AppSearchDelegate extends SearchDelegate<String> {
         slivers: [
           if (trimmed.isEmpty)
             SliverPadding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
               sliver: SliverToBoxAdapter(
-                child: Text(
-                  translate.recent_searches,
-                  style: Theme.of(context).textTheme.bodyText1,
+                child: ListTile(
+                  title: Text(
+                    translate.recent_searches,
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.clear_all),
+                    tooltip: translate.clear_tooltip,
+                    onPressed: () async {
+                      final box = await context.read(searchBox.future);
+                      if (box != null && box.isOpen) {
+                        await box.clear();
+                        context.refresh(suggestions(trimmed));
+                      }
+                    },
+                  ),
                 ),
               ),
             ),
@@ -80,7 +91,7 @@ class AppSearchDelegate extends SearchDelegate<String> {
             ),
             SliverPadding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
               sliver: SliverToBoxAdapter(
                 child: Text(
                   translate.suggested_searches,

@@ -3,6 +3,7 @@ import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gameshop_deals/riverpod/preference_provider.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:gameshop_deals/widget/display_deal/saved_deal_button.dart';
 import 'package:gameshop_deals/widget/display_deal/thumb_image.dart';
@@ -77,11 +78,13 @@ class _SwipePage extends StatelessWidget {
           ),
         ),
         const SliverToBoxAdapter(child: Divider()),
-        const _DealListWidget(),
-        /* const SliverFillRemaining(
-          hasScrollBody: false,
-          child: const SizedBox(height: 80.0),
+        /* const SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          sliver: const SliverToBoxAdapter(
+            child: const _Stats(),
+          ),
         ), */
+        const _DealListWidget(),
       ],
     );
   }
@@ -192,8 +195,11 @@ class _Stats extends ConsumerWidget {
               );
               print(_steamLink.toString());
               if (await canLaunch(_steamLink.toString())) {
+                final bool webView = context.read(preferenceProvider.state).webView;
                 await launch(
                   _steamLink.toString(),
+                  forceWebView: webView,
+                  enableJavaScript: webView,
                 );
               } else {
                 Scaffold.of(context).showSnackBar(
@@ -235,7 +241,8 @@ class _Stats extends ConsumerWidget {
                 deal.metacriticLink,
               );
               if (await canLaunch(_metacriticLink.toString())) {
-                await launch(_metacriticLink.toString());
+                final bool webView = context.read(preferenceProvider.state).webView;
+                await launch(_metacriticLink.toString(), forceWebView: webView, enableJavaScript: webView);
               } else {
                 Scaffold.of(context).showSnackBar(
                   SnackBar(content: Text('Error Launching url')),
@@ -301,7 +308,8 @@ class _ButtonsDeal extends ConsumerWidget {
                 final Uri _pcGamingWikiUri = Uri.https(pcWikiUrl,
                     '/api/appid.php', {'appid': deal.steamAppId});
                 if (await canLaunch(_pcGamingWikiUri.toString())) {
-                  await launch(_pcGamingWikiUri.toString());
+                  final bool webView = context.read(preferenceProvider.state).webView;
+                  await launch(_pcGamingWikiUri.toString(), forceWebView: webView, enableJavaScript: webView);
                 } else {
                   Scaffold.of(context).showSnackBar(
                     SnackBar(content: Text('Error Launching url')),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/all.dart';
-import 'package:gameshop_deals/riverpod/preference_provider.dart';
+import 'package:gameshop_deals/riverpod/hive_preferences_provider.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
 
 class PreferenceDialog<T extends Object> extends StatefulWidget {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart' show singleDeal;
+import 'package:gameshop_deals/riverpod/preference_provider.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:gameshop_deals/widget/display_deal/price_widget.dart';
 import 'package:gameshop_deals/widget/display_deal/store_avatar.dart';
@@ -27,7 +28,8 @@ class StoreDealGrid extends ConsumerWidget {
       onPressed: () async {
         String _dealLink = '${cheapsharkUrl}/redirect?dealID=${deal.dealId}';
         if (await canLaunch(_dealLink)) {
-          await launch(_dealLink);
+          final bool webView = context.read(preferenceProvider.state).webView;
+          await launch(_dealLink, forceWebView: webView, enableJavaScript: webView);
         } else {
           Scaffold.of(context).showSnackBar(
             SnackBar(content: Text('Error Launching url')),
@@ -72,7 +74,8 @@ class StoreDealTile extends ConsumerWidget {
           String _dealLink =
               'https://www.cheapshark.com/redirect?dealID=${deal.dealId}';
           if (await canLaunch(_dealLink)) {
-            await launch(_dealLink);
+            final bool webView = context.read(preferenceProvider.state).webView;
+            await launch(_dealLink, forceWebView: webView, enableJavaScript: webView);
           } else {
             Scaffold.of(context).showSnackBar(
                 SnackBar(content: Text('Error Launching url: $_dealLink')));

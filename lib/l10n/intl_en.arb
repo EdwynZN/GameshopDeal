@@ -90,6 +90,21 @@
         "type": "text",
         "description": "settings option"
     },
+    "internal_browser_checkbox": "Internal Browser",
+    "@internal_browser_checkbox": {
+        "type": "text",
+        "description": "Internal Browser checkbox to decide if use an external or internal app to navigate"
+    },
+    "notifications": "Notifications",
+    "@notifications": {
+        "type": "text",
+        "description": "Notifications option"
+    },
+    "theme_title": "Themes",
+    "@theme_title": {
+        "type": "text",
+        "description": "Themes option"
+    },
     "filter_tooltip": "Open filter menu",
     "@filter_tooltip": {
         "type": "text",
@@ -327,6 +342,11 @@
         "type": "text",
         "description": "clear cache"
     },
+    "cache_subtitle": "Clear images cache, recent searches, etc.",
+    "@cache_subtitle": {
+        "type": "text",
+        "description": "description of what is cached and deleted"
+    },
     "cache_dialog_title": "Are you sure?",
     "@cache_dialog_title": {
         "type": "text",
@@ -402,5 +422,15 @@
     "@connection_error": {
         "type": "text",
         "description": "error mesage displaying when there is no internet connection"
+    },
+    "soon": "Soon",
+    "@soon": {
+        "type": "text",
+        "description": "soon"
+    },
+    "privacy_policy": "Privacy Policy",
+    "@privacy_policy": {
+        "type": "text",
+        "description": "Privacy Policy text button"
     }
   }

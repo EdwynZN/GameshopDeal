@@ -90,6 +90,21 @@
         "type": "texto",
         "description": "Opciones"
     },
+    "internal_browser_checkbox": "Navegador Interno",
+    "@internal_browser_checkbox": {
+        "type": "text",
+        "description": "casilla para seleccionar navegador interno o externo"
+    },
+    "notifications": "Notificaciones",
+    "@notifications": {
+        "type": "texto",
+        "description": "Título de notifications"
+    },
+    "theme_title": "Temas",
+    "@theme_title": {
+        "type": "texto",
+        "description": "Temas"
+    },
     "filter_tooltip": "Abrir menu de filtros",
     "@filter_tooltip": {
         "type": "texto",
@@ -113,13 +128,13 @@
     },
     "first_tooltip": "Primero",
     "@first_tooltip": {
-        "type": "text",
+        "type": "texto",
         "context": "PageView: NavigationBar Button",
         "description": "button to go to the beginning of the list"
     },
     "last_tooltip": "Último",
     "@last_tooltip": {
-        "type": "text",
+        "type": "texto",
         "context": "PageView: NavigationBar Button",
         "description": "button to go to the last deal of the list"
     },
@@ -159,10 +174,10 @@
         "type": "texto",
         "description": "texto dentro del chip expecificando todas las tiendas"
     },
-    "apply_filter": "Guardar",
+    "apply_filter": "Aplicar",
     "@apply_filter": {
         "type": "texto",
-        "description": "Bot'on para guardar filtro"
+        "description": "Botón para guardar/aplicar filtro"
     },
     "on_sale": "En venta",
     "@on_sale": {
@@ -327,6 +342,11 @@
         "type": "texto",
         "description": "Borrar cache"
     },
+    "cache_subtitle": "Borrar imágenes en cache, búsquedas recientes, etc.",
+    "@cache_subtitle": {
+        "type": "texto",
+        "description": "descripción de que es borrado"
+    },
     "cache_dialog_title": "Estas seguro?",
     "@cache_dialog_title": {
         "type": "texto",
@@ -402,5 +422,15 @@
     "@connection_error": {
         "type": "texto",
         "description": "mensaje de error cuando no hay conexión a internet, esta en modo avión, etc."
+    },
+    "soon": "Próximamente",
+    "@soon": {
+        "type": "texto",
+        "description": "Próximamente"
+    },
+    "privacy_policy": "Política de Privacidad",
+    "@privacy_policy": {
+        "type": "texto",
+        "description": "Título del botón de Política de Privacidad"
     }
   }

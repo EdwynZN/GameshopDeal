@@ -5,7 +5,7 @@ import 'package:gameshop_deals/utils/preferences_constants.dart';
 final searchSyncBox = Provider.autoDispose<Box<String>>((ref) {
   Box<String> box;
 
-  if (Hive.isBoxOpen(searchHistoryKey)) box = Hive.box<String>(searchHistoryKey);
+  if (Hive.isBoxOpen(searchHistoryHiveBox)) box = Hive.box<String>(searchHistoryHiveBox);
 
   ref.onDispose(() async => await box?.close());
 
@@ -15,10 +15,10 @@ final searchSyncBox = Provider.autoDispose<Box<String>>((ref) {
 final searchBox = FutureProvider.autoDispose<Box<String>>((ref) async {
   Box<String> box;
 
-  if (Hive.isBoxOpen(searchHistoryKey))
-    box = Hive.box<String>(searchHistoryKey);
+  if (Hive.isBoxOpen(searchHistoryHiveBox))
+    box = Hive.box<String>(searchHistoryHiveBox);
   else
-    box = await Hive.openBox<String>(searchHistoryKey);
+    box = await Hive.openBox<String>(searchHistoryHiveBox);
 
   ref.onDispose(() async => await box?.close());
 

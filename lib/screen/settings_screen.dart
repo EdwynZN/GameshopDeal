@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/cache_manager_provider.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
+import 'package:gameshop_deals/riverpod/theme_provider.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
+import 'package:gameshop_deals/widget/dialog_preference_provider.dart';
+import 'package:gameshop_deals/widget/preference/webview.dart';
 import 'package:hive/hive.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -10,8 +13,12 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final S translate = S.of(context);
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          title: Text(translate.settings),
+        ),
         body: Theme(
           data: Theme.of(context).copyWith(
             dividerColor: Colors.transparent,
@@ -25,31 +32,37 @@ class SettingsScreen extends StatelessWidget {
                       leading: const Icon(Icons.settings_applications_outlined),
                       title: const Text('General'),
                       children: [
-                        for (int i = 0; i < 15; i++)
-                          CheckboxListTile(
-                            dense: true,
-                            value: true,
-                            onChanged: print,
-                            title: const Text('General'),
-                          ),
+                        const WebViewPreference(),
                       ],
                     ),
                   ),
-                  const _CardSettings(
-                      child: ListTile(
-                    leading: const Icon(Icons.settings_applications_outlined),
-                    title: const Text('General'),
-                  )),
-                  const _CardSettings(
-                      child: ListTile(
-                    leading: const Icon(Icons.palette_outlined),
-                    title: const Text('Themes'),
-                  )),
-                  const _CardSettings(
-                      child: ListTile(
-                    leading: const Icon(Icons.notifications_on_outlined),
-                    title: const Text('Notifications'),
-                  )),
+                  _CardSettings(
+                    child: ListTile(
+                      leading: const Icon(Icons.palette_outlined),
+                      title: Text(translate.theme_title),
+                      onTap: () async {
+                        final S translate = S.of(context);
+                        final ThemeMode mode = await showDialog<ThemeMode>(
+                          context: context,
+                          builder: (_) => PreferenceDialog<ThemeMode>(
+                            title: translate.choose_theme,
+                            provider: themeProvider,
+                            values: ThemeMode.values,
+                          ),
+                        );
+                        if (mode != null)
+                          context.read(themeProvider).changeState(mode);
+                      },
+                    ),
+                  ),
+                  _CardSettings(
+                    child: ListTile(
+                      enabled: false,
+                      leading: const Icon(Icons.notifications_on_outlined),
+                      title: Text(translate.notifications),
+                      subtitle: Text(translate.soon),
+                    ),
+                  ),
                   const _CardSettings(child: const _ClearCacheWidget()),
                   _CardSettings(
                     child: AboutListTile(
@@ -57,18 +70,19 @@ class SettingsScreen extends StatelessWidget {
                       applicationIcon: CircleAvatar(
                         radius: IconTheme.of(context).size / 2,
                         backgroundColor: Colors.transparent,
-                        backgroundImage: const AssetImage('assets/thumbnails/icon_app.png'),
+                        backgroundImage:
+                            const AssetImage('assets/thumbnails/icon_app.png'),
                       ),
                       aboutBoxChildren: [
                         TextButton.icon(
                           onPressed: () => print('hey'),
                           icon: const Icon(Icons.privacy_tip_outlined),
-                          label: Text('Privacy Policy'),
+                          label: Text(translate.privacy_policy),
                         ),
                         TextButton.icon(
                           onPressed: () => print('hey'),
                           icon: const Icon(Icons.code_outlined),
-                          label: Text('Github Code'),
+                          label: Text('Github'),
                         ),
                       ],
                       applicationName: 'Gameshop',
@@ -78,8 +92,9 @@ class SettingsScreen extends StatelessWidget {
               ),
               SliverFillRemaining(
                 hasScrollBody: false,
-                child: SizedBox(
-                  height: 0, 
+                child: Container(
+                  height: 0,
+                  padding: EdgeInsets.all(12.0),
                   child: Image.asset('assets/thumbnails/icon_app.png'),
                 ),
               ),
@@ -100,8 +115,9 @@ class _ClearCacheWidget extends StatelessWidget {
     return ListTile(
       leading: const Icon(Icons.delete_outline_outlined),
       title: Text(translate.cache_title),
+      subtitle: Text(translate.cache_subtitle),
       onTap: () async {
-        bool clear = await showDialog<bool>(
+        final bool clear = await showDialog<bool>(
           context: context,
           child: const _CacheDialog(),
         );
@@ -113,7 +129,7 @@ class _ClearCacheWidget extends StatelessWidget {
           await context
               .read(cacheManagerFamilyProvider(cacheKeyStores))
               .emptyCache();
-          final box = await Hive.openBox<String>(searchHistoryKey);
+          final box = await Hive.openBox<String>(searchHistoryHiveBox);
           if (box.isOpen && box.isNotEmpty) await box.clear();
           if (scaffold?.mounted ?? false) {
             scaffold?.hideCurrentSnackBar();

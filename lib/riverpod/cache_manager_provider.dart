@@ -6,14 +6,18 @@ import 'package:dio/dio.dart';
 final cacheManagerFamilyProvider =
     Provider.autoDispose.family<CacheManager, String>((ref, key) {
   final dioInstance = Dio();
-
-  ref.onDispose(() => dioInstance..clear()..close());
-
-  return CacheManager(
+  final cacheManager = CacheManager(
     Config(key,
-        stalePeriod: const Duration(days: 7),
-        maxNrOfCacheObjects: 600,
-        fileService: DioFileService(dioClient: dioInstance)
-        ),
+      stalePeriod: const Duration(days: 7),
+      maxNrOfCacheObjects: 600,
+      fileService: DioFileService(dioClient: dioInstance),
+    ),
   );
+
+  ref.onDispose(() async {
+    dioInstance..clear()..close();
+    cacheManager.dispose();
+  });
+
+  return cacheManager;
 }, name: 'Cache Manager');

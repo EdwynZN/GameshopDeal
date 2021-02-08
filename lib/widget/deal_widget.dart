@@ -4,6 +4,7 @@ import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/model/sort_by_enum.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart' show singleDeal;
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
+import 'package:gameshop_deals/riverpod/preference_provider.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:gameshop_deals/utils/routes_constants.dart';
 import 'package:gameshop_deals/widget/display_deal/metacritic.dart';
@@ -518,9 +519,12 @@ class _BottomSheetButtonsDeal extends ConsumerWidget {
               ),
               label: Text(translate.go_to_deal),
               onPressed: () async {
-                String _dealLink = '${cheapsharkUrl}/redirect?dealID=${deal.dealId}';
-                if (await canLaunch(_dealLink)) 
-                  await launch(_dealLink);
+                String _dealLink =
+                    '${cheapsharkUrl}/redirect?dealID=${deal.dealId}';
+                if (await canLaunch(_dealLink)) {
+                  final bool webView = context.read(preferenceProvider.state).webView;
+                  await launch(_dealLink, forceWebView: webView, enableJavaScript: webView);
+                }
               },
             ),
             if (steamAppId != null) ...[
@@ -533,7 +537,8 @@ class _BottomSheetButtonsDeal extends ConsumerWidget {
                     '/app/${deal.steamAppId}',
                   );
                   if (await canLaunch(_steamLink.toString())) {
-                    await launch(_steamLink.toString());
+                    final bool webView = context.read(preferenceProvider.state).webView;
+                    await launch(_steamLink.toString(), forceWebView: webView, enableJavaScript: webView);
                   }
                 },
               ),
@@ -541,10 +546,11 @@ class _BottomSheetButtonsDeal extends ConsumerWidget {
                 icon: const Icon(Icons.computer),
                 label: const Text('PC Wiki'),
                 onPressed: () async {
-                  final Uri _pcGamingWikiUri = Uri.https(pcWikiUrl,
-                      '/api/appid.php', {'appid': steamAppId});
+                  final Uri _pcGamingWikiUri = Uri.https(
+                      pcWikiUrl, '/api/appid.php', {'appid': steamAppId});
                   if (await canLaunch(_pcGamingWikiUri.toString())) {
-                    await launch(_pcGamingWikiUri.toString());
+                    final bool webView = context.read(preferenceProvider.state).webView;
+                    await launch(_pcGamingWikiUri.toString(), forceWebView: webView, enableJavaScript: webView);
                   }
                 },
               ),
@@ -563,8 +569,11 @@ class _BottomSheetButtonsDeal extends ConsumerWidget {
                     metacriticLink,
                   );
                   if (await canLaunch(_metacriticLink.toString())) {
+                    final bool webView = context.read(preferenceProvider.state).webView;
                     await launch(
                       _metacriticLink.toString(),
+                      forceWebView: webView,
+                      enableJavaScript: webView,
                     );
                   }
                 },

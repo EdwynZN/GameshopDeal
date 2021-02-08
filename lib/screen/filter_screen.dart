@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
-import 'package:gameshop_deals/riverpod/preference_provider.dart';
+import 'package:gameshop_deals/riverpod/hive_preferences_provider.dart';
+import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:gameshop_deals/widget/filter/flag_filter.dart';
 import 'package:gameshop_deals/widget/filter/metacritic.dart';
 import 'package:gameshop_deals/widget/filter/price_slider.dart';
@@ -33,29 +34,24 @@ class FilterPage extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
-        DecoratedBox(
-          decoration: BoxDecoration(
-            border: Border(
-              bottom:
-                BorderSide(width: 1, color: Theme.of(context).dividerColor),
-            ),
+        AppBar(
+          primary: false,
+          titleSpacing: 0.0,
+          shape: Border(
+            bottom: BorderSide(width: 1, color: Theme.of(context).dividerColor),
           ),
-          child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-            leading: const CloseButton(),
-            title: Text(translate.filter,
-              style: Theme.of(context).textTheme.headline3),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const _SaveButton(),
-                const _RestartButton(),
-              ],
-            ),
+          leading: const CloseButton(),
+          title: Text(translate.filter,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
+          actions: [
+            const _SaveButton(),
+            const _RestartButton(),
+          ],
         ),
         Expanded(
-            child: CustomScrollView(
+          child: CustomScrollView(
           slivers: <Widget>[
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -104,8 +100,7 @@ class FilterPage extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             border: Border(
-              top:
-                  BorderSide(width: 1, color: Theme.of(context).dividerColor),
+              top: BorderSide(width: 1, color: Theme.of(context).dividerColor),
             ),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -123,15 +118,15 @@ class _SaveButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final title = watch(titleProvider);
-    final S translate = S.of(context);
+    //final S translate = S.of(context);
     return IconButton(
       icon: const Icon(Icons.save_outlined),
-      tooltip: translate.apply_filter,
+      tooltip: MaterialLocalizations.of(context).saveButtonLabel,
       onPressed: () async {
-        final preferedBox = context.read(preferencesProvider);
+        final preferedBox = context.read(hivePreferencesProvider);
         final StateController<Filter> filterCopy =
-          context.read(filterProviderCopy(title));
-        await preferedBox.put('filter', filterCopy.state);
+            context.read(filterProviderCopy(title));
+        await preferedBox.put(filterKey, filterCopy.state);
       },
     );
   }
@@ -147,13 +142,7 @@ class _RestartButton extends ConsumerWidget {
     return IconButton(
       icon: const Icon(Icons.refresh),
       tooltip: translate.restart_tooltip,
-      onPressed: () {
-        final StateController<Filter> filterCopy =
-            context.read(filterProviderCopy(title));
-        final StateController<Filter> filter =
-            context.read(filterProvider(title));
-        filterCopy.state = filter.state;
-      },
+      onPressed: () => context.refresh(filterProviderCopy(title)),
     );
   }
 }
@@ -168,8 +157,9 @@ class _ApplyButton extends ConsumerWidget {
     return ElevatedButton(
       onPressed: () {
         final StateController<Filter> filterCopy =
-          context.read(filterProviderCopy(title));
-        final StateController<Filter> filter = context.read(filterProvider(title));
+            context.read(filterProviderCopy(title));
+        final StateController<Filter> filter =
+            context.read(filterProvider(title));
         if (filter.state == filterCopy.state) return;
         filter.state = filterCopy.state.copyWith();
         Navigator.maybePop(context);

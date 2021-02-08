@@ -223,6 +223,36 @@ class S {
     );
   }
 
+  /// `Internal Browser`
+  String get internal_browser_checkbox {
+    return Intl.message(
+      'Internal Browser',
+      name: 'internal_browser_checkbox',
+      desc: 'Internal Browser checkbox to decide if use an external or internal app to navigate',
+      args: [],
+    );
+  }
+
+  /// `Notifications`
+  String get notifications {
+    return Intl.message(
+      'Notifications',
+      name: 'notifications',
+      desc: 'Notifications option',
+      args: [],
+    );
+  }
+
+  /// `Themes`
+  String get theme_title {
+    return Intl.message(
+      'Themes',
+      name: 'theme_title',
+      desc: 'Themes option',
+      args: [],
+    );
+  }
+
   /// `Open filter menu`
   String get filter_tooltip {
     return Intl.message(
@@ -598,6 +628,16 @@ class S {
     );
   }
 
+  /// `Clear images cache, recent searches, etc.`
+  String get cache_subtitle {
+    return Intl.message(
+      'Clear images cache, recent searches, etc.',
+      name: 'cache_subtitle',
+      desc: 'description of what is cached and deleted',
+      args: [],
+    );
+  }
+
   /// `Are you sure?`
   String get cache_dialog_title {
     return Intl.message(
@@ -721,6 +761,26 @@ class S {
       'No Internet connection',
       name: 'connection_error',
       desc: 'error mesage displaying when there is no internet connection',
+      args: [],
+    );
+  }
+
+  /// `Soon`
+  String get soon {
+    return Intl.message(
+      'Soon',
+      name: 'soon',
+      desc: 'soon',
+      args: [],
+    );
+  }
+
+  /// `Privacy Policy`
+  String get privacy_policy {
+    return Intl.message(
+      'Privacy Policy',
+      name: 'privacy_policy',
+      desc: 'Privacy Policy text button',
       args: [],
     );
   }

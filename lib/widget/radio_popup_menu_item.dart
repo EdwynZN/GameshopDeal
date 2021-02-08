@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/all.dart';
-import 'package:gameshop_deals/riverpod/preference_provider.dart';
+import 'package:gameshop_deals/riverpod/hive_preferences_provider.dart';
 
 class RadioPopupMenuItem<T extends Object> extends PopupMenuItem<T> {
   const RadioPopupMenuItem({

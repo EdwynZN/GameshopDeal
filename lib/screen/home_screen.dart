@@ -109,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return SafeArea(
       child: Scaffold(
         appBar: widget.search ? const SearchAppBar() : const HomeAppBar(),
-        endDrawer: !isTablet ? const FilterScreen() : null,
+        endDrawer: isTablet ? const FilterScreen() : null,
         body: ProviderListener<AsyncValue>(
           onChange: (context, deal) {
             if (!mounted) return;
