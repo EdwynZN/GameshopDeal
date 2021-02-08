@@ -19,14 +19,26 @@ const String viewKey = 'DealView';
 /// Preference Key for Deals in HiveBox Preferences
 const String preferenceKey = 'Preference';
 
-/// CheapShark url
+/// Github Project url: https://github.com
+const String githubUrl = 'github.com';
+
+/// Github Project path: https://github.com/EdwynZN/GameshopDeal
+const String projectPath = '/EdwynZN/GameshopDeal';
+
+/// Github Issue path: https://github.com/EdwynZN/GameshopDeal
+const String issuesPath = '/issues';
+
+/// Privacy Policy path: /blob/main/Privacy Policy.md
+const String privacyPolicyPath = '/blob/main/Privacy Policy.md';
+
+/// CheapShark url: https://www.cheapshark.com
 const String cheapsharkUrl = 'https://www.cheapshark.com';
 
-/// Metacritic url
+/// Metacritic url: www.metacritic.com
 const String metacriticUrl = 'www.metacritic.com';
 
-/// PCWiki url
+/// PCWiki url: www.pcgamingwiki.com
 const String pcWikiUrl = 'www.pcgamingwiki.com';
 
-/// Steam url
+/// Steam url: store.steampowered.com
 const String steamUrl = 'store.steampowered.com';

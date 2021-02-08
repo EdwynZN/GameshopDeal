@@ -99,6 +99,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "refresh" : MessageLookupByLibrary.simpleMessage("Refresh"),
     "release" : m9,
     "remove_deal" : MessageLookupByLibrary.simpleMessage("Remove Deal"),
+    "report_bug" : MessageLookupByLibrary.simpleMessage("Report Bug"),
     "restart_tooltip" : MessageLookupByLibrary.simpleMessage("Restart"),
     "retail_discount" : MessageLookupByLibrary.simpleMessage("Retail discount"),
     "retail_discount_tooltip" : MessageLookupByLibrary.simpleMessage("Games with a current retail price <\$29"),

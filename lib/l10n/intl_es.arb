@@ -432,5 +432,10 @@
     "@privacy_policy": {
         "type": "texto",
         "description": "Título del botón de Política de Privacidad"
+    },
+    "report_bug": "Reportar Error",
+    "@report_bug": {
+        "type": "texto",
+        "description": "Título del botón para reportar un error"
     }
   }

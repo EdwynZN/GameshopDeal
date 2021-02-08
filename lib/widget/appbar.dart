@@ -13,6 +13,9 @@ import 'package:gameshop_deals/utils/routes_constants.dart';
 import 'package:gameshop_deals/widget/dialog_preference_provider.dart';
 import 'package:gameshop_deals/widget/radio_popup_menu_item.dart';
 import 'package:gameshop_deals/widget/search_delegate.dart';
+import 'package:in_app_review/in_app_review.dart';
+
+final InAppReview _inAppReview = InAppReview.instance;
 
 /*
 class HomeAppBar extends StatelessWidget{
@@ -232,7 +235,7 @@ class __MoreSettingsState extends State<_MoreSettings> {
       items: [
         PopupMenuItem<int>(child: Text(translate.deal_view), value: 0),
         PopupMenuItem<int>(child: Text(translate.choose_theme), value: 1),
-        PopupMenuItem<int>(child: Text(translate.feedback), value: 2),
+        PopupMenuItem<int>(child: Text(translate.rate_me), value: 2),
         //PopupMenuItem<int>(child: Text(translate.help), value: 4),
         PopupMenuItem<int>(child: Text(translate.refresh), value: 3),
         PopupMenuItem<int>(child: Text(translate.settings), value: 4),
@@ -331,6 +334,10 @@ class __MoreSettingsState extends State<_MoreSettings> {
                 break;
               case 1:
                 _themeMenu();
+                break;
+              case 2:
+                if (await _inAppReview.isAvailable()) _inAppReview.requestReview();
+                else _inAppReview.openStoreListing();
                 break;
               case 3:
                 context.refresh(dealPageProvider(title));

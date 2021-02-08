@@ -432,5 +432,10 @@
     "@privacy_policy": {
         "type": "text",
         "description": "Privacy Policy text button"
+    },
+    "report_bug": "Report Bug",
+    "@report_bug": {
+        "type": "text",
+        "description": "Report Bug text button"
     }
   }

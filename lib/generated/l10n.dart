@@ -784,6 +784,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Report Bug`
+  String get report_bug {
+    return Intl.message(
+      'Report Bug',
+      name: 'report_bug',
+      desc: 'Report Bug text button',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

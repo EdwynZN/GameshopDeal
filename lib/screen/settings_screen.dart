@@ -7,6 +7,10 @@ import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:gameshop_deals/widget/dialog_preference_provider.dart';
 import 'package:gameshop_deals/widget/preference/webview.dart';
 import 'package:hive/hive.dart';
+import 'package:in_app_review/in_app_review.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+final InAppReview _inAppReview = InAppReview.instance;
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key key}) : super(key: key);
@@ -75,14 +79,39 @@ class SettingsScreen extends StatelessWidget {
                       ),
                       aboutBoxChildren: [
                         TextButton.icon(
-                          onPressed: () => print('hey'),
+                          onPressed: () async {
+                            final url =
+                              Uri.https(githubUrl, projectPath + privacyPolicyPath);
+                            await launch(url.toString());
+                          },
                           icon: const Icon(Icons.privacy_tip_outlined),
                           label: Text(translate.privacy_policy),
                         ),
                         TextButton.icon(
-                          onPressed: () => print('hey'),
+                          onPressed: () async {
+                            final url =
+                              Uri.https(githubUrl, projectPath);
+                            await launch(url.toString());
+                          },
                           icon: const Icon(Icons.code_outlined),
                           label: Text('Github'),
+                        ),
+                        TextButton.icon(
+                          onPressed: () async {
+                            final url =
+                              Uri.https(githubUrl, projectPath + issuesPath);
+                            await launch(url.toString());
+                          },
+                          icon: const Icon(Icons.bug_report_outlined),
+                          label: Text(translate.report_bug),
+                        ),
+                        TextButton.icon(
+                          onPressed: () async {
+                            if (await _inAppReview.isAvailable()) _inAppReview.requestReview();
+                            else _inAppReview.openStoreListing();
+                          },
+                          icon: const Icon(Icons.star),
+                          label: Text(translate.rate_me),
                         ),
                       ],
                       applicationName: 'Gameshop',
