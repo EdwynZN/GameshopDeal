@@ -57,7 +57,7 @@ class _SwipePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
-      primary: true,
+      primary: false,
       slivers: [
         const SliverPadding(
           padding: const EdgeInsets.all(8.0),
@@ -78,12 +78,6 @@ class _SwipePage extends StatelessWidget {
           ),
         ),
         const SliverToBoxAdapter(child: Divider()),
-        /* const SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          sliver: const SliverToBoxAdapter(
-            child: const _Stats(),
-          ),
-        ), */
         const _DealListWidget(),
       ],
     );

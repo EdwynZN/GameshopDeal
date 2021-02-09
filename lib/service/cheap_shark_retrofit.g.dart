@@ -83,19 +83,18 @@ class _DiscountApi implements DiscountApi {
   }
 
   @override
-  getGamesById(id, [cancelToken]) async {
+  getGamesById(id, [options, cancelToken]) async {
     ArgumentError.checkNotNull(id, 'id');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'id': id};
     queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
+    final newOptions = newRequestOptions(options);
+    newOptions.extra.addAll(_extra);
+    newOptions.headers.addAll(<String, dynamic>{});
     final Response<Map<String, dynamic>> _result = await _dio.request('/games',
         queryParameters: queryParameters,
-        options: RequestOptions(
-            method: 'GET',
-            headers: <String, dynamic>{},
-            extra: _extra,
-            baseUrl: baseUrl),
+        options: newOptions.merge(method: 'GET', baseUrl: baseUrl),
         data: _data,
         cancelToken: cancelToken);
     final value = GameLookup.fromJson(_result.data);

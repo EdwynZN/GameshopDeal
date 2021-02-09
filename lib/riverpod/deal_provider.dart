@@ -67,9 +67,20 @@ final dealsProvider = StateNotifierProvider.autoDispose
 final gameDealLookupProvider =
     FutureProvider.autoDispose.family<GameLookup, String>((ref, id) async {
   final cancelToken = CancelToken();
-  ref.onDispose(cancelToken.cancel);
+  final DioCacheManager dioCacheManager =
+      DioCacheManager(CacheConfig(defaultRequestMethod: 'GET'));
+  final dio = ref.watch(dioProvider)
+    ..interceptors.add(dioCacheManager.interceptor);
+  final Options _cacheOptions = buildCacheOptions(null);
 
-  return ref.watch(cheapSharkProvider).getGamesById(id, cancelToken);
+  ref.onDispose(() {
+    cancelToken.cancel();
+    dio..interceptors.remove(dioCacheManager.interceptor);
+  });
+
+  return ref
+    .watch(cheapSharkProvider)
+    .getGamesById(id, _cacheOptions, cancelToken);
 }, name: 'Game Deal Lookup');
 
 final dealsOfGameProvider =
@@ -83,8 +94,8 @@ class _DealListPagination extends StateNotifier<AsyncValue<List<Deal>>> {
   final DiscountApi _api;
   final CancelToken cancelToken;
   _DealListPagination(this.filter, this._api, this.cancelToken)
-      : _parameters = Map<String, dynamic>.of(filter.parameters),
-        super(AsyncValue.loading()) {
+    : _parameters = Map<String, dynamic>.of(filter.parameters),
+      super(AsyncValue.loading()) {
     _parameters.putIfAbsent('pageNumber', () => 0);
     _fetch();
   }

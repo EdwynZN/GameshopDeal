@@ -21,7 +21,7 @@ class Routes {
             builder: (_) => FilterScreen(), settings: settings);
       case homeRoute:
         return materialRoute(
-          child: const MyHomePage(),
+          child: const Home(),
           settings: settings,
         );
       case settingsRoute:
@@ -42,7 +42,7 @@ class Routes {
           settings: settings,
         );
       default:
-        return materialRoute(child: const MyHomePage(), settings: settings);
+        return materialRoute(child: const Home(), settings: settings);
     }
   }
 
@@ -66,7 +66,7 @@ class Routes {
         return materialRoute(
           child: Consumer(builder: (context, watch, _) {
             final title = watch(titleProvider);
-            return MyHomePage.Search(title: title);
+            return Home.Search(title: title);
           }),
           settings: settings,
         );

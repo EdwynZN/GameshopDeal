@@ -34,7 +34,8 @@ abstract class DiscountApi{
   @GET('/games')
   Future<GameLookup> getGamesById(
     @Query('id') String id,
-    [@CancelRequest() CancelToken cancelToken]
+    [@DioOptions() Options options,
+    @CancelRequest() CancelToken cancelToken]
   );
 
   @GET('/games')
