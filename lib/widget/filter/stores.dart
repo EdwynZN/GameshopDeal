@@ -10,9 +10,9 @@ import 'package:gameshop_deals/model/filter.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart' show cheapsharkUrl;
 
-final _storesProvider = ScopedProvider<Set<int>>((watch) {
+final _storesProvider = ScopedProvider<Set<String>>((watch) {
   final title = watch(titleProvider);
-  return watch(filterProviderCopy(title)).state.storeID;
+  return watch(filterProviderCopy(title)).state.storeId;
 }, name: 'Stores ID');
 
 class StoreWidget extends ConsumerWidget {
@@ -22,7 +22,7 @@ class StoreWidget extends ConsumerWidget {
   Widget build(BuildContext context, ScopedReader watch) {
     final S translate = S.of(context);
     final title = watch(titleProvider);
-    final Set<int> storesSelected = watch(_storesProvider);
+    final Set<String> storesSelected = watch(_storesProvider);
     final stores = watch(storesProvider);
     return stores.when(
       loading: () => const Padding(
@@ -44,7 +44,7 @@ class StoreWidget extends ConsumerWidget {
               onSelected: (val) {
                 final StateController<Filter> filter =
                     context.read(filterProviderCopy(title));
-                filter.state = filter.state.copyWith(storeID: <int>{});
+                filter.state = filter.state.copyWith(storeId: const <String>{});
               },
               label: Text(translate.all_choice),
               avatar: const Icon(
@@ -63,16 +63,16 @@ class StoreWidget extends ConsumerWidget {
             ),
             for (Store store in activeStores)
               ChoiceChip(
-                selected: storesSelected.contains(int.tryParse(store.storeId)),
+                selected: storesSelected.contains(store.storeId),
                 onSelected: (val) {
                   final StateController<Filter> filter =
                       context.read(filterProviderCopy(title));
-                  Set<int> set = Set<int>.from(storesSelected);
+                  Set<String> set = Set<String>.from(storesSelected);
                   if (val)
-                    set.add(int.tryParse(store.storeId));
+                    set.add(store.storeId);
                   else
-                    set.remove(int.tryParse(store.storeId));
-                  filter.state = filter.state.copyWith(storeID: set);
+                    set.remove(store.storeId);
+                  filter.state = filter.state.copyWith(storeId: set);
                 },
                 label: Text(store.storeName),
                 avatar: CachedNetworkImage(

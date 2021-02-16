@@ -229,7 +229,7 @@
         "type": "text",
         "description": "Descending order"
     },
-    "review": "{review, select, Overwhelmingly_Negative {Overwhelmingly Negative} Very_Negative {Very Negative} Negative {Negative} Mostly_Negative {Mostly Negative} Mixed {Mixed} Mostly_Positive {Mostly Positive} Positive {Positive} Very_Positive {Very Positive} Overwhelmingly_Positive {Overwhelmingly Positive} other {{review}}}",
+    "review": "{review, select, Overwhelmingly_Negative {Overwhelmingly Negative} Very_Negative {Very Negative} Negative {Negative} Mostly_Negative {Mostly Negative} Mixed {Mixed} Mostly_Positive {Mostly Positive} Positive {Positive} Very_Positive {Very Positive} Overwhelmingly_Positive {Overwhelmingly Positive} null {Unknown} other {{review}}}",
     "@review": {
         "type": "multiple choice",
         "description": "String representing the reviews of the game",
@@ -388,6 +388,16 @@
             }
         }
     },
+    "save_deal_title": "Watchlist",
+    "@save_deal_title": {
+        "type": "text",
+        "description": "Save deal title Appbar"
+    },
+    "save_deal_tooltip": "Open watchlist",
+    "@save_deal_tooltip": {
+        "type": "text",
+        "description": "Save deal tooltip button in Appbar"
+    },
     "save_deal": "Save Deal",
     "@save_deal": {
         "type": "text",
@@ -397,6 +407,26 @@
     "@remove_deal": {
         "type": "text",
         "description": "Remove Deal text button"
+    },
+    "cheapest_ever": "Cheapest Ever: ",
+    "@cheapest_ever": {
+        "type": "text",
+        "description": "Cheapest price ever text"
+    },
+    "cheapest_price_and_date": "${price} on {date}",
+    "@cheapest_price_and_date": {
+        "type": "text",
+        "description": "shows the price and date of the cheapest price ever",
+        "placeholders": {
+            "price": {
+                "example": "19.99",
+                "description": "cheapest price ever of the deal"
+            },
+            "date": {
+                "example": "Dec. 19, 2020",
+                "description": "shortDate of the cheapest price ever"
+            }
+        }
     },
     "go_to_deal": "Go to Deal",
     "@go_to_deal": {

@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
+import 'package:gameshop_deals/screen/detail_game_screen.dart';
 import 'package:gameshop_deals/screen/detail_screen.dart';
 import 'package:gameshop_deals/screen/home_screen.dart';
 import 'package:gameshop_deals/screen/filter_screen.dart';
+import 'package:gameshop_deals/screen/saved_games_home_screen.dart';
+import 'package:gameshop_deals/screen/saved_games_screen.dart';
 import 'package:gameshop_deals/screen/settings_screen.dart';
 import 'package:gameshop_deals/screen/search_screen.dart';
 import 'package:gameshop_deals/utils/routes_constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gameshop_deals/widget/deal_widget.dart';
 
 import 'dart:math' as math;
 
@@ -33,12 +35,12 @@ class Routes {
         );
       case detailRoute:
         return materialRoute(
-          child: ProviderScope(
-            overrides: [
-              indexDeal.overrideWithValue(settings.arguments as int),
-            ],
-            child: const DetailDealScreen(),
-          ),
+          child: DetailDealPageView(offset: settings.arguments as int),
+          settings: settings,
+        );
+      case savedGamesRoute:
+        return SlideRoute(
+          builder: (_) => GameLookupScreen(),
           settings: settings,
         );
       default:
@@ -53,12 +55,7 @@ class Routes {
             builder: (_) => FilterScreen(), settings: settings);
       case detailRoute:
         return materialRoute(
-          child: ProviderScope(
-            overrides: [
-              indexDeal.overrideWithValue(settings.arguments as int),
-            ],
-            child: const DetailDealScreen(),
-          ),
+          child: DetailDealPageView(offset: settings.arguments as int),
           settings: settings,
         );
       case homeRoute:
@@ -68,6 +65,22 @@ class Routes {
             final title = watch(titleProvider);
             return Home.Search(title: title);
           }),
+          settings: settings,
+        );
+    }
+  }
+
+  static Route<dynamic> getSavedGamesRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case detailRoute:
+        return materialRoute(
+          child: DetailGamePageView(offset: settings.arguments as int),
+          settings: settings,
+        );
+      case homeRoute:
+      default:
+        return materialRoute(
+          child: const GameHome(),
           settings: settings,
         );
     }
@@ -290,7 +303,6 @@ class SlideRoute<T> extends PageRoute<T> {
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
-    final double maxWidth = MediaQuery.of(context).size.width;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarIconBrightness:
@@ -309,28 +321,26 @@ class SlideRoute<T> extends PageRoute<T> {
             .animate(animation),
         child: GestureDetector(
           child: child,
-          onHorizontalDragUpdate: (DragUpdateDetails details) =>
-              _handleDragUpdate(details, maxWidth),
-          onHorizontalDragEnd: (DragEndDetails details) =>
-              _handleDragEnd(details, maxWidth),
+          onHorizontalDragUpdate: _handleDragUpdate,
+          onHorizontalDragEnd: _handleDragEnd,
         ),
       ),
     );
   }
 
-  void _handleDragUpdate(DragUpdateDetails details, double maxWidth) {
+  void _handleDragUpdate(DragUpdateDetails details) {
     if (!navigator.userGestureInProgress) navigator.didStartUserGesture();
-    controller.value -= details.primaryDelta / maxWidth;
+    controller.value -= details.primaryDelta / navigator.context.size.width;
     if (controller.value == 1.0 && navigator.userGestureInProgress)
       navigator.didStopUserGesture();
   }
 
-  void _handleDragEnd(DragEndDetails details, double maxWidth) {
+  void _handleDragEnd(DragEndDetails details) {
     final NavigatorState _navigator = navigator;
     if (controller.value == 1.0 && !_navigator.userGestureInProgress) return;
     bool animateForward;
 
-    final double flingVelocity = details.primaryVelocity / maxWidth;
+    final double flingVelocity = details.primaryVelocity / navigator.context.size.width;
     if (flingVelocity.abs() >= 2.0)
       animateForward = flingVelocity <= 0;
     else

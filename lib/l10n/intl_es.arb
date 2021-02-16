@@ -229,7 +229,7 @@
         "type": "texto",
         "description": "Orden descendente"
     },
-    "review": "{review, select, Overwhelmingly_Negative {Extremadamente Negativo} Very_Negative {Muy Negativo} Negative {Negativo} Mostly_Negative {Mayormente Negativo} Mixed {Mixtas} Mostly_Positive {Mayormente Positivo} Positive {Positivo} Very_Positive {Muy Positivo} Overwhelmingly_Positive {Extremadamente Positivo} other {Desconocido}}",
+    "review": "{review, select, Overwhelmingly_Negative {Extremadamente Negativo} Very_Negative {Muy Negativo} Negative {Negativo} Mostly_Negative {Mayormente Negativo} Mixed {Mixtas} Mostly_Positive {Mayormente Positivo} Positive {Positivo} Very_Positive {Muy Positivo} Overwhelmingly_Positive {Extremadamente Positivo} null {Desconocido} other {Desconocido}}",
     "@review": {
         "type": "opción múltiple",
         "description": "texto representando las reseñas del juego",
@@ -388,6 +388,16 @@
             }
         }
     },
+    "save_deal_title": "Mis Ofertas",
+    "@save_deal_title": {
+        "type": "texto",
+        "description": "Título de la lista de seguimiento de ofertas"
+    },
+    "save_deal_tooltip": "Abrir ofertas guardadas",
+    "@save_deal_tooltip": {
+        "type": "texto",
+        "description": "Sugerencia mostrada del bot'on de la lista de seguimiento"
+    },
     "save_deal": "Guardar oferta",
     "@save_deal": {
         "type": "texto",
@@ -397,6 +407,26 @@
     "@remove_deal": {
         "type": "texto",
         "description": "Botón para quitar la oferta de la lista de guardados"
+    },
+    "cheapest_ever": "Mejor Oferta: ",
+    "@cheapest_ever": {
+        "type": "texto",
+        "description": "texto simple mencionando la mejor oferta de un juego"
+    },
+    "cheapest_price_and_date": "${price} el {date}",
+    "@cheapest_price_and_date": {
+        "type": "texto",
+        "description": "muestra el precio más bajo y fecha de cuando sucedio del juego",
+        "placeholders": {
+            "price": {
+                "example": "19.99",
+                "description": "preció de la mejor promoción del juego"
+            },
+            "date": {
+                "example": "Dec. 19, 2020",
+                "description": "fecha de la mejor promoción"
+            }
+        }
     },
     "go_to_deal": "Ir a oferta",
     "@go_to_deal": {

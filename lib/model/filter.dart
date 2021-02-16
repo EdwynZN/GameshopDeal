@@ -2,6 +2,7 @@ import 'package:hive/hive.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
 import 'sort_by_enum.dart';
+
 part 'filter.freezed.dart';
 part 'filter.g.dart';
 
@@ -12,7 +13,7 @@ bool _intToBool(int value) => value == 1;
 abstract class Filter with _$Filter {
   @HiveType(typeId: 9, adapterName: 'FilterAdapter')
   factory Filter({
-    @HiveField(0) @Default(const <int>{}) @JsonKey(defaultValue: const <int>{}) Set<int> storeID,
+    @HiveField(0) @Default(const <String>{}) @JsonKey(defaultValue: const <String>{}) Set<String> storeId,
     @HiveField(1) @Default(60) @JsonKey(defaultValue: 60) int pageSize,
     @HiveField(2) @Default(SortBy.Deal_Rating) SortBy sortBy,
     @HiveField(3) @Default(false) @JsonKey(name: 'desc', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool) bool isAscendant,
@@ -30,7 +31,7 @@ abstract class Filter with _$Filter {
 
   @late
   Map<String, dynamic> get parameters => <String, dynamic>{
-    if(storeID.isNotEmpty) 'storeID' : storeID.join(','),
+    if(storeId.isNotEmpty) 'storeID' : storeId.join(','),
     if(sortBy != SortBy.Deal_Rating) 'sortBy' : describeEnum(sortBy),
     if(pageSize != 60) 'pageSize' : pageSize,
     if(isAscendant) 'desc' : 1,

@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
-import 'package:gameshop_deals/model/deal_view_enum.dart';
+import 'package:gameshop_deals/model/view_enum.dart';
 import 'package:gameshop_deals/riverpod/display_provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart' hide RefreshIndicator;
 import 'package:flutter_riverpod/src/internals.dart';
@@ -12,7 +12,7 @@ mixin PrincipalState<T extends StatefulWidget> on State<T> {
   final ScrollController scrollController = ScrollController();
   final PageController pageController = PageController(keepPage: false);
   bool _isTablet, _isPageView = false;
-  ProviderSubscription<DealView> _subscription;
+  ProviderSubscription<View> _subscription;
   ProviderContainer _container;
   RefreshController refreshController = RefreshController();
   S translate;
@@ -28,7 +28,7 @@ mixin PrincipalState<T extends StatefulWidget> on State<T> {
     final container = ProviderScope.containerOf(context);
     if (container != _container) {
       _container = container;
-      bool _isPage = _container.read(displayProvider.state) == DealView.Swipe;
+      bool _isPage = _container.read(displayProvider.state) == View.Swipe;
       if (_isPage != isPageView) _isPageView = _isPage;
       _listen();
     }
@@ -37,15 +37,15 @@ mixin PrincipalState<T extends StatefulWidget> on State<T> {
   void _listen() {
     _subscription?.close();
     _subscription = null;
-    _subscription = _container.listen<DealView>(
+    _subscription = _container.listen<View>(
       displayProvider.state,
       mayHaveChanged: _mayHaveChanged,
     );
   }
 
-  void _mayHaveChanged(ProviderSubscription<DealView> subscription) {
+  void _mayHaveChanged(ProviderSubscription<View> subscription) {
     if (subscription.flush()) {
-      bool _isPage = subscription.read() == DealView.Swipe;
+      bool _isPage = subscription.read() == View.Swipe;
       if (_isPage != isPageView) setState(() => _isPageView = _isPage);
     }
   }
@@ -72,7 +72,7 @@ mixin PrincipalState<T extends StatefulWidget> on State<T> {
           return translate.dio_error(dioError.type, dioError.message);
       }
     }
-    return e.error;
+    return e.error.toString();
   }
 
   @override
@@ -83,5 +83,4 @@ mixin PrincipalState<T extends StatefulWidget> on State<T> {
     refreshController.dispose();
     super.dispose();
   }
-
 }

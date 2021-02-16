@@ -4,9 +4,11 @@ import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/preference_provider.dart';
+import 'package:gameshop_deals/riverpod/saved_deals_provider.dart' show singleGameLookup;
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:gameshop_deals/widget/display_deal/saved_deal_button.dart';
 import 'package:gameshop_deals/widget/display_deal/thumb_image.dart';
+import 'package:gameshop_deals/widget/display_gamelookup/cheapest_ever.dart';
 import 'package:gameshop_deals/widget/radial_progression.dart';
 import 'package:gameshop_deals/widget/store_deal_widget.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart'
@@ -27,7 +29,7 @@ class PageDeal extends ConsumerWidget {
       onPageChanged: (index) {
         final dealPage = context.read(dealPageProvider(title));
         if (!dealPage.isLastPage && index == (childCount - 1)) {
-          dealPage.retrievePage();
+          dealPage.retrieveNextPage();
         }
       },
       childrenDelegate: SliverChildBuilderDelegate(
@@ -78,8 +80,33 @@ class _SwipePage extends StatelessWidget {
           ),
         ),
         const SliverToBoxAdapter(child: Divider()),
+        const SliverToBoxAdapter(child: const _CheapestEverWidget()),
         const _DealListWidget(),
       ],
+    );
+  }
+}
+
+class _CheapestEverWidget extends ConsumerWidget {
+  const _CheapestEverWidget({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, ScopedReader watch) {
+    final String gameId = watch(singleDeal).gameId;
+    final game = watch(gameDealLookupProvider(gameId));
+    return game.maybeWhen(
+      orElse: () => const SizedBox.shrink(),
+      data: (value) => ProviderScope(
+        overrides: [
+          singleGameLookup.overrideWithValue(value)
+        ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: CheapestEverWidget(
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -124,7 +151,6 @@ class _DealWidget extends ConsumerWidget {
       );
     }
     if (span.length == 2) span.insert(1, const TextSpan(text: ' · '));
-
     final Widget data = RichText(
       textAlign: TextAlign.left,
       overflow: TextOverflow.fade,
@@ -148,7 +174,12 @@ class _DealWidget extends ConsumerWidget {
             borderRadius: BorderRadius.circular(4),
             child: ConstrainedBox(
               constraints: BoxConstraints(maxHeight: 70, maxWidth: 120),
-              child: const ThumbImage(),
+              child: ProviderScope(
+                overrides: [
+                  thumbProvider.overrideAs((watch) => watch(singleDeal).thumb)
+                ],
+                child: const ThumbImage(),
+              ),
             ),
           ),
         ),
@@ -189,7 +220,8 @@ class _Stats extends ConsumerWidget {
               );
               print(_steamLink.toString());
               if (await canLaunch(_steamLink.toString())) {
-                final bool webView = context.read(preferenceProvider.state).webView;
+                final bool webView =
+                    context.read(preferenceProvider.state).webView;
                 await launch(
                   _steamLink.toString(),
                   forceWebView: webView,
@@ -235,8 +267,10 @@ class _Stats extends ConsumerWidget {
                 deal.metacriticLink,
               );
               if (await canLaunch(_metacriticLink.toString())) {
-                final bool webView = context.read(preferenceProvider.state).webView;
-                await launch(_metacriticLink.toString(), forceWebView: webView, enableJavaScript: webView);
+                final bool webView =
+                    context.read(preferenceProvider.state).webView;
+                await launch(_metacriticLink.toString(),
+                    forceWebView: webView, enableJavaScript: webView);
               } else {
                 Scaffold.of(context).showSnackBar(
                   SnackBar(content: Text('Error Launching url')),
@@ -291,7 +325,9 @@ class _ButtonsDeal extends ConsumerWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Expanded(child: const SavedDealButton(),),
+        Expanded(
+          child: const SavedDealButton(),
+        ),
         if (deal.steamAppId != null) ...[
           const SizedBox(width: 8.0),
           Expanded(
@@ -299,11 +335,13 @@ class _ButtonsDeal extends ConsumerWidget {
               icon: const Icon(Icons.computer),
               label: const Text('PC Wiki'),
               onPressed: () async {
-                final Uri _pcGamingWikiUri = Uri.https(pcWikiUrl,
-                    '/api/appid.php', {'appid': deal.steamAppId});
+                final Uri _pcGamingWikiUri = Uri.https(
+                    pcWikiUrl, '/api/appid.php', {'appid': deal.steamAppId});
                 if (await canLaunch(_pcGamingWikiUri.toString())) {
-                  final bool webView = context.read(preferenceProvider.state).webView;
-                  await launch(_pcGamingWikiUri.toString(), forceWebView: webView, enableJavaScript: webView);
+                  final bool webView =
+                      context.read(preferenceProvider.state).webView;
+                  await launch(_pcGamingWikiUri.toString(),
+                      forceWebView: webView, enableJavaScript: webView);
                 } else {
                   Scaffold.of(context).showSnackBar(
                     SnackBar(content: Text('Error Launching url')),
@@ -352,7 +390,7 @@ class _DealListWidget extends ConsumerWidget {
                 child: const StoreDealGrid(),
               ),
               semanticIndexOffset: 1,
-              childCount: deals.length ?? 0,
+              childCount: deals?.length ?? 0,
             ),
           ),
         );
@@ -380,7 +418,7 @@ class EndLinearProgressIndicator extends ConsumerWidget {
             RefreshLocalizations.of(context).currentLocalization.loadFailedText,
           ),
           onPressed: () async =>
-              context.read(dealPageProvider(title)).retrievePage(),
+              context.read(dealPageProvider(title)).retrieveNextPage(),
         ),
       ),
     );
@@ -446,21 +484,22 @@ class _PageVisualizerState extends State<PageVisualizer> {
   Widget build(BuildContext context) {
     return Material(
       type: MaterialType.transparency,
-      child: Consumer(
-        builder: (context, watch, child) {
-          final title = watch(titleProvider);
-          final deals = watch(dealsProvider(title).state);
-          final maxPage = deals.length;
-          final isEmpty = deals.isEmpty;
-          String label;
-          if (maxPage != 0 && _currentPage < maxPage)
-            label = '${_currentPage + 1}: ${deals[_currentPage]?.title ?? ''}';
-          _currentPage = _currentPage.clamp(0, isEmpty ? 0 : maxPage - 1);
-          String current = '${_currentPage + 1}';
-          current = current.padLeft(2, ' ').padLeft(3, ' ');
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Consumer(
+          builder: (context, watch, child) {
+            final title = watch(titleProvider);
+            final deals = watch(dealsProvider(title).state);
+            final maxPage = deals.length;
+            final isEmpty = deals.isEmpty;
+            String label;
+            if (maxPage != 0 && _currentPage < maxPage)
+              label =
+                  '${_currentPage + 1}: ${deals[_currentPage]?.title ?? ''}';
+            _currentPage = _currentPage.clamp(0, isEmpty ? 0 : maxPage - 1);
+            String current = '${_currentPage + 1}';
+            current = current.padLeft(2, ' ').padLeft(3, ' ');
+            return Row(
               children: [
                 IconButton(
                   tooltip: translate.first_tooltip,
@@ -504,9 +543,9 @@ class _PageVisualizerState extends State<PageVisualizer> {
                       : null,
                 ),
               ],
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
+import 'package:gameshop_deals/utils/preferences_constants.dart' show preferenceHiveBox;
 
 final hiveBoxProvider =
     FutureProvider.autoDispose.family<Box<dynamic>, String>((ref, name) async {
@@ -14,7 +15,7 @@ final hiveBoxProvider =
 }, name: 'HiveBox');
 
 final hivePreferencesProvider = Provider<Box<dynamic>>(
-  (_) => Hive.box<dynamic>('preferences'),
+  (_) => Hive.box<dynamic>(preferenceHiveBox),
   name: 'HivePreferences',
 );
 

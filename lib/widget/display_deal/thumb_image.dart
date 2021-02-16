@@ -1,9 +1,10 @@
 import 'package:flutter_riverpod/all.dart';
-import 'package:gameshop_deals/riverpod/deal_provider.dart' show singleDeal;
 import 'package:flutter/material.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:gameshop_deals/riverpod/cache_manager_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+
+final thumbProvider = ScopedProvider<String>(null);
 
 class ThumbImage extends ConsumerWidget {
   final Alignment alignment;
@@ -21,19 +22,19 @@ class ThumbImage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final deal = watch(singleDeal);
-    assert(deal != null && deal.thumb != null);
-    final String thumb = deal.thumb;
+    final thumb = watch(thumbProvider);
+    assert(thumb != null);
     return CachedNetworkImage(
       imageUrl: thumb,
       fit: fit,
       alignment: alignment,
-      imageBuilder: !addInk ? null : (context, imageProvider) =>
-        Ink.image(
-          image: imageProvider,
-          alignment: alignment,
-          fit: fit,
-        ),
+      imageBuilder: !addInk
+          ? null
+          : (context, imageProvider) => Ink.image(
+                image: imageProvider,
+                alignment: alignment,
+                fit: fit,
+              ),
       cacheManager: watch(cacheManagerFamilyProvider(cacheKeyDeals)),
       errorWidget: (_, __, ___) => const Icon(Icons.error),
       placeholder: (_, __) => Container(

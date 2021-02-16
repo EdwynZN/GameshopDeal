@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/model/view_enum.dart';
-import 'package:gameshop_deals/riverpod/deal_provider.dart'
-  show dealsProvider, singleDeal;
+import 'package:gameshop_deals/riverpod/saved_deals_provider.dart'
+  show savedGamesProvider, singleGameLookup, gameKeysProvider;
 import 'package:gameshop_deals/riverpod/display_provider.dart';
-import 'package:gameshop_deals/riverpod/filter_provider.dart';
-import 'package:gameshop_deals/widget/deal_widget.dart';
+import 'package:gameshop_deals/widget/gamelookup_widget.dart';
 
-class DealListView extends ConsumerWidget {
-  const DealListView({Key key}) : super(key: key);
+class GameListView extends ConsumerWidget {
+  const GameListView({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final title = watch(titleProvider);
-    final deals = watch(dealsProvider(title).state);
+    final games = watch(gameKeysProvider);
     final View view = watch(displayProvider.state);
-    if (deals.isEmpty) return const SliverToBoxAdapter();
+    if (games.isEmpty) return const SliverToBoxAdapter();
     switch (view) {
-      case View.Grid:
+      /* case View.Grid:
         return SliverPadding(
           padding: const EdgeInsets.all(4.0),
           sliver: SliverGrid(
@@ -26,13 +23,13 @@ class DealListView extends ConsumerWidget {
               (BuildContext _, int index) {
                 return ProviderScope(
                   overrides: [
-                    indexDeal.overrideWithValue(index),
-                    singleDeal.overrideWithValue(deals[index])
+                    indexGameLookup.overrideWithValue(index),
+                    singleGameLookup.overrideAs((watch) => watch(savedGamesProvider.state)[games[index]])
                   ],
-                  child: const GridDeal(),
+                  child: const GridGameLookup(),
                 );
               },
-              childCount: deals.length,
+              childCount: games.length,
             ),
             gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 150,
@@ -41,7 +38,7 @@ class DealListView extends ConsumerWidget {
               crossAxisSpacing: 4.0,
             ),
           ),
-        );
+        ); */
       case View.Detail:
         return SliverList(
           //itemExtent: 86.0,
@@ -49,13 +46,13 @@ class DealListView extends ConsumerWidget {
             (BuildContext _, int index) {
               return ProviderScope(
                 overrides: [
-                  indexDeal.overrideWithValue(index),
-                  singleDeal.overrideWithValue(deals[index])
+                  indexGameLookup.overrideWithValue(index),
+                  singleGameLookup.overrideAs((watch) => watch(savedGamesProvider.state)[games[index]])
                 ],
-                child: const DetailedDeal(),
+                child: const DetailedGameLookup(),
               );
             },
-            childCount: deals?.length ?? 0,
+            childCount: games?.length ?? 0,
           ),
         );
       case View.Compact:
@@ -65,13 +62,13 @@ class DealListView extends ConsumerWidget {
             (BuildContext _, int index) {
               return ProviderScope(
                 overrides: [
-                  indexDeal.overrideWithValue(index),
-                  singleDeal.overrideWithValue(deals[index])
+                  indexGameLookup.overrideWithValue(index),
+                  singleGameLookup.overrideAs((watch) => watch(savedGamesProvider.state)[games[index]])
                 ],
-                child: const CompactDeal(),
+                child: const CompactGameLookup(),
               );
             },
-            childCount: deals?.length ?? 0,
+            childCount: games?.length ?? 0,
           ),
         );
       case View.List:
@@ -81,13 +78,13 @@ class DealListView extends ConsumerWidget {
             (BuildContext _, int index) {
               return ProviderScope(
                 overrides: [
-                  indexDeal.overrideWithValue(index),
-                  singleDeal.overrideWithValue(deals[index])
+                  indexGameLookup.overrideWithValue(index),
+                  singleGameLookup.overrideAs((watch) => watch(savedGamesProvider.state)[games[index]])
                 ],
-                child: const ListDeal(),
+                child: const ListGameLookup(),
               );
             },
-            childCount: deals?.length ?? 0,
+            childCount: games?.length ?? 0,
           ),
         );
     }

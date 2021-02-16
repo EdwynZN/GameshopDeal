@@ -8,6 +8,7 @@ import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/riverpod/repository_provider.dart';
 import 'package:gameshop_deals/model/game_lookup.dart';
 import 'package:gameshop_deals/model/filter.dart';
+import 'package:gameshop_deals/model/pagination_model.dart';
 
 final singleDeal = ScopedProvider<Deal>(null);
 
@@ -17,7 +18,7 @@ final storesProvider = FutureProvider.autoDispose<List<Store>>((ref) {
       DioCacheManager(CacheConfig(defaultRequestMethod: 'GET'));
   final dio = Dio()..interceptors.add(dioCacheManager.interceptor);
   final Options _cacheOptions = buildCacheOptions(const Duration(days: 3),
-      maxStale: const Duration(days: 30), forceRefresh: true);
+      maxStale: const Duration(days: 365), forceRefresh: true);
 
   ref.onDispose(() {
     cancelToken.cancel();
@@ -32,21 +33,23 @@ final storesProvider = FutureProvider.autoDispose<List<Store>>((ref) {
 
 final singleStoreProvider =
     Provider.autoDispose.family<Store, String>((ref, id) {
-  return ref
-      .watch(storesProvider)
-      .data
-      ?.value
-      ?.firstWhere((element) => element.storeId == id, orElse: () => null);
+  final asyncStores = ref.watch(storesProvider).data;
+  final store = asyncStores?.value
+    ?.firstWhere((element) => element.storeId == id, orElse: () => null);
+
+  ref.maintainState = store != null;
+
+  return store;
 }, name: 'SingleStore');
 
 final dealPageProvider = StateNotifierProvider.autoDispose
-    .family<_DealListPagination, String>((ref, title) {
+    .family<DealListPagination, String>((ref, title) {
   final CancelToken cancelToken = CancelToken();
   final Filter filter = ref.watch(filterProvider(title)).state;
   ref.onDispose(cancelToken.cancel);
 
   final DiscountApi api = ref.watch(cheapSharkProvider);
-  return _DealListPagination(filter, api, cancelToken);
+  return DealListPagination(filter, api, cancelToken);
 }, name: 'dealList');
 
 final dealsProvider = StateNotifierProvider.autoDispose
@@ -79,8 +82,8 @@ final gameDealLookupProvider =
   });
 
   return ref
-    .watch(cheapSharkProvider)
-    .getGamesById(id, _cacheOptions, cancelToken);
+      .watch(cheapSharkProvider)
+      .getGamesById(id, _cacheOptions, cancelToken);
 }, name: 'Game Deal Lookup');
 
 final dealsOfGameProvider =
@@ -88,22 +91,24 @@ final dealsOfGameProvider =
   return ref.watch(gameDealLookupProvider(id)).whenData((value) => value.deals);
 }, name: 'Deals of Game Lookup');
 
-class _DealListPagination extends StateNotifier<AsyncValue<List<Deal>>> {
+class DealListPagination extends StateNotifier<AsyncValue<List<Deal>>>
+    implements Pagination<List<Deal>> {
   final Filter filter;
   final Map<String, dynamic> _parameters;
   final DiscountApi _api;
   final CancelToken cancelToken;
-  _DealListPagination(this.filter, this._api, this.cancelToken)
-    : _parameters = Map<String, dynamic>.of(filter.parameters),
-      super(AsyncValue.loading()) {
+  DealListPagination(this.filter, this._api, this.cancelToken)
+      : _parameters = Map<String, dynamic>.of(filter.parameters),
+        super(AsyncValue.loading()) {
     _parameters.putIfAbsent('pageNumber', () => 0);
     _fetch();
   }
 
   bool _lastPage = false;
 
-  Future<void> retrievePage() async {
-    if (state is AsyncLoading || _lastPage)
+  @override
+  Future<void> retrieveNextPage() async {
+    if (state is AsyncLoading || isLastPage)
       return;
     else if (state is AsyncData)
       _parameters.update('pageNumber', (value) => ++value, ifAbsent: () => 0);
@@ -111,12 +116,15 @@ class _DealListPagination extends StateNotifier<AsyncValue<List<Deal>>> {
     await _fetch();
   }
 
+  @override
+  Future<List<Deal>> fetchPage() => _api.getDeals(_parameters, cancelToken);
+
   Future<void> _fetch() async {
-    final fetch =
-        await AsyncValue.guard(() => _api.getDeals(_parameters, cancelToken));
+    final fetch = await AsyncValue.guard(() => fetchPage());
     if (mounted) state = fetch;
   }
 
+  @override
   bool get isLastPage {
     if (_lastPage) return _lastPage;
     if (state is AsyncData &&

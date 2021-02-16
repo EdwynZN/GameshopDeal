@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
-import 'package:gameshop_deals/model/deal_view_enum.dart';
+import 'package:gameshop_deals/model/view_enum.dart';
 import 'package:gameshop_deals/model/sort_by_enum.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart'
     show dealPageProvider;
@@ -17,69 +17,12 @@ import 'package:in_app_review/in_app_review.dart';
 
 final InAppReview _inAppReview = InAppReview.instance;
 
-/*
-class HomeAppBar extends StatelessWidget{
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverAppBar(
-      shape: CustomAppBarShape(),
-      pinned: true, primary: true,
-      title: Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis blandit'),
-      actions: <Widget>[
-        const Icon(Icons.search),
-        const SizedBox(width: 20,),
-        const Icon(Icons.remove_red_eye),
-        const SizedBox(width: 20,)
-      ],
-    );
-  }
-}
-
-class CustomAppBarShape extends ContinuousRectangleBorder{
-
-  @override
-  Path getOuterPath(Rect rect, { TextDirection textDirection }) {
-    return Path()..lineTo(0, rect.height)
-      ..quadraticBezierTo(rect.width / 2, rect.height + 20, rect.width, rect.height)
-      ..lineTo(rect.width, 0);
-  }
-}*/
-/* 
-class CustomAppBarShape extends ContinuousRectangleBorder {
-  Path _getPath(RRect rect) {
-    return Path()
-      ..lineTo(0, rect.height)
-      ..quadraticBezierTo(
-          rect.width / 2, rect.height + 20, rect.width, rect.height)
-      ..lineTo(rect.width, 0);
-  }
-
-  Path _getinnerPath(RRect rect) {
-    return Path()
-      ..lineTo(0, rect.height)
-      ..quadraticBezierTo(
-          rect.width / 2, rect.height + 30, rect.width, rect.height)
-      ..lineTo(rect.width, 0);
-  }
-
-  @override
-  Path getOuterPath(Rect rect, {TextDirection textDirection}) {
-    return _getPath(borderRadius.resolve(textDirection).toRRect(rect));
-  }
-
-  @override
-  Path getInnerPath(Rect rect, {TextDirection textDirection}) {
-    return _getinnerPath(borderRadius.resolve(textDirection).toRRect(rect));
-  }
-}
- */
 final _sortByProvider = ScopedProvider<SortBy>(
   (watch) => watch(filterProvider(watch(titleProvider))).state.sortBy,
   name: 'Sort By',
 );
 
-class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
+class HomeAppBar extends StatelessWidget with PreferredSizeWidget {
   @override
   final Size preferredSize;
 
@@ -98,6 +41,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         },
       ),
       actions: const <Widget>[
+        const _SavedGamesButton(),
         const _SearchButton(),
         const _FilterButton(),
         const _MoreSettings(),
@@ -106,7 +50,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
+class SearchAppBar extends StatelessWidget with PreferredSizeWidget {
   @override
   final Size preferredSize;
 
@@ -124,12 +68,40 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Consumer(
         builder: (context, watch, _) {
           final title = watch(titleProvider);
-          return Text(title, overflow: TextOverflow.fade,);
+          return Text(
+            title,
+            overflow: TextOverflow.fade,
+          );
         },
       ),
       actions: const <Widget>[
         const _SearchButton(),
         const _FilterButton(),
+        const _MoreSettings(),
+      ],
+    );
+  }
+}
+
+class SavedAppBar extends StatelessWidget with PreferredSizeWidget {
+  @override
+  final Size preferredSize;
+
+  const SavedAppBar({Key key})
+      : preferredSize = const Size.fromHeight(56.0),
+        super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final S translate = S.of(context);
+    return AppBar(
+      primary: true,
+      leading: BackButton(
+        onPressed: () => Navigator.of(context, rootNavigator: true).maybePop(),
+      ),
+      title: Text(translate.save_deal_title),
+      actions: const <Widget>[
+        const _SearchButton(),
         const _MoreSettings(),
       ],
     );
@@ -248,7 +220,7 @@ class __MoreSettingsState extends State<_MoreSettings> {
     final double size = Theme.of(context).appBarTheme.iconTheme.size ?? 24;
     Offset offset =
         context.size.centerRight(Size.square(size).center(Offset.zero));
-    return showMenu<DealView>(
+    return showMenu<View>(
       context: context,
       position: RelativeRect.fromLTRB(offset.dx, offset.dy, 0, 0),
       items: [
@@ -257,8 +229,8 @@ class __MoreSettingsState extends State<_MoreSettings> {
           enabled: false,
           textStyle: Theme.of(context).textTheme.subtitle2,
         ),
-        for (DealView view in DealView.values)
-          RadioPopupMenuItem<DealView>(
+        for (View view in View.values)
+          RadioPopupMenuItem<View>(
             child: Text(translate.choose_deal_view(view)),
             value: view,
             provider: displayProvider,
@@ -283,7 +255,10 @@ class __MoreSettingsState extends State<_MoreSettings> {
         ),
         for (ThemeMode mode in ThemeMode.values)
           RadioPopupMenuItem<ThemeMode>(
-            child: Text(translate.themeMode(mode), maxLines: 1,),
+            child: Text(
+              translate.themeMode(mode),
+              maxLines: 1,
+            ),
             value: mode,
             provider: themeProvider,
           ),
@@ -293,12 +268,12 @@ class __MoreSettingsState extends State<_MoreSettings> {
 
   // ignore: unused_element
   Future<void> _postViewDialog() async {
-    final DealView mode = await showDialog<DealView>(
+    final View mode = await showDialog<View>(
       context: context,
-      builder: (_) => PreferenceDialog<DealView>(
+      builder: (_) => PreferenceDialog<View>(
           title: translate.deal_view,
           provider: displayProvider,
-          values: DealView.values),
+          values: View.values),
     );
     if (mode != null) context.read(displayProvider).changeState(mode);
   }
@@ -336,15 +311,17 @@ class __MoreSettingsState extends State<_MoreSettings> {
                 _themeMenu();
                 break;
               case 2:
-                if (await _inAppReview.isAvailable()) _inAppReview.requestReview();
-                else _inAppReview.openStoreListing();
+                if (await _inAppReview.isAvailable())
+                  _inAppReview.requestReview();
+                else
+                  _inAppReview.openStoreListing();
                 break;
               case 3:
                 context.refresh(dealPageProvider(title));
                 break;
               case 4:
                 Navigator.of(context, rootNavigator: true)
-                  .pushNamed(settingsRoute);
+                    .pushNamed(settingsRoute);
                 break;
             }
           },
@@ -366,6 +343,21 @@ class _FilterButton extends StatelessWidget {
           ? Scaffold.of(context).openEndDrawer()
           : Navigator.pushNamed(context, filterRoute),
       tooltip: translate.filter_tooltip,
+    );
+  }
+}
+
+class _SavedGamesButton extends StatelessWidget {
+  const _SavedGamesButton({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final S translate = S.of(context);
+    return IconButton(
+      icon: const Icon(Icons.visibility_outlined),
+      onPressed: () async =>
+          Navigator.of(context, rootNavigator: true).pushNamed(savedGamesRoute),
+      tooltip: translate.save_deal_tooltip,
     );
   }
 }

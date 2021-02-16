@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
-import 'package:gameshop_deals/riverpod/filter_provider.dart';
 
 class FAB extends StatefulWidget {
   final ScrollController controller;
@@ -64,20 +62,14 @@ class _FABState extends State<FAB> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final S translate = S.of(context);
     return SlideTransition(
       position: positionAnimation,
-      child: Consumer(
+      child: FloatingActionButton(
+        tooltip: translate.up_tooltip,
+        //heroTag: '${title}_FAB',
+        onPressed: () => widget.controller.jumpTo(0.0),
         child: const Icon(Icons.keyboard_arrow_up),
-        builder: (context, watch, child) {
-          final S translate = S.of(context);
-          final title = watch(titleProvider);
-          return FloatingActionButton(
-            tooltip: translate.up_tooltip,
-            heroTag: '${title}_FAB',
-            onPressed: () => widget.controller.jumpTo(0.0),
-            child: child,
-          );
-        },
       ),
     );
   }

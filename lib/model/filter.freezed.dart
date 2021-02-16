@@ -19,8 +19,8 @@ class _$FilterTearOff {
 // ignore: unused_element
   _Filter call(
       {@HiveField(0)
-      @JsonKey(defaultValue: const <int>{})
-          Set<int> storeID = const <int>{},
+      @JsonKey(defaultValue: const <String>{})
+          Set<String> storeId = const <String>{},
       @HiveField(1)
       @JsonKey(defaultValue: 60)
           int pageSize = 60,
@@ -57,7 +57,7 @@ class _$FilterTearOff {
       @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           bool exact = false}) {
     return _Filter(
-      storeID: storeID,
+      storeId: storeId,
       pageSize: pageSize,
       sortBy: sortBy,
       isAscendant: isAscendant,
@@ -87,8 +87,8 @@ const $Filter = _$FilterTearOff();
 /// @nodoc
 mixin _$Filter {
   @HiveField(0)
-  @JsonKey(defaultValue: const <int>{})
-  Set<int> get storeID;
+  @JsonKey(defaultValue: const <String>{})
+  Set<String> get storeId;
   @HiveField(1)
   @JsonKey(defaultValue: 60)
   int get pageSize;
@@ -143,8 +143,8 @@ abstract class $FilterCopyWith<$Res> {
       _$FilterCopyWithImpl<$Res>;
   $Res call(
       {@HiveField(0)
-      @JsonKey(defaultValue: const <int>{})
-          Set<int> storeID,
+      @JsonKey(defaultValue: const <String>{})
+          Set<String> storeId,
       @HiveField(1)
       @JsonKey(defaultValue: 60)
           int pageSize,
@@ -192,7 +192,7 @@ class _$FilterCopyWithImpl<$Res> implements $FilterCopyWith<$Res> {
 
   @override
   $Res call({
-    Object storeID = freezed,
+    Object storeId = freezed,
     Object pageSize = freezed,
     Object sortBy = freezed,
     Object isAscendant = freezed,
@@ -208,7 +208,7 @@ class _$FilterCopyWithImpl<$Res> implements $FilterCopyWith<$Res> {
     Object exact = freezed,
   }) {
     return _then(_value.copyWith(
-      storeID: storeID == freezed ? _value.storeID : storeID as Set<int>,
+      storeId: storeId == freezed ? _value.storeId : storeId as Set<String>,
       pageSize: pageSize == freezed ? _value.pageSize : pageSize as int,
       sortBy: sortBy == freezed ? _value.sortBy : sortBy as SortBy,
       isAscendant:
@@ -238,8 +238,8 @@ abstract class _$FilterCopyWith<$Res> implements $FilterCopyWith<$Res> {
   @override
   $Res call(
       {@HiveField(0)
-      @JsonKey(defaultValue: const <int>{})
-          Set<int> storeID,
+      @JsonKey(defaultValue: const <String>{})
+          Set<String> storeId,
       @HiveField(1)
       @JsonKey(defaultValue: 60)
           int pageSize,
@@ -288,7 +288,7 @@ class __$FilterCopyWithImpl<$Res> extends _$FilterCopyWithImpl<$Res>
 
   @override
   $Res call({
-    Object storeID = freezed,
+    Object storeId = freezed,
     Object pageSize = freezed,
     Object sortBy = freezed,
     Object isAscendant = freezed,
@@ -304,7 +304,7 @@ class __$FilterCopyWithImpl<$Res> extends _$FilterCopyWithImpl<$Res>
     Object exact = freezed,
   }) {
     return _then(_Filter(
-      storeID: storeID == freezed ? _value.storeID : storeID as Set<int>,
+      storeId: storeId == freezed ? _value.storeId : storeId as Set<String>,
       pageSize: pageSize == freezed ? _value.pageSize : pageSize as int,
       sortBy: sortBy == freezed ? _value.sortBy : sortBy as SortBy,
       isAscendant:
@@ -334,8 +334,8 @@ class __$FilterCopyWithImpl<$Res> extends _$FilterCopyWithImpl<$Res>
 class _$_Filter with DiagnosticableTreeMixin implements _Filter {
   _$_Filter(
       {@HiveField(0)
-      @JsonKey(defaultValue: const <int>{})
-          this.storeID = const <int>{},
+      @JsonKey(defaultValue: const <String>{})
+          this.storeId = const <String>{},
       @HiveField(1)
       @JsonKey(defaultValue: 60)
           this.pageSize = 60,
@@ -371,7 +371,7 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
       this.title,
       @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
           this.exact = false})
-      : assert(storeID != null),
+      : assert(storeId != null),
         assert(pageSize != null),
         assert(sortBy != null),
         assert(isAscendant != null),
@@ -390,8 +390,8 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
 
   @override
   @HiveField(0)
-  @JsonKey(defaultValue: const <int>{})
-  final Set<int> storeID;
+  @JsonKey(defaultValue: const <String>{})
+  final Set<String> storeId;
   @override
   @HiveField(1)
   @JsonKey(defaultValue: 60)
@@ -458,7 +458,7 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
     if (_didparameters == false) {
       _didparameters = true;
       _parameters = <String, dynamic>{
-        if (storeID.isNotEmpty) 'storeID': storeID.join(','),
+        if (storeId.isNotEmpty) 'storeID': storeId.join(','),
         if (sortBy != SortBy.Deal_Rating) 'sortBy': describeEnum(sortBy),
         if (pageSize != 60) 'pageSize': pageSize,
         if (isAscendant) 'desc': 1,
@@ -481,7 +481,7 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Filter(storeID: $storeID, pageSize: $pageSize, sortBy: $sortBy, isAscendant: $isAscendant, lowerPrice: $lowerPrice, upperPrice: $upperPrice, metacritic: $metacritic, steamRating: $steamRating, steamAppId: $steamAppId, onlyRetail: $onlyRetail, steamWorks: $steamWorks, onSale: $onSale, title: $title, exact: $exact, parameters: $parameters)';
+    return 'Filter(storeId: $storeId, pageSize: $pageSize, sortBy: $sortBy, isAscendant: $isAscendant, lowerPrice: $lowerPrice, upperPrice: $upperPrice, metacritic: $metacritic, steamRating: $steamRating, steamAppId: $steamAppId, onlyRetail: $onlyRetail, steamWorks: $steamWorks, onSale: $onSale, title: $title, exact: $exact, parameters: $parameters)';
   }
 
   @override
@@ -489,7 +489,7 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'Filter'))
-      ..add(DiagnosticsProperty('storeID', storeID))
+      ..add(DiagnosticsProperty('storeId', storeId))
       ..add(DiagnosticsProperty('pageSize', pageSize))
       ..add(DiagnosticsProperty('sortBy', sortBy))
       ..add(DiagnosticsProperty('isAscendant', isAscendant))
@@ -510,9 +510,9 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _Filter &&
-            (identical(other.storeID, storeID) ||
+            (identical(other.storeId, storeId) ||
                 const DeepCollectionEquality()
-                    .equals(other.storeID, storeID)) &&
+                    .equals(other.storeId, storeId)) &&
             (identical(other.pageSize, pageSize) ||
                 const DeepCollectionEquality()
                     .equals(other.pageSize, pageSize)) &&
@@ -553,7 +553,7 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
   @override
   int get hashCode =>
       runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(storeID) ^
+      const DeepCollectionEquality().hash(storeId) ^
       const DeepCollectionEquality().hash(pageSize) ^
       const DeepCollectionEquality().hash(sortBy) ^
       const DeepCollectionEquality().hash(isAscendant) ^
@@ -581,8 +581,8 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
 abstract class _Filter implements Filter {
   factory _Filter(
       {@HiveField(0)
-      @JsonKey(defaultValue: const <int>{})
-          Set<int> storeID,
+      @JsonKey(defaultValue: const <String>{})
+          Set<String> storeId,
       @HiveField(1)
       @JsonKey(defaultValue: 60)
           int pageSize,
@@ -623,8 +623,8 @@ abstract class _Filter implements Filter {
 
   @override
   @HiveField(0)
-  @JsonKey(defaultValue: const <int>{})
-  Set<int> get storeID;
+  @JsonKey(defaultValue: const <String>{})
+  Set<String> get storeId;
   @override
   @HiveField(1)
   @JsonKey(defaultValue: 60)

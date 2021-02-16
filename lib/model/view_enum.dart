@@ -1,45 +1,45 @@
 import 'package:hive/hive.dart';
 
-enum DealView{List, Grid, Detail, Compact, Swipe}
+enum View{List, Grid, Detail, Compact, Swipe}
 
-class DealViewAdapter extends TypeAdapter<DealView> {
+class ViewAdapter extends TypeAdapter<View> {
   @override
   final int typeId = 8;
 
   @override
-  DealView read(BinaryReader reader) {
+  View read(BinaryReader reader) {
     switch (reader.readByte()) {
       case 0:  
-        return DealView.List;
+        return View.List;
       case 1:  
-        return DealView.Grid;
+        return View.Grid;
       case 2:
-        return DealView.Detail;
+        return View.Detail;
       case 3:
-        return DealView.Compact;
+        return View.Compact;
       case 4:
-        return DealView.Swipe;
+        return View.Swipe;
       default:
-        return DealView.List;
+        return View.List;
     }
   }
 
   @override
-  void write(BinaryWriter writer, DealView obj) {
+  void write(BinaryWriter writer, View obj) {
     switch (obj) {
-      case DealView.List:
+      case View.List:
         writer.writeByte(0);
         break;
-      case DealView.Grid:
+      case View.Grid:
         writer.writeByte(1);
         break;
-      case DealView.Detail:
+      case View.Detail:
         writer.writeByte(2);
         break;
-      case DealView.Compact:
+      case View.Compact:
         writer.writeByte(3);
         break;
-      case DealView.Swipe:
+      case View.Swipe:
         writer.writeByte(4);
         break;
     }
@@ -51,7 +51,7 @@ class DealViewAdapter extends TypeAdapter<DealView> {
   @override
   bool operator ==(Object other) =>
     identical(this, other) ||
-    other is DealViewAdapter &&
+    other is ViewAdapter &&
       runtimeType == other.runtimeType &&
       typeId == other.typeId;
 }

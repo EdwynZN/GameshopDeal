@@ -8,10 +8,7 @@ import 'package:gameshop_deals/widget/display_deal/store_avatar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class StoreDealGrid extends ConsumerWidget {
-  final bool showDeal;
-  const StoreDealGrid({Key key, this.showDeal = true})
-      : assert(showDeal != null, 'showDeal cannot be \'null\''),
-        super(key: key);
+  const StoreDealGrid({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, watch) {
@@ -45,7 +42,12 @@ class StoreDealGrid extends ConsumerWidget {
             Expanded(
               child: ConstrainedBox(
                 constraints: BoxConstraints(minWidth: 56.0, maxHeight: 48),
-                child: StoreAvatarBanner(),
+                child: ProviderScope(
+                  overrides: [
+                    indexStore.overrideWithValue(deal.storeId)
+                  ],
+                  child: const StoreAvatarBanner(),
+                ),
               ),
             ),
             const PriceWidget(),
@@ -83,8 +85,13 @@ class StoreDealTile extends ConsumerWidget {
         },
         title: ConstrainedBox(
           constraints: BoxConstraints(minWidth: 56.0, maxHeight: 48),
-          child: StoreAvatarBanner(
-            alignment: Alignment.centerLeft,
+          child: ProviderScope(
+            overrides: [
+              indexStore.overrideWithValue(deal.storeId)
+            ],
+            child: const StoreAvatarBanner(
+              alignment: Alignment.centerLeft,
+            ),
           ),
         ),
         trailing: const PriceWidget(),

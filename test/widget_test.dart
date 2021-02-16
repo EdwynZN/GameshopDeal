@@ -28,10 +28,10 @@ const Map<String, dynamic> defaultFilter = {
 void main() {
   test('Test Freezed filter model', (){
     Filter filter = Filter();
-    Filter filterTest = Filter(storeID: <int>{1,2,3}, onlyRetail: true, steamWorks: true);
-    Filter filterTest2 = Filter(storeID: <int>{});
+    Filter filterTest = Filter(storeId: <String>{'1','2','3'}, onlyRetail: true, steamWorks: true);
+    Filter filterTest2 = Filter(storeId: <String>{});
 
-    Filter filterTest3 = filterTest.copyWith(storeID: <int>{});
+    Filter filterTest3 = filterTest.copyWith(storeId: <String>{});
 
     print(filterTest);
     print(filterTest.toJson());

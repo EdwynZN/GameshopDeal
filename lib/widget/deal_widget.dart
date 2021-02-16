@@ -22,10 +22,7 @@ final _sortByProvider = ScopedProvider<SortBy>((watch) {
 }, name: 'Sort By');
 
 class DetailedDeal extends ConsumerWidget {
-  final bool showDeal;
-  const DetailedDeal({Key key, this.showDeal = true})
-      : assert(showDeal != null, 'showDeal cannot be \'null\''),
-        super(key: key);
+  const DetailedDeal({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -47,7 +44,7 @@ class DetailedDeal extends ConsumerWidget {
             child: Padding(
               padding: const EdgeInsetsDirectional.only(
                   start: 8.0, bottom: 4, end: 4),
-              child: _TitleDeal(showStore: showDeal),
+              child: const _TitleDeal(),
             ),
           ),
           Flexible(flex: null, child: Center(child: const PriceWidget())),
@@ -89,7 +86,12 @@ class CompactDeal extends ConsumerWidget {
         border: Border(bottom: Divider.createBorderSide(context)),
       ),
       child: ListTile(
-        leading: const StoreAvatarIcon(),
+        leading: ProviderScope(
+          overrides: [
+            indexStore.overrideWithValue(deal.storeId)
+          ],
+          child: const StoreAvatarIcon(),
+        ),
         dense: true,
         title: Text(
           title,
@@ -151,7 +153,12 @@ class GridDeal extends ConsumerWidget {
             deal.title,
             maxLines: 2,
           ),
-          leading: const StoreAvatarIcon(size: 14),
+          leading: ProviderScope(
+            overrides: [
+              indexStore.overrideWithValue(deal.storeId)
+            ],
+            child: StoreAvatarIcon(size: Theme.of(context).textTheme.bodyText2.fontSize),
+          ),
         ),
         child: DecoratedBox(
           position: DecorationPosition.foreground,
@@ -169,10 +176,13 @@ class GridDeal extends ConsumerWidget {
               stops: [0.0, 0.3, 0.5],
             ),
           ),
-          child: const ThumbImage(
-            alignment: Alignment.center,
-            fit: BoxFit.scaleDown,
-            addInk: true,
+          child: ProviderScope(
+            overrides: [thumbProvider.overrideAs((watch) => watch(singleDeal).thumb)],
+            child: const ThumbImage(
+              alignment: Alignment.center,
+              fit: BoxFit.scaleDown,
+              addInk: true,
+            ),
           ),
         ),
         footer: GridTileBar(
@@ -187,55 +197,8 @@ class GridDeal extends ConsumerWidget {
   }
 }
 
-class TileDeal extends StatelessWidget {
-  final bool showDeal;
-  const TileDeal({Key key, this.showDeal = true})
-      : assert(showDeal != null, 'showDeal cannot be \'null\''),
-        super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Flexible(
-            flex: null,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: 70, maxWidth: 120),
-                child: const ThumbImage(),
-              ),
-            ),
-          ),
-          Flexible(
-            flex: 1,
-            child: Padding(
-              padding: const EdgeInsetsDirectional.only(start: 8.0),
-              child: showDeal
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Expanded(child: const _TitleDeal()),
-                        Flexible(flex: null, child: const PriceWidget())
-                      ],
-                    )
-                  : const _TitleDeal(showStore: false),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class ListDeal extends StatelessWidget {
-  final bool showDeal;
-  const ListDeal({Key key, this.showDeal = true})
-      : assert(showDeal != null, 'showDeal cannot be \'null\''),
-        super(key: key);
+  const ListDeal({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -255,21 +218,23 @@ class ListDeal extends StatelessWidget {
               borderRadius: BorderRadius.circular(4),
               child: ConstrainedBox(
                 constraints: BoxConstraints(maxHeight: 70, maxWidth: 120),
-                child: const ThumbImage(),
+                child: ProviderScope(
+                  overrides: [thumbProvider.overrideAs((watch) => watch(singleDeal).thumb)],
+                  child: const ThumbImage(),
+                ),
               ),
             ),
           ),
           Expanded(
             child: Padding(
               padding: const EdgeInsetsDirectional.only(start: 8.0, end: 4),
-              child: _TitleDeal(showStore: showDeal),
+              child: _TitleDeal(),
             ),
           ),
-          if (showDeal) Flexible(flex: null, child: PriceWidget()),
+          Flexible(flex: null, child: PriceWidget()),
         ],
       ),
     );
-    if (!showDeal) return child;
     return Consumer(
       child: child,
       builder: (context, watch, child) {
@@ -278,18 +243,16 @@ class ListDeal extends StatelessWidget {
         return InkWell(
           onTap: () =>
               Navigator.of(context).pushNamed(detailRoute, arguments: index),
-          onLongPress: !showDeal
-              ? null
-              : () async {
-                  showModalBottomSheet(
-                    context: context,
-                    useRootNavigator: true,
-                    builder: (context) => ProviderScope(
-                      overrides: [singleDeal.overrideWithValue(deal)],
-                      child: const _BottomSheetButtonsDeal(),
-                    ),
-                  );
-                },
+          onLongPress: () async {
+            showModalBottomSheet(
+              context: context,
+              useRootNavigator: true,
+              builder: (context) => ProviderScope(
+                overrides: [singleDeal.overrideWithValue(deal)],
+                child: const _BottomSheetButtonsDeal(),
+              ),
+            );
+          },
           child: child,
         );
       },
@@ -298,12 +261,7 @@ class ListDeal extends StatelessWidget {
 }
 
 class _TitleDeal extends ConsumerWidget {
-  final bool showStore;
-  const _TitleDeal({
-    this.showStore = true,
-    Key key,
-  })  : assert(showStore != null, 'showDeal cannot be \'null\''),
-        super(key: key);
+  const _TitleDeal({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -325,7 +283,7 @@ class _TitleDeal extends ConsumerWidget {
           ),
         Padding(
           padding: const EdgeInsetsDirectional.only(end: 4),
-          child: showStore ? const _Subtitle() : const _Subtitle.gameOnly(),
+          child: const _Subtitle(),
         ),
       ],
     );
@@ -353,18 +311,6 @@ class _Subtitle extends ConsumerWidget {
         this.showLastChange = showLastChange ?? true,
         super(key: key);
 
-  const _Subtitle.gameOnly({
-    Key key,
-    bool showMetacritic,
-    bool showReleaseDate,
-    bool showRating,
-  })  : this.showStore = false,
-        this.showMetacritic = showMetacritic ?? true,
-        this.showReleaseDate = showReleaseDate ?? true,
-        this.showRating = showRating ?? true,
-        this.showLastChange = false,
-        super(key: key);
-
   String _difference(S translate, int mEpoch) {
     final DateTime change = DateTime.fromMillisecondsSinceEpoch(mEpoch * 1000);
     final difference = DateTime.now().difference(change);
@@ -373,9 +319,9 @@ class _Subtitle extends ConsumerWidget {
     else if (difference.inDays >= 30)
       return translate.change_in_months(difference.inDays ~/ 30);
     else if (difference.inHours >= 24)
-      return translate.change_in_days((difference.inHours / 24).ceil());
+      return translate.change_in_days(difference.inHours ~/ 24);
     else if (difference.inMinutes >= 60)
-      return translate.change_in_hours((difference.inMinutes / 60).ceil());
+      return translate.change_in_hours(difference.inMinutes ~/ 60);
     else if (difference.inMinutes >= 1)
       return translate.change_in_minutes(difference.inMinutes);
     else
@@ -391,8 +337,13 @@ class _Subtitle extends ConsumerWidget {
       if (showStore)
         WidgetSpan(
           alignment: PlaceholderAlignment.middle,
-          child: StoreAvatarIcon(
-            size: Theme.of(context).textTheme.bodyText2.fontSize,
+          child: ProviderScope(
+            overrides: [
+              indexStore.overrideWithValue(deal.storeId)
+            ],
+            child: StoreAvatarIcon(
+              size: Theme.of(context).textTheme.bodyText2.fontSize,
+            ),
           ),
         ),
     ];
@@ -514,8 +465,13 @@ class _BottomSheetButtonsDeal extends ConsumerWidget {
           children: [
             const SavedTextDealButton(),
             TextButton.icon(
-              icon: StoreAvatarIcon(
-                size: IconTheme.of(context).size / 1.2,
+              icon: ProviderScope(
+                overrides: [
+                  indexStore.overrideWithValue(deal.storeId)
+                ],
+                child: StoreAvatarIcon(
+                  size: IconTheme.of(context).size / 1.2,
+                ),
               ),
               label: Text(translate.go_to_deal),
               onPressed: () async {

@@ -486,7 +486,7 @@ class S {
     );
   }
 
-  /// `{review, select, Overwhelmingly_Negative {Overwhelmingly Negative} Very_Negative {Very Negative} Negative {Negative} Mostly_Negative {Mostly Negative} Mixed {Mixed} Mostly_Positive {Mostly Positive} Positive {Positive} Very_Positive {Very Positive} Overwhelmingly_Positive {Overwhelmingly Positive} other {{review}}}`
+  /// `{review, select, Overwhelmingly_Negative {Overwhelmingly Negative} Very_Negative {Very Negative} Negative {Negative} Mostly_Negative {Mostly Negative} Mixed {Mixed} Mostly_Positive {Mostly Positive} Positive {Positive} Very_Positive {Very Positive} Overwhelmingly_Positive {Overwhelmingly Positive} null {Unknown} other {{review}}}`
   String review(Object review) {
     return Intl.select(
       review,
@@ -500,6 +500,7 @@ class S {
         'Positive': 'Positive',
         'Very_Positive': 'Very Positive',
         'Overwhelmingly_Positive': 'Overwhelmingly Positive',
+        'null': 'Unknown',
         'other': '$review',
       },
       name: 'review',
@@ -708,6 +709,26 @@ class S {
     );
   }
 
+  /// `Watchlist`
+  String get save_deal_title {
+    return Intl.message(
+      'Watchlist',
+      name: 'save_deal_title',
+      desc: 'Save deal title Appbar',
+      args: [],
+    );
+  }
+
+  /// `Open watchlist`
+  String get save_deal_tooltip {
+    return Intl.message(
+      'Open watchlist',
+      name: 'save_deal_tooltip',
+      desc: 'Save deal tooltip button in Appbar',
+      args: [],
+    );
+  }
+
   /// `Save Deal`
   String get save_deal {
     return Intl.message(
@@ -725,6 +746,26 @@ class S {
       name: 'remove_deal',
       desc: 'Remove Deal text button',
       args: [],
+    );
+  }
+
+  /// `Cheapest Ever: `
+  String get cheapest_ever {
+    return Intl.message(
+      'Cheapest Ever: ',
+      name: 'cheapest_ever',
+      desc: 'Cheapest price ever text',
+      args: [],
+    );
+  }
+
+  /// `${price} on {date}`
+  String cheapest_price_and_date(Object price, Object date) {
+    return Intl.message(
+      '\$$price on $date',
+      name: 'cheapest_price_and_date',
+      desc: 'shows the price and date of the cheapest price ever',
+      args: [price, date],
     );
   }
 

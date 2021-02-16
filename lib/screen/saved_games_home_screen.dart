@@ -1,50 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gameshop_deals/riverpod/deal_provider.dart'
-    show dealPageProvider, dealsProvider;
-import 'package:gameshop_deals/riverpod/filter_provider.dart';
+import 'package:gameshop_deals/riverpod/saved_deals_provider.dart';
 import 'package:gameshop_deals/screen/filter_screen.dart';
 import 'package:gameshop_deals/widget/appbar.dart';
 import 'package:gameshop_deals/widget/floating_scroll_button.dart';
 import 'package:gameshop_deals/widget/principal_screen_mixin.dart';
-import 'package:gameshop_deals/widget/view_deal/scroll_view.dart';
-import 'package:gameshop_deals/widget/view_deal/swipe_page.dart';
+import 'package:gameshop_deals/widget/view_gamelookup/swipe_page.dart';
+import 'package:gameshop_deals/widget/view_gamelookup/scroll_view.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart' hide RefreshIndicator;
 
-class Home extends StatefulWidget {
+class GameHome extends StatefulWidget {
   final String title;
-  final Widget appBar;
-  const Home({Key key})
-      : title = '',
-        appBar = const HomeAppBar(),
-        super(key: key);
-
-  const Home.Search({Key key, this.title})
-      : appBar = const SearchAppBar(),
-        super(key: key);
+  const GameHome({Key key})
+      : title = '', super(key: key);
 
   @override
-  _HomeState createState() => _HomeState();
+  _GameHomeState createState() => _GameHomeState();
 }
 
-class _HomeState extends State<Home> with PrincipalState {
+class _GameHomeState extends State<GameHome> with PrincipalState {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: widget.appBar,
+        appBar: const SavedAppBar(),
         endDrawer: isTablet ? const FilterScreen() : null,
         body: ProviderListener<AsyncValue>(
-          onChange: (context, deal) {
+          onChange: (context, savedGames) {
             if (!mounted) return;
-            if (deal is AsyncError) {
+            if (savedGames is AsyncError) {
               if (refreshController.headerStatus != RefreshStatus.failed &&
-                  context.read(dealsProvider(widget.title)).state.isEmpty) {
+                  context.read(savedGamesProvider).state.isEmpty) {
                 refreshController.refreshFailed();
               }
               refreshController.loadFailed();
               if (ModalRoute.of(context).isCurrent) {
-                String message = errorRequestMessage(deal);
+                String message = errorRequestMessage(savedGames);
                 Scaffold.of(context)
                   ..hideCurrentSnackBar()
                   ..showSnackBar(
@@ -53,22 +44,22 @@ class _HomeState extends State<Home> with PrincipalState {
                     ),
                   );
               }
-            } else if (deal is AsyncData) {
+            } else if (savedGames is AsyncData) {
               if (refreshController.isRefresh)
                 refreshController.refreshCompleted();
               final noMoreData =
-                  context.read(dealPageProvider(widget.title)).isLastPage;
+                  context.read(savedGamesPageProvider).isLastPage;
               if (noMoreData)
                 refreshController.loadNoData();
               else
                 refreshController.loadComplete();
             }
           },
-          provider: dealPageProvider(widget.title).state,
+          provider: savedGamesPageProvider.state,
           child: isPageView
               ? PageDeal(controller: pageController)
               : PrimaryScrollController(
-                  key: PageStorageKey('ListView'),
+                  key: PageStorageKey('GameListView'),
                   controller: scrollController,
                   child: Scrollbar(
                     thickness: 3.0,
@@ -83,18 +74,19 @@ class _HomeState extends State<Home> with PrincipalState {
                         primary: true,
                         slivers: <Widget>[
                           const SliverSafeArea(
-                            sliver: const DealListView(),
+                            sliver: const GameListView(),
                           ),
                         ],
                       ),
                       onRefresh: () async {
                         refreshController.loadComplete();
-                        context.refresh(dealPageProvider(widget.title));
+                        context.refresh(savedGamesPageProvider);
                       },
                       onLoading: () async {
-                        final dealPage =
-                            context.read(dealPageProvider(widget.title));
-                        if (!dealPage.isLastPage) await dealPage.retrieveNextPage();
+                        final gamesPage =
+                            context.read(savedGamesPageProvider);
+                        if (!gamesPage.isLastPage) await gamesPage.retrieveNextPage();
+                        else refreshController.loadNoData();
                       },
                     ),
                   ),
@@ -137,8 +129,7 @@ class _ScrollFooterState extends LoadIndicatorState<ScrollFooter> {
   Widget buildContent(BuildContext context, LoadStatus mode) {
     return Consumer(
       builder: (context, watch, _) {
-        final title = watch(titleProvider);
-        final deals = watch(dealPageProvider(title).state);
+        final deals = watch(savedGamesPageProvider.state);
         return deals.when(
           data: (_) => const SizedBox(height: 4.0),
           loading: () => const Align(
@@ -151,7 +142,7 @@ class _ScrollFooterState extends LoadIndicatorState<ScrollFooter> {
                   .currentLocalization
                   .loadFailedText),
               onPressed: () async {
-                context.read(dealPageProvider(title)).retrieveNextPage();
+                context.read(savedGamesPageProvider).retrieveNextPage();
                 mode = LoadStatus.loading;
               },
             ),

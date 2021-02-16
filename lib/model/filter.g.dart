@@ -17,7 +17,7 @@ class FilterAdapter extends TypeAdapter<_$_Filter> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return _$_Filter(
-      storeID: (fields[0] as List)?.cast<int>().toSet(),
+      storeId: (fields[0] as List)?.cast<String>().toSet(),
       pageSize: fields[1] as int,
       sortBy: fields[2] as SortBy,
       isAscendant: fields[3] as bool,
@@ -37,7 +37,7 @@ class FilterAdapter extends TypeAdapter<_$_Filter> {
     writer
       ..writeByte(12)
       ..writeByte(0)
-      ..write(obj.storeID?.toList())
+      ..write(obj.storeId?.toList())
       ..writeByte(1)
       ..write(obj.pageSize)
       ..writeByte(2)
@@ -79,7 +79,7 @@ class FilterAdapter extends TypeAdapter<_$_Filter> {
 
 _$_Filter _$_$_FilterFromJson(Map<String, dynamic> json) {
   return _$_Filter(
-    storeID: (json['storeID'] as List)?.map((e) => e as int)?.toSet() ?? {},
+    storeId: (json['storeId'] as List)?.map((e) => e as String)?.toSet() ?? {},
     pageSize: json['pageSize'] as int ?? 60,
     sortBy: _$enumDecodeNullable(_$SortByEnumMap, json['sortBy']) ??
         SortBy.Deal_Rating,
@@ -99,7 +99,7 @@ _$_Filter _$_$_FilterFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$_$_FilterToJson(_$_Filter instance) => <String, dynamic>{
-      'storeID': instance.storeID?.toList(),
+      'storeId': instance.storeId?.toList(),
       'pageSize': instance.pageSize,
       'sortBy': _$SortByEnumMap[instance.sortBy],
       'desc': _boolToInt(instance.isAscendant),

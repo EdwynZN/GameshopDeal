@@ -5,6 +5,7 @@ import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/riverpod/theme_provider.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:gameshop_deals/widget/dialog_preference_provider.dart';
+import 'package:gameshop_deals/widget/preference/display_view.dart';
 import 'package:gameshop_deals/widget/preference/webview.dart';
 import 'package:hive/hive.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -37,6 +38,7 @@ class SettingsScreen extends StatelessWidget {
                       title: const Text('General'),
                       children: [
                         const WebViewPreference(),
+                        const DisplayPreference(),
                       ],
                     ),
                   ),

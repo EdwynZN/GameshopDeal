@@ -8,13 +8,19 @@ const String cacheKeyStores = 'Stores';
 const String cacheKeyDeals = 'Deals';
 
 /// Hive Box for SearchHistory
+const String preferenceHiveBox = 'PreferencesBox';
+
+/// Hive Box for SearchHistory
 const String searchHistoryHiveBox = 'SearchHistory';
+
+/// Hive Box for Price Alert Games
+const String alertHiveBox = 'PriceAlertBox';
 
 /// Hive Key for Filter in HiveBox Preferences
 const String filterKey = 'Filter';
 
 /// Hive Key for Deal View in HiveBox Preferences
-const String viewKey = 'DealView';
+const String viewKey = 'View';
 
 /// Preference Key for Deals in HiveBox Preferences
 const String preferenceKey = 'Preference';

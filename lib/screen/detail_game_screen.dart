@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:gameshop_deals/widget/view_deal/swipe_page.dart';
+import 'package:gameshop_deals/widget/view_gamelookup/swipe_page.dart';
 
-class DetailDealPageView extends StatefulWidget {
+class DetailGamePageView extends StatefulWidget {
   final int offset;
-  const DetailDealPageView({Key key, this.offset}) : super(key: key);
+  const DetailGamePageView({Key key, this.offset}) : super(key: key);
 
   @override
-  _DetailDealPageViewState createState() => _DetailDealPageViewState();
+  _DetailGamePageViewState createState() => _DetailGamePageViewState();
 }
 
-class _DetailDealPageViewState extends State<DetailDealPageView> {
+class _DetailGamePageViewState extends State<DetailGamePageView> {
   PageController pageController;
 
   @override

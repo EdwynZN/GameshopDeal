@@ -5,6 +5,7 @@ import 'package:gameshop_deals/model/cheapest_price.dart';
 import 'package:gameshop_deals/model/deal.dart';
 import 'package:gameshop_deals/model/filter.dart';
 import 'package:gameshop_deals/model/game_lookup.dart';
+import 'package:gameshop_deals/model/price_alert.dart';
 import 'package:gameshop_deals/model/sort_by_enum.dart';
 import 'package:gameshop_deals/model/preference.dart';
 import 'package:gameshop_deals/widget/route_transitions.dart';
@@ -14,8 +15,9 @@ import 'package:gameshop_deals/riverpod/theme_provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:gameshop_deals/model/theme_mode_adapter_enum.dart';
-import 'package:gameshop_deals/model/deal_view_enum.dart';
+import 'package:gameshop_deals/model/view_enum.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:gameshop_deals/utils/preferences_constants.dart' show preferenceHiveBox;
 
 class Logger extends ProviderObserver {
   @override
@@ -54,16 +56,18 @@ class Logger extends ProviderObserver {
 
 Future<void> _initHive() async {
   await Hive.initFlutter();
-  Hive..registerAdapter<ThemeMode>(ThemeModeAdapter())
-    ..registerAdapter<DealView>(DealViewAdapter())
+  Hive
+    ..registerAdapter<ThemeMode>(ThemeModeAdapter())
+    ..registerAdapter<View>(ViewAdapter())
     ..registerAdapter<GameLookup>(GameLookupAdapter())
     ..registerAdapter<Info>(InfoAdapter())
     ..registerAdapter<CheapestPrice>(CheapestPriceAdapter())
     ..registerAdapter<Deal>(DealAdapter())
     ..registerAdapter<SortBy>(SortByAdapter())
     ..registerAdapter<Filter>(FilterAdapter())
+    ..registerAdapter<PriceAlert>(PriceAlertAdapter())
     ..registerAdapter<Preference>(PreferenceAdapter());
-  await Hive.openBox<dynamic>('preferences');
+  await Hive.openBox<dynamic>(preferenceHiveBox);
 }
 
 void main() async {

@@ -1,14 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/all.dart';
-import 'package:gameshop_deals/riverpod/deal_provider.dart'
-    show singleDeal, singleStoreProvider;
+import 'package:gameshop_deals/riverpod/deal_provider.dart' show singleStoreProvider;
 import 'package:flutter/material.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:gameshop_deals/riverpod/cache_manager_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart'
-    show cheapsharkUrl;
+  show cheapsharkUrl;
+
+final indexStore = ScopedProvider<String>(null);
 
 class StoreAvatarIcon extends ConsumerWidget {
   final double size;
@@ -17,14 +18,13 @@ class StoreAvatarIcon extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final double iconSize = size ?? IconTheme.of(context).size;
-    final deal = watch(singleDeal);
-    assert(deal != null);
-    final store = watch(singleStoreProvider(deal.storeId));
-    if (store == null) 
-    return Icon(
-      Icons.local_grocery_store_outlined,
-      size: iconSize,
-    );
+    final id = watch(indexStore);
+    final store = watch(singleStoreProvider(id));
+    if (store == null)
+      return Icon(
+        Icons.local_grocery_store_outlined,
+        size: iconSize,
+      );
     final brightness = ThemeData.estimateBrightnessForColor(
         Theme.of(context).scaffoldBackgroundColor);
     BlendMode blend =
@@ -58,9 +58,8 @@ class StoreAvatarBanner extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final deal = watch(singleDeal);
-    assert(deal != null);
-    final store = watch(singleStoreProvider(deal.storeId));
+    final id = watch(indexStore);
+    final store = watch(singleStoreProvider(id));
     if (store == null) return const SizedBox.shrink();
     final brightness = ThemeData.estimateBrightnessForColor(
         Theme.of(context).scaffoldBackgroundColor);
