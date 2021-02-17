@@ -30,7 +30,7 @@ class PageDeal extends ConsumerWidget {
         (context, index) {
           if ((childCount == index) &&
               !context.read(savedGamesPageProvider).isLastPage)
-            return const EndLinearProgressIndicator();
+            return const _EndLinearProgressIndicator();
           else if (index >= childCount) return null;
           return ProviderScope(
             overrides: [
@@ -141,8 +141,8 @@ class _DealListWidget extends ConsumerWidget {
   }
 }
 
-class EndLinearProgressIndicator extends ConsumerWidget {
-  const EndLinearProgressIndicator({Key key}) : super(key: key);
+class _EndLinearProgressIndicator extends ConsumerWidget {
+  const _EndLinearProgressIndicator({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {

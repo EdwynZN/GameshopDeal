@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart'
   show cheapsharkUrl;
 
-final indexStore = ScopedProvider<String>(null);
+final storeIdProvider = ScopedProvider<String>(null);
 
 class StoreAvatarIcon extends ConsumerWidget {
   final double size;
@@ -18,7 +18,7 @@ class StoreAvatarIcon extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final double iconSize = size ?? IconTheme.of(context).size;
-    final id = watch(indexStore);
+    final id = watch(storeIdProvider);
     final store = watch(singleStoreProvider(id));
     if (store == null)
       return Icon(
@@ -58,7 +58,7 @@ class StoreAvatarBanner extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final id = watch(indexStore);
+    final id = watch(storeIdProvider);
     final store = watch(singleStoreProvider(id));
     if (store == null) return const SizedBox.shrink();
     final brightness = ThemeData.estimateBrightnessForColor(

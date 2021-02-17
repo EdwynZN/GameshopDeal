@@ -88,7 +88,7 @@ class CompactDeal extends ConsumerWidget {
       child: ListTile(
         leading: ProviderScope(
           overrides: [
-            indexStore.overrideWithValue(deal.storeId)
+            storeIdProvider.overrideWithValue(deal.storeId)
           ],
           child: const StoreAvatarIcon(),
         ),
@@ -155,7 +155,7 @@ class GridDeal extends ConsumerWidget {
           ),
           leading: ProviderScope(
             overrides: [
-              indexStore.overrideWithValue(deal.storeId)
+              storeIdProvider.overrideWithValue(deal.storeId)
             ],
             child: StoreAvatarIcon(size: Theme.of(context).textTheme.bodyText2.fontSize),
           ),
@@ -339,7 +339,7 @@ class _Subtitle extends ConsumerWidget {
           alignment: PlaceholderAlignment.middle,
           child: ProviderScope(
             overrides: [
-              indexStore.overrideWithValue(deal.storeId)
+              storeIdProvider.overrideWithValue(deal.storeId)
             ],
             child: StoreAvatarIcon(
               size: Theme.of(context).textTheme.bodyText2.fontSize,
@@ -467,7 +467,7 @@ class _BottomSheetButtonsDeal extends ConsumerWidget {
             TextButton.icon(
               icon: ProviderScope(
                 overrides: [
-                  indexStore.overrideWithValue(deal.storeId)
+                  storeIdProvider.overrideWithValue(deal.storeId)
                 ],
                 child: StoreAvatarIcon(
                   size: IconTheme.of(context).size / 1.2,

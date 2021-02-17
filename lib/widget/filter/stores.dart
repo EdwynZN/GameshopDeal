@@ -8,7 +8,8 @@ import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart' show storesProvider;
 import 'package:gameshop_deals/model/filter.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
-import 'package:gameshop_deals/utils/preferences_constants.dart' show cheapsharkUrl;
+import 'package:gameshop_deals/utils/preferences_constants.dart'
+    show cheapsharkUrl;
 
 final _storesProvider = ScopedProvider<Set<String>>((watch) {
   final title = watch(titleProvider);
@@ -34,8 +35,6 @@ class StoreWidget extends ConsumerWidget {
         onPressed: () => context.refresh(storesProvider),
       ),
       data: (stores) {
-        List<Store> activeStores =
-            stores.where((element) => element.isActive).toList();
         return Wrap(
           spacing: 8,
           children: <Widget>[
@@ -61,7 +60,7 @@ class StoreWidget extends ConsumerWidget {
               ),
               tooltip: translate.all_stores_tooltip,
             ),
-            for (Store store in activeStores)
+            for (Store store in stores)
               ChoiceChip(
                 selected: storesSelected.contains(store.storeId),
                 onSelected: (val) {

@@ -44,7 +44,7 @@ class StoreDealGrid extends ConsumerWidget {
                 constraints: BoxConstraints(minWidth: 56.0, maxHeight: 48),
                 child: ProviderScope(
                   overrides: [
-                    indexStore.overrideWithValue(deal.storeId)
+                    storeIdProvider.overrideWithValue(deal.storeId)
                   ],
                   child: const StoreAvatarBanner(),
                 ),
@@ -87,7 +87,7 @@ class StoreDealTile extends ConsumerWidget {
           constraints: BoxConstraints(minWidth: 56.0, maxHeight: 48),
           child: ProviderScope(
             overrides: [
-              indexStore.overrideWithValue(deal.storeId)
+              storeIdProvider.overrideWithValue(deal.storeId)
             ],
             child: const StoreAvatarBanner(
               alignment: Alignment.centerLeft,

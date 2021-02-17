@@ -101,7 +101,7 @@ class SavedAppBar extends StatelessWidget with PreferredSizeWidget {
       ),
       title: Text(translate.save_deal_title),
       actions: const <Widget>[
-        const _SearchButton(),
+        //const _SearchButton(),
         const _MoreSettings(),
       ],
     );

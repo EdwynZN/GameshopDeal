@@ -12,7 +12,7 @@ import 'package:gameshop_deals/model/pagination_model.dart';
 
 final singleDeal = ScopedProvider<Deal>(null);
 
-final storesProvider = FutureProvider.autoDispose<List<Store>>((ref) {
+final storesProvider = FutureProvider.autoDispose<List<Store>>((ref) async {
   final cancelToken = CancelToken();
   final DioCacheManager dioCacheManager =
       DioCacheManager(CacheConfig(defaultRequestMethod: 'GET'));
@@ -25,10 +25,12 @@ final storesProvider = FutureProvider.autoDispose<List<Store>>((ref) {
     dio..interceptors.remove(dioCacheManager.interceptor);
     dio.close();
   });
+  
+  final stores = await DiscountApi(dio).getStores(_cacheOptions, cancelToken);
 
   ref.maintainState = true;
-
-  return DiscountApi(dio).getStores(_cacheOptions, cancelToken);
+  
+  return stores.where((element) => element.isActive).toList();
 }, name: 'StoresProvider');
 
 final singleStoreProvider =

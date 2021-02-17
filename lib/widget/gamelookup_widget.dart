@@ -35,8 +35,8 @@ class DetailedGameLookup extends ConsumerWidget {
           Expanded(
             child: const Padding(
               padding: const EdgeInsetsDirectional.only(
-                  start: 8.0, bottom: 4, end: 4),
-              child: const _TitleGameLookup(),
+                start: 8.0, bottom: 4, end: 4),
+              child: const _TitleGameLookup(showCheapest: true),
             ),
           ),
           Flexible(
@@ -87,7 +87,9 @@ class CompactGameLookup extends ConsumerWidget {
       ),
       child: ListTile(
         leading: ProviderScope(
-          overrides: [indexStore.overrideWithValue(game.deals.first.storeId)],
+          overrides: [
+            storeIdProvider.overrideWithValue(game.deals.first.storeId)
+          ],
           child: const StoreAvatarIcon(),
         ),
         dense: true,
@@ -104,7 +106,7 @@ class CompactGameLookup extends ConsumerWidget {
             children: [
               for (var deal in game.deals.skip(1))
                 ProviderScope(
-                  overrides: [indexStore.overrideWithValue(deal.storeId)],
+                  overrides: [storeIdProvider.overrideWithValue(deal.storeId)],
                   child: StoreAvatarIcon(
                     size: Theme.of(context).textTheme.bodyText2.fontSize,
                   ),
@@ -169,7 +171,9 @@ class GridGameLookup extends ConsumerWidget {
             maxLines: 2,
           ),
           leading: ProviderScope(
-            overrides: [indexStore.overrideWithValue(game.deals.first.storeId)],
+            overrides: [
+              storeIdProvider.overrideWithValue(game.deals.first.storeId)
+            ],
             child: StoreAvatarIcon(
               size: Theme.of(context).textTheme.bodyText2.fontSize,
             ),
@@ -216,60 +220,6 @@ class GridGameLookup extends ConsumerWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class TileGameLookup extends StatelessWidget {
-  const TileGameLookup({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Flexible(
-            flex: null,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: 70, maxWidth: 120),
-                child: ProviderScope(
-                  overrides: [
-                    thumbProvider.overrideAs(
-                        (watch) => watch(singleGameLookup).info.thumb)
-                  ],
-                  child: const ThumbImage(),
-                ),
-              ),
-            ),
-          ),
-          Flexible(
-            flex: 1,
-            child: Padding(
-              padding: const EdgeInsetsDirectional.only(start: 8.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Expanded(child: const _TitleGameLookup()),
-                  Flexible(
-                    flex: null,
-                    child: ProviderScope(
-                      overrides: [
-                        singleDeal.overrideAs(
-                            (watch) => watch(singleGameLookup).deals.first)
-                      ],
-                      child: const PriceWidget(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -351,13 +301,15 @@ class ListGameLookup extends StatelessWidget {
 }
 
 class _TitleGameLookup extends ConsumerWidget {
-  const _TitleGameLookup({Key key}) : super(key: key);
+  final bool showCheapest;
+  const _TitleGameLookup({Key key, this.showCheapest = false}) 
+    : assert(showCheapest != null),
+      super(key: key);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final game = watch(singleGameLookup);
     assert(game != null);
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -371,6 +323,11 @@ class _TitleGameLookup extends ConsumerWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
+        if (showCheapest)
+        const Padding(
+          padding: const EdgeInsetsDirectional.only(bottom: 4, end: 4),
+          child: CheapestEverWidget(),
+        ),
         Padding(
           padding: const EdgeInsetsDirectional.only(end: 4),
           child: Wrap(
@@ -379,7 +336,7 @@ class _TitleGameLookup extends ConsumerWidget {
             children: [
               for (var deal in game.deals)
                 ProviderScope(
-                  overrides: [indexStore.overrideWithValue(deal.storeId)],
+                  overrides: [storeIdProvider.overrideWithValue(deal.storeId)],
                   child: StoreAvatarIcon(
                     size: Theme.of(context).textTheme.bodyText2.fontSize,
                   ),
@@ -428,7 +385,9 @@ class _BottomSheetButtonsGameLookup extends ConsumerWidget {
               for (var deal in game.deals)
                 TextButton.icon(
                   icon: ProviderScope(
-                    overrides: [indexStore.overrideWithValue(deal.storeId)],
+                    overrides: [
+                      storeIdProvider.overrideWithValue(deal.storeId)
+                    ],
                     child: StoreAvatarIcon(
                       size: IconTheme.of(context).size / 1.2,
                     ),

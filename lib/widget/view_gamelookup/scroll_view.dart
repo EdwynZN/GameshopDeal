@@ -15,7 +15,7 @@ class GameListView extends ConsumerWidget {
     final View view = watch(displayProvider.state);
     if (games.isEmpty) return const SliverToBoxAdapter();
     switch (view) {
-      /* case View.Grid:
+      case View.Grid:
         return SliverPadding(
           padding: const EdgeInsets.all(4.0),
           sliver: SliverGrid(
@@ -38,7 +38,7 @@ class GameListView extends ConsumerWidget {
               crossAxisSpacing: 4.0,
             ),
           ),
-        ); */
+        );
       case View.Detail:
         return SliverList(
           //itemExtent: 86.0,
