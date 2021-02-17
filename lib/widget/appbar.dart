@@ -99,7 +99,7 @@ class SavedAppBar extends StatelessWidget with PreferredSizeWidget {
       leading: BackButton(
         onPressed: () => Navigator.of(context, rootNavigator: true).maybePop(),
       ),
-      title: Text(translate.save_deal_title),
+      title: Text(translate.save_game_title),
       actions: const <Widget>[
         //const _SearchButton(),
         const _MoreSettings(),
@@ -205,7 +205,7 @@ class __MoreSettingsState extends State<_MoreSettings> {
       context: context,
       position: RelativeRect.fromLTRB(offset.dx, offset.dy, 0, 0),
       items: [
-        PopupMenuItem<int>(child: Text(translate.deal_view), value: 0),
+        PopupMenuItem<int>(child: Text(translate.view), value: 0),
         PopupMenuItem<int>(child: Text(translate.choose_theme), value: 1),
         PopupMenuItem<int>(child: Text(translate.rate_me), value: 2),
         //PopupMenuItem<int>(child: Text(translate.help), value: 4),
@@ -225,13 +225,13 @@ class __MoreSettingsState extends State<_MoreSettings> {
       position: RelativeRect.fromLTRB(offset.dx, offset.dy, 0, 0),
       items: [
         PopupMenuItem(
-          child: Text(translate.deal_view),
+          child: Text(translate.view),
           enabled: false,
           textStyle: Theme.of(context).textTheme.subtitle2,
         ),
         for (View view in View.values)
           RadioPopupMenuItem<View>(
-            child: Text(translate.choose_deal_view(view)),
+            child: Text(translate.choose_view(view)),
             value: view,
             provider: displayProvider,
           ),
@@ -271,7 +271,7 @@ class __MoreSettingsState extends State<_MoreSettings> {
     final View mode = await showDialog<View>(
       context: context,
       builder: (_) => PreferenceDialog<View>(
-          title: translate.deal_view,
+          title: translate.view,
           provider: displayProvider,
           values: View.values),
     );
@@ -357,7 +357,7 @@ class _SavedGamesButton extends StatelessWidget {
       icon: const Icon(Icons.visibility_outlined),
       onPressed: () async =>
           Navigator.of(context, rootNavigator: true).pushNamed(savedGamesRoute),
-      tooltip: translate.save_deal_tooltip,
+      tooltip: translate.save_game_tooltip,
     );
   }
 }

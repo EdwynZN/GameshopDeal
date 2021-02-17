@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart' show singleDeal;
 import 'package:gameshop_deals/riverpod/saved_deals_provider.dart'
-    show singleGameLookup;
+    show singleGameLookup, gameKeysProvider;
 import 'package:gameshop_deals/riverpod/preference_provider.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:gameshop_deals/utils/routes_constants.dart';
 import 'package:gameshop_deals/widget/display_deal/price_widget.dart';
+import 'package:gameshop_deals/widget/display_deal/saved_deal_button.dart';
 import 'package:gameshop_deals/widget/display_deal/store_avatar.dart';
 import 'package:gameshop_deals/widget/display_deal/thumb_image.dart';
 import 'package:gameshop_deals/widget/display_gamelookup/cheapest_ever.dart';
@@ -35,7 +36,7 @@ class DetailedGameLookup extends ConsumerWidget {
           Expanded(
             child: const Padding(
               padding: const EdgeInsetsDirectional.only(
-                start: 8.0, bottom: 4, end: 4),
+                  start: 8.0, bottom: 4, end: 4),
               child: const _TitleGameLookup(showCheapest: true),
             ),
           ),
@@ -62,7 +63,10 @@ class DetailedGameLookup extends ConsumerWidget {
           context: context,
           useRootNavigator: true,
           builder: (context) => ProviderScope(
-            overrides: [singleGameLookup.overrideWithValue(game)],
+            overrides: [
+              singleGameLookup.overrideWithValue(game),
+              indexGameLookup.overrideWithValue(index),
+            ],
             child: const _BottomSheetButtonsGameLookup(),
           ),
         );
@@ -128,7 +132,10 @@ class CompactGameLookup extends ConsumerWidget {
             context: context,
             useRootNavigator: true,
             builder: (context) => ProviderScope(
-              overrides: [singleGameLookup.overrideWithValue(game)],
+              overrides: [
+                singleGameLookup.overrideWithValue(game),
+                indexGameLookup.overrideWithValue(index),
+              ],
               child: const _BottomSheetButtonsGameLookup(),
             ),
           );
@@ -159,7 +166,10 @@ class GridGameLookup extends ConsumerWidget {
           context: context,
           useRootNavigator: true,
           builder: (context) => ProviderScope(
-            overrides: [singleGameLookup.overrideWithValue(game)],
+            overrides: [
+              singleGameLookup.overrideWithValue(game),
+              indexGameLookup.overrideWithValue(index),
+            ],
             child: const _BottomSheetButtonsGameLookup(),
           ),
         );
@@ -288,7 +298,10 @@ class ListGameLookup extends StatelessWidget {
               useRootNavigator: true,
               isScrollControlled: true,
               builder: (context) => ProviderScope(
-                overrides: [singleGameLookup.overrideWithValue(game)],
+                overrides: [
+                singleGameLookup.overrideWithValue(game),
+                indexGameLookup.overrideWithValue(index),
+              ],
                 child: const _BottomSheetButtonsGameLookup(),
               ),
             );
@@ -302,9 +315,9 @@ class ListGameLookup extends StatelessWidget {
 
 class _TitleGameLookup extends ConsumerWidget {
   final bool showCheapest;
-  const _TitleGameLookup({Key key, this.showCheapest = false}) 
-    : assert(showCheapest != null),
-      super(key: key);
+  const _TitleGameLookup({Key key, this.showCheapest = false})
+      : assert(showCheapest != null),
+        super(key: key);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -324,10 +337,10 @@ class _TitleGameLookup extends ConsumerWidget {
             ),
           ),
         if (showCheapest)
-        const Padding(
-          padding: const EdgeInsetsDirectional.only(bottom: 4, end: 4),
-          child: CheapestEverWidget(),
-        ),
+          const Padding(
+            padding: const EdgeInsetsDirectional.only(bottom: 4, end: 4),
+            child: CheapestEverWidget(),
+          ),
         Padding(
           padding: const EdgeInsetsDirectional.only(end: 4),
           child: Wrap(
@@ -368,15 +381,31 @@ class _BottomSheetButtonsGameLookup extends ConsumerWidget {
               padding: const EdgeInsets.all(8.0),
               decoration: BoxDecoration(
                   border: Border(bottom: Divider.createBorderSide(context))),
-              child: Text(
-                title,
+              child: Text.rich(
+                TextSpan(
+                  text: '$title\n',
+                  children: [
+                    const WidgetSpan(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: CheapestEverWidget(),
+                      ),
+                    ),
+                  ]
+                ),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headline6,
               ),
             ),
-          const Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0),
-            child: CheapestEverWidget(),
+          ProviderScope(
+            overrides: [
+              singleDeal.overrideAs((watch) {
+                final index = watch(indexGameLookup);
+                final keys = watch(gameKeysProvider);
+                return game.deals.first.copyWith(gameId: keys[index], title: game.info.title);
+              }),
+            ], 
+            child: const SavedTextDealButton(),
           ),
           Wrap(
             spacing: 8.0,

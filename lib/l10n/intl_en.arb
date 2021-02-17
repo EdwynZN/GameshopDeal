@@ -23,13 +23,13 @@
         "type": "text",
         "description": "Help"
     },
-    "deal_view": "Deal view",
-    "@deal_view": {
+    "view": "View",
+    "@view": {
         "type": "text",
-        "description": "Deal view"
+        "description": "View"
     },
-    "choose_deal_view": "{view, select, List {List} Grid {Grid} Detail {Detail} Compact {Compact} Swipe {Swipe} other {List}}",
-    "@choose_deal_view": {
+    "choose_view": "{view, select, List {List} Grid {Grid} Detail {Detail} Compact {Compact} Swipe {Swipe} other {List}}",
+    "@choose_view": {
         "type": "multiple choice",
         "description": "DealView enum",
         "placeholder": {
@@ -388,23 +388,23 @@
             }
         }
     },
-    "save_deal_title": "Watchlist",
-    "@save_deal_title": {
+    "save_game_title": "Watchlist",
+    "@save_game_title": {
         "type": "text",
         "description": "Save deal title Appbar"
     },
-    "save_deal_tooltip": "Open watchlist",
-    "@save_deal_tooltip": {
+    "save_game_tooltip": "Open Watchlist",
+    "@save_game_tooltip": {
         "type": "text",
         "description": "Save deal tooltip button in Appbar"
     },
-    "save_deal": "Save Deal",
-    "@save_deal": {
+    "save_game": "Save Game",
+    "@save_game": {
         "type": "text",
-        "description": "Save Deal text button"
+        "description": "Save Game text button"
     },
-    "remove_deal": "Remove Deal",
-    "@remove_deal": {
+    "remove_game": "Remove Game",
+    "@remove_game": {
         "type": "text",
         "description": "Remove Deal text button"
     },

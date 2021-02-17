@@ -18,15 +18,15 @@ class DisplayPreference extends ConsumerWidget {
         final View mode = await showDialog<View>(
           context: context,
           builder: (_) => PreferenceDialog<View>(
-            title: translate.deal_view,
+            title: translate.view,
             provider: displayProvider,
             values: View.values,
           ),
         );
         if (mode != null) context.read(displayProvider).changeState(mode);
       },
-      title: Text(translate.deal_view),
-      subtitle: Text(translate.choose_deal_view(view)),
+      title: Text(translate.view),
+      subtitle: Text(translate.choose_view(view)),
     );
   }
 }

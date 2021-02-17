@@ -75,18 +75,18 @@ class S {
     );
   }
 
-  /// `Deal view`
-  String get deal_view {
+  /// `View`
+  String get view {
     return Intl.message(
-      'Deal view',
-      name: 'deal_view',
-      desc: 'Deal view',
+      'View',
+      name: 'view',
+      desc: 'View',
       args: [],
     );
   }
 
   /// `{view, select, List {List} Grid {Grid} Detail {Detail} Compact {Compact} Swipe {Swipe} other {List}}`
-  String choose_deal_view(Object view) {
+  String choose_view(Object view) {
     return Intl.select(
       view,
       {
@@ -97,7 +97,7 @@ class S {
         'Swipe': 'Swipe',
         'other': 'List',
       },
-      name: 'choose_deal_view',
+      name: 'choose_view',
       desc: 'DealView enum',
       args: [view],
     );
@@ -710,40 +710,40 @@ class S {
   }
 
   /// `Watchlist`
-  String get save_deal_title {
+  String get save_game_title {
     return Intl.message(
       'Watchlist',
-      name: 'save_deal_title',
+      name: 'save_game_title',
       desc: 'Save deal title Appbar',
       args: [],
     );
   }
 
-  /// `Open watchlist`
-  String get save_deal_tooltip {
+  /// `Open Watchlist`
+  String get save_game_tooltip {
     return Intl.message(
-      'Open watchlist',
-      name: 'save_deal_tooltip',
+      'Open Watchlist',
+      name: 'save_game_tooltip',
       desc: 'Save deal tooltip button in Appbar',
       args: [],
     );
   }
 
-  /// `Save Deal`
-  String get save_deal {
+  /// `Save Game`
+  String get save_game {
     return Intl.message(
-      'Save Deal',
-      name: 'save_deal',
-      desc: 'Save Deal text button',
+      'Save Game',
+      name: 'save_game',
+      desc: 'Save Game text button',
       args: [],
     );
   }
 
-  /// `Remove Deal`
-  String get remove_deal {
+  /// `Remove Game`
+  String get remove_game {
     return Intl.message(
-      'Remove Deal',
-      name: 'remove_deal',
+      'Remove Game',
+      name: 'remove_game',
       desc: 'Remove Deal text button',
       args: [],
     );

@@ -37,7 +37,7 @@ class _PreferenceDialogState<T> extends State<PreferenceDialog<T>> {
 
   String _translatedTitle(T title) {
     if (title is ThemeMode) return translate.themeMode(title);
-    else return translate.choose_deal_view(title);
+    else return translate.choose_view(title);
   }
 
   @override

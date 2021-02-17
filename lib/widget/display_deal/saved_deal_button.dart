@@ -35,7 +35,7 @@ class SavedDealButton extends ConsumerWidget {
             icon: const Icon(Icons.visibility_outlined),
             label: Flexible(
               child: Text(
-                translate.save_deal,
+                translate.save_game,
                 overflow: TextOverflow.fade,
                 softWrap: false,
               ),
@@ -59,7 +59,7 @@ class SavedDealButton extends ConsumerWidget {
           icon: const Icon(Icons.visibility_off_outlined),
           label: Flexible(
             child: Text(
-              translate.remove_deal,
+              translate.remove_game,
               overflow: TextOverflow.fade,
               softWrap: false,
             ),
@@ -98,7 +98,7 @@ class SavedTextDealButton extends ConsumerWidget {
             icon: const Icon(Icons.visibility_outlined),
             label: Flexible(
               child: Text(
-                translate.save_deal,
+                translate.save_game,
                 overflow: TextOverflow.fade,
                 softWrap: false,
               ),
@@ -122,7 +122,7 @@ class SavedTextDealButton extends ConsumerWidget {
           icon: const Icon(Icons.visibility_off_outlined),
           label: Flexible(
             child: Text(
-              translate.remove_deal,
+              translate.remove_game,
               overflow: TextOverflow.fade,
               softWrap: false,
             ),

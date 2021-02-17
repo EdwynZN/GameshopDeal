@@ -23,13 +23,13 @@
         "type": "texto",
         "description": "Ayuda"
     },
-    "deal_view": "Vista de ofertas",
-    "@deal_view": {
+    "view": "Vista",
+    "@view": {
         "type": "texto",
-        "description": "Vista de ofertas"
+        "description": "Vista"
     },
-    "choose_deal_view": "{view, select, List {Lista} Grid {Cuadrícula} Detail {Detalle} Compact {Compacta} Swipe {Página} other {Lista}}",
-    "@choose_deal_view": {
+    "choose_view": "{view, select, List {Lista} Grid {Cuadrícula} Detail {Detalle} Compact {Compacta} Swipe {Página} other {Lista}}",
+    "@choose_view": {
         "type": "opción múltiple",
         "description": "enum de la vista de ofertas",
         "placeholder": {
@@ -388,23 +388,23 @@
             }
         }
     },
-    "save_deal_title": "Mis Ofertas",
-    "@save_deal_title": {
+    "save_game_title": "Mis Juegos",
+    "@save_game_title": {
         "type": "texto",
-        "description": "Título de la lista de seguimiento de ofertas"
+        "description": "Título de la lista de seguimiento de juegos"
     },
-    "save_deal_tooltip": "Abrir ofertas guardadas",
-    "@save_deal_tooltip": {
+    "save_game_tooltip": "Abrir juegos guardadas",
+    "@save_game_tooltip": {
         "type": "texto",
         "description": "Sugerencia mostrada del bot'on de la lista de seguimiento"
     },
-    "save_deal": "Guardar oferta",
-    "@save_deal": {
+    "save_game": "Guardar juego",
+    "@save_game": {
         "type": "texto",
         "description": "Botón para guardar la oferta"
     },
-    "remove_deal": "Remover oferta",
-    "@remove_deal": {
+    "remove_game": "Remover juego",
+    "@remove_game": {
         "type": "texto",
         "description": "Botón para quitar la oferta de la lista de guardados"
     },

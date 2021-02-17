@@ -3,6 +3,7 @@ import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/saved_deals_provider.dart';
+import 'package:gameshop_deals/widget/display_deal/saved_deal_button.dart';
 import 'package:gameshop_deals/widget/display_deal/thumb_image.dart';
 import 'package:gameshop_deals/widget/display_gamelookup/cheapest_ever.dart';
 import 'package:gameshop_deals/widget/gamelookup_widget.dart';
@@ -63,6 +64,22 @@ class _SwipePage extends StatelessWidget {
           ),
         ),
         const SliverToBoxAdapter(child: Divider()),
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+          sliver: SliverToBoxAdapter(
+            child: ProviderScope(
+              overrides: [
+                singleDeal.overrideAs((watch) {
+                  final index = watch(indexGameLookup);
+                  final keys = watch(gameKeysProvider);
+                  final game = watch(singleGameLookup);
+                  return game.deals.first.copyWith(gameId: keys[index], title: game.info.title);
+                }),
+              ],
+              child: const SavedDealButton(),
+            ),
+          ),
+        ),
         SliverPadding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           sliver: SliverToBoxAdapter(
