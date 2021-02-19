@@ -467,5 +467,16 @@
     "@report_bug": {
         "type": "texto",
         "description": "Título del botón para reportar un error"
+    },
+    "alert_price": "{tag, plural, zero{Notificar cuando sea gratis} other{Notificar cuando el precio baje a ${tag} o menos}}",
+    "@alert_price": {
+        "type": "text",
+        "description": "Notificar cuando el precio sea más bajo que el mencionado en la etiqueta",
+        "placeholders": {
+            "tag": {
+                "example": "10",
+                "description": "cantidad de dinero"
+            }
+        }
     }
   }

@@ -73,7 +73,8 @@ class _SwipePage extends StatelessWidget {
                   final index = watch(indexGameLookup);
                   final keys = watch(gameKeysProvider);
                   final game = watch(singleGameLookup);
-                  return game.deals.first.copyWith(gameId: keys[index], title: game.info.title);
+                  return game.deals.first
+                      .copyWith(gameId: keys[index], title: game.info.title);
                 }),
               ],
               child: const SavedDealButton(),
@@ -253,7 +254,7 @@ class _PageVisualizerState extends State<PageVisualizer> {
             String label;
             if (maxPage != 0 && _currentPage < maxPage)
               label =
-                  '${_currentPage + 1}: ${games[keys[_currentPage]]?.info?.title ?? ''}';
+                '${_currentPage + 1}: ${games[keys[_currentPage]]?.info?.title ?? ''}';
             _currentPage = _currentPage.clamp(0, isEmpty ? 0 : maxPage - 1);
             String current = '${_currentPage + 1}';
             current = current.padLeft(2, ' ').padLeft(3, ' ');
@@ -274,10 +275,9 @@ class _PageVisualizerState extends State<PageVisualizer> {
                   child: SizedBox(
                     height: DefaultTextStyle.of(context).style.fontSize,
                     child: Slider.adaptive(
-                      min: 0.0,
                       max: isEmpty ? 0.0 : (maxPage - 1).toDouble(),
-                      divisions: isEmpty ? null : maxPage - 1,
-                      value: isEmpty ? 0.0 : _currentPage.toDouble(),
+                      divisions: isEmpty ? null : maxPage,
+                      value: _currentPage.toDouble(),
                       label: label,
                       onChanged: (newValue) {
                         setState(() => _currentPage = newValue.round());
@@ -285,7 +285,7 @@ class _PageVisualizerState extends State<PageVisualizer> {
                       onChangeEnd: (newValue) {
                         if (newValue != widget.controller.page &&
                             newValue < maxPage)
-                          widget.controller.jumpToPage((newValue).round());
+                          widget.controller.jumpToPage(newValue.round());
                       },
                     ),
                   ),
@@ -296,9 +296,8 @@ class _PageVisualizerState extends State<PageVisualizer> {
                   iconSize: DefaultTextStyle.of(context).style.fontSize,
                   icon: const Icon(Icons.skip_next_outlined),
                   onPressed: () => widget.controller.hasClients
-                      ? widget.controller
-                          .jumpToPage(isEmpty ? 0 : (maxPage - 1))
-                      : null,
+                    ? widget.controller.jumpToPage(isEmpty ? 0 : (maxPage - 1))
+                    : null,
                 ),
               ],
             );

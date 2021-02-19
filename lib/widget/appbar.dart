@@ -8,6 +8,7 @@ import 'package:gameshop_deals/riverpod/deal_provider.dart'
     show dealPageProvider;
 import 'package:gameshop_deals/riverpod/display_provider.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
+import 'package:gameshop_deals/riverpod/saved_deals_provider.dart';
 import 'package:gameshop_deals/riverpod/theme_provider.dart';
 import 'package:gameshop_deals/utils/routes_constants.dart';
 import 'package:gameshop_deals/widget/dialog_preference_provider.dart';
@@ -102,7 +103,7 @@ class SavedAppBar extends StatelessWidget with PreferredSizeWidget {
       title: Text(translate.save_game_title),
       actions: const <Widget>[
         //const _SearchButton(),
-        const _MoreSettings(),
+        const _MoreSettings(savedGamesRefresh: true,),
       ],
     );
   }
@@ -182,7 +183,8 @@ class _SearchButton extends ConsumerWidget {
 }
 
 class _MoreSettings extends StatefulWidget {
-  const _MoreSettings({Key key}) : super(key: key);
+  final bool savedGamesRefresh;
+  const _MoreSettings({Key key, this.savedGamesRefresh = false}) : super(key: key);
 
   @override
   __MoreSettingsState createState() => __MoreSettingsState();
@@ -317,7 +319,10 @@ class __MoreSettingsState extends State<_MoreSettings> {
                   _inAppReview.openStoreListing();
                 break;
               case 3:
-                context.refresh(dealPageProvider(title));
+                if(widget.savedGamesRefresh)
+                  context.refresh(savedGamesPageProvider);
+                else
+                  context.refresh(dealPageProvider(title));
                 break;
               case 4:
                 Navigator.of(context, rootNavigator: true)

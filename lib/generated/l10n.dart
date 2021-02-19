@@ -835,6 +835,18 @@ class S {
       args: [],
     );
   }
+
+  /// `{tag, plural, zero{Alert when price is Free} other{Alert when price drops to ${tag} or below}}`
+  String alert_price(num tag) {
+    return Intl.plural(
+      tag,
+      zero: 'Alert when price is Free',
+      other: 'Alert when price drops to \$$tag or below',
+      name: 'alert_price',
+      desc: 'Alert when price drops below tag',
+      args: [tag],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

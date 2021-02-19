@@ -470,7 +470,7 @@ class _BottomSheetButtonsDeal extends ConsumerWidget {
                   storeIdProvider.overrideWithValue(deal.storeId)
                 ],
                 child: StoreAvatarIcon(
-                  size: IconTheme.of(context).size / 1.2,
+                  size: Theme.of(context).textTheme.bodyText2.fontSize,
                 ),
               ),
               label: Text(translate.go_to_deal),

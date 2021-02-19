@@ -5,7 +5,7 @@
 
 **Or you can [donate on PayPal](https://paypal.me/EdwynZN)**
 
-Browse through different shop and find the best deals of the games you want!
+Browse through different shops and find the best deals of the games you want!
 
 Features:
 - Infinite scrolling, as long as there are deals, they will be fetched, the sky is the limit

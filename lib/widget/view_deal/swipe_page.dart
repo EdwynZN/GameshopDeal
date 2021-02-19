@@ -487,7 +487,7 @@ class _PageVisualizerState extends State<PageVisualizer> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Consumer(
-          builder: (context, watch, child) {
+          builder: (_, watch, __) {
             final title = watch(titleProvider);
             final deals = watch(dealsProvider(title).state);
             final maxPage = deals.length;
@@ -516,10 +516,9 @@ class _PageVisualizerState extends State<PageVisualizer> {
                   child: SizedBox(
                     height: DefaultTextStyle.of(context).style.fontSize,
                     child: Slider.adaptive(
-                      min: 0.0,
                       max: isEmpty ? 0.0 : (maxPage - 1).toDouble(),
-                      divisions: isEmpty ? null : maxPage - 1,
-                      value: isEmpty ? 0.0 : _currentPage.toDouble(),
+                      divisions: isEmpty ? null : maxPage,
+                      value: _currentPage.toDouble(),
                       label: label,
                       onChanged: (newValue) {
                         setState(() => _currentPage = newValue.round());
@@ -527,7 +526,7 @@ class _PageVisualizerState extends State<PageVisualizer> {
                       onChangeEnd: (newValue) {
                         if (newValue != widget.controller.page &&
                             newValue < maxPage)
-                          widget.controller.jumpToPage((newValue).round());
+                          widget.controller.jumpToPage(newValue.round());
                       },
                     ),
                   ),

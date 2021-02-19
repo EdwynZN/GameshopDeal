@@ -467,5 +467,16 @@
     "@report_bug": {
         "type": "text",
         "description": "Report Bug text button"
+    },
+    "alert_price": "{tag, plural, zero{Alert when price is Free} other{Alert when price drops to ${tag} or below}}",
+    "@alert_price": {
+        "type": "text",
+        "description": "Alert when price drops below tag",
+        "placeholders": {
+            "tag": {
+                "example": "10",
+                "description": "money tag"
+            }
+        }
     }
   }

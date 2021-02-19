@@ -340,7 +340,8 @@ class SlideRoute<T> extends PageRoute<T> {
     if (controller.value == 1.0 && !_navigator.userGestureInProgress) return;
     bool animateForward;
 
-    final double flingVelocity = details.primaryVelocity / navigator.context.size.width;
+    final double flingVelocity =
+      details.primaryVelocity / navigator.context.size.width;
     if (flingVelocity.abs() >= 2.0)
       animateForward = flingVelocity <= 0;
     else

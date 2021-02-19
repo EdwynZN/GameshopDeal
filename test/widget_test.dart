@@ -5,11 +5,16 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:gameshop_deals/main.dart';
 import 'package:gameshop_deals/model/filter.dart';
+import 'package:gameshop_deals/riverpod/repository_provider.dart';
+import 'package:mockito/mockito.dart';
+import 'package:hive/hive.dart';
 
 const Map<String, dynamic> defaultFilter = {
   'pageNumber': 0,
@@ -25,10 +30,15 @@ const Map<String, dynamic> defaultFilter = {
   'onSale': 0
 };
 
-void main() {
-  test('Test Freezed filter model', (){
+class DioAdapterMock extends Mock implements HttpClientAdapter {}
+class HiveFake extends Fake implements HiveInterface {}
+class HiveMock extends Mock implements HiveInterface {}
+
+void main() async {
+  test('Test Freezed filter model', () {
     Filter filter = Filter();
-    Filter filterTest = Filter(storeId: <String>{'1','2','3'}, onlyRetail: true, steamWorks: true);
+    Filter filterTest = Filter(
+        storeId: <String>{'1', '2', '3'}, onlyRetail: true, steamWorks: true);
     Filter filterTest2 = Filter(storeId: <String>{});
 
     Filter filterTest3 = filterTest.copyWith(storeId: <String>{});
@@ -40,6 +50,29 @@ void main() {
     print(filterTest3.parameters);
 
     expect(filterTest2, filter);
+  });
+
+  group('Test GameApp', () async {
+    final Dio dio = Dio();
+    DioAdapterMock dioAdapterMock;
+
+    setUpAll(() {
+      dioAdapterMock = DioAdapterMock();
+      dio.httpClientAdapter = dioAdapterMock;
+    });
+
+    testWidgets('Test Receiving deals', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            dioProvider.overrideWithValue(dio),
+            
+          ],
+          child: GameShop()
+        )
+      );
+
+    });
   });
 
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

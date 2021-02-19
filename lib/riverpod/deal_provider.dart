@@ -25,11 +25,11 @@ final storesProvider = FutureProvider.autoDispose<List<Store>>((ref) async {
     dio..interceptors.remove(dioCacheManager.interceptor);
     dio.close();
   });
-  
+
   final stores = await DiscountApi(dio).getStores(_cacheOptions, cancelToken);
 
   ref.maintainState = true;
-  
+
   return stores.where((element) => element.isActive).toList();
 }, name: 'StoresProvider');
 
@@ -37,7 +37,7 @@ final singleStoreProvider =
     Provider.autoDispose.family<Store, String>((ref, id) {
   final asyncStores = ref.watch(storesProvider).data;
   final store = asyncStores?.value
-    ?.firstWhere((element) => element.storeId == id, orElse: () => null);
+      ?.firstWhere((element) => element.storeId == id, orElse: () => null);
 
   ref.maintainState = store != null;
 
@@ -76,16 +76,14 @@ final gameDealLookupProvider =
       DioCacheManager(CacheConfig(defaultRequestMethod: 'GET'));
   final dio = ref.watch(dioProvider)
     ..interceptors.add(dioCacheManager.interceptor);
-  final Options _cacheOptions = buildCacheOptions(null);
+  final Options _cacheOptions = buildServiceCacheOptions();
 
   ref.onDispose(() {
     cancelToken.cancel();
     dio..interceptors.remove(dioCacheManager.interceptor);
   });
 
-  return ref
-      .watch(cheapSharkProvider)
-      .getGamesById(id, _cacheOptions, cancelToken);
+  return ref.watch(cheapSharkProvider).getGamesById(id, _cacheOptions, cancelToken);
 }, name: 'Game Deal Lookup');
 
 final dealsOfGameProvider =

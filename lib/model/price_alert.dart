@@ -9,7 +9,7 @@ abstract class PriceAlert with _$PriceAlert {
 
   @HiveType(typeId: 12, adapterName: 'PriceAlertAdapter')
   const factory PriceAlert({
-    @HiveField(0) @Default(14.99) double price,
+    @HiveField(0) @Default(0.0) double price,
     @HiveField(1) @Default(const <String>{}) Set<String> storeId,
   }) = _PriceAlert;
 	

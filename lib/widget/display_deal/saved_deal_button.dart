@@ -5,7 +5,7 @@ import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/model/price_alert.dart';
 import 'package:gameshop_deals/riverpod/cache_manager_provider.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart'
-  show storesProvider, singleDeal;
+    show storesProvider, singleDeal;
 import 'package:gameshop_deals/riverpod/saved_deals_provider.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -42,7 +42,8 @@ class SavedDealButton extends ConsumerWidget {
             ),
             onPressed: () async {
               final box = await context.read(savedBoxProvider.future);
-              final priceAlert = await showDialog<PriceAlert>(
+              await box.put(deal.gameId, PriceAlert());
+              /* final priceAlert = await showDialog<PriceAlert>(
                 context: context,
                 builder: (context) {
                   return ProviderScope(overrides: [
@@ -51,7 +52,7 @@ class SavedDealButton extends ConsumerWidget {
                   ], child: const _PriceAlertDialog());
                 },
               );
-              if (priceAlert != null) await box.put(deal.gameId, priceAlert);
+              if (priceAlert != null) await box.put(deal.gameId, priceAlert); */
             },
           );
         }
@@ -105,7 +106,8 @@ class SavedTextDealButton extends ConsumerWidget {
             ),
             onPressed: () async {
               final box = await context.read(savedBoxProvider.future);
-              final priceAlert = await showDialog<PriceAlert>(
+              await box.put(deal.gameId, PriceAlert());
+              /* final priceAlert = await showDialog<PriceAlert>(
                 context: context,
                 builder: (context) {
                   return ProviderScope(overrides: [
@@ -114,7 +116,7 @@ class SavedTextDealButton extends ConsumerWidget {
                   ], child: const _PriceAlertDialog());
                 },
               );
-              if (priceAlert != null) await box.put(deal.gameId, priceAlert);
+              if (priceAlert != null) await box.put(deal.gameId, priceAlert); */
             },
           );
         }
@@ -145,7 +147,6 @@ class _PriceAlertDialog extends StatefulWidget {
 }
 
 class __PriceAlertDialogState extends State<_PriceAlertDialog> {
-  bool any = false;
   PriceAlert alertPrice = PriceAlert();
   S translate;
   MaterialLocalizations localizations;
@@ -162,22 +163,19 @@ class __PriceAlertDialogState extends State<_PriceAlertDialog> {
     return AlertDialog(
       scrollable: true,
       title: Consumer(
-        builder: (context, watch, _) => Text(watch(_titleDialog)),
+        builder: (context, watch, _) => Text(
+          watch(_titleDialog),
+          textAlign: TextAlign.center,
+        ),
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          CheckboxListTile(
-            contentPadding: EdgeInsets.zero,
-            controlAffinity: ListTileControlAffinity.leading,
-            title: Text('Any'),
-            value: any,
-            onChanged: (newValue) => setState(() => any = newValue),
-          ),
-          if (any) ...[
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 424),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
             Text(
-              '${translate.go_to_deal} \$${alertPrice.price.toInt()}',
+              translate.alert_price(alertPrice.price.toInt()),
               textAlign: TextAlign.center,
             ),
             Slider.adaptive(
@@ -189,11 +187,11 @@ class __PriceAlertDialogState extends State<_PriceAlertDialog> {
               min: 0,
               max: 100,
               divisions: 100,
-              label: '${alertPrice.price.toInt()}',
+              label: '\$${alertPrice.price.toInt()}',
             ),
             Text(
               '${translate.stores}',
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.left,
             ),
             Consumer(
               builder: (context, watch, _) {
@@ -269,8 +267,8 @@ class __PriceAlertDialogState extends State<_PriceAlertDialog> {
                 );
               },
             ),
-          ]
-        ],
+          ],
+        ),
       ),
       actions: [
         TextButton(

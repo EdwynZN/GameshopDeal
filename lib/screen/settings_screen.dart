@@ -61,14 +61,14 @@ class SettingsScreen extends StatelessWidget {
                       },
                     ),
                   ),
-                  _CardSettings(
+                  /* _CardSettings(
                     child: ListTile(
                       enabled: false,
                       leading: const Icon(Icons.notifications_on_outlined),
                       title: Text(translate.notifications),
                       subtitle: Text(translate.soon),
                     ),
-                  ),
+                  ), */
                   const _CardSettings(child: const _ClearCacheWidget()),
                   _CardSettings(
                     child: AboutListTile(
