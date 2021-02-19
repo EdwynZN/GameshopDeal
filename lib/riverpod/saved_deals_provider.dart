@@ -59,8 +59,9 @@ final savedGamesPageProvider =
   );
 }, name: 'dealList');
 
-final savedGamesProvider = StateNotifierProvider
-  .autoDispose<StateController<Map<String, GameLookup>>>((ref) {
+final savedGamesProvider =
+    StateNotifierProvider.autoDispose<StateController<Map<String, GameLookup>>>(
+        (ref) {
   final notifier =
       StateController<Map<String, GameLookup>>(const <String, GameLookup>{});
 
@@ -94,18 +95,20 @@ class GamesPagination extends StateNotifier<AsyncValue<Map<String, GameLookup>>>
       _lastPage = true;
   }
 
-  int page = 0;
+  int get page => _page;
+
+  int _page = 0;
   bool _lastPage = false;
 
   @override
   Future<Map<String, GameLookup>> fetchPage() =>
-      _api.getGamesByMultipleId(_gamesId[page], cancelToken);
+      _api.getGamesByMultipleId(_gamesId[_page], cancelToken);
 
   @override
   Future<void> retrieveNextPage() async {
     if (state is AsyncLoading || isLastPage)
       return;
-    else if (state is AsyncData) ++page;
+    else if (state is AsyncData) ++_page;
     state = AsyncValue.loading();
     await _fetch();
   }

@@ -29,8 +29,9 @@ class PageDeal extends ConsumerWidget {
       },
       childrenDelegate: SliverChildBuilderDelegate(
         (context, index) {
-          if ((childCount == index) &&
-              !context.read(savedGamesPageProvider).isLastPage)
+          final pageProvider = context.read(savedGamesPageProvider);
+          if (childCount == index && (!pageProvider.isLastPage 
+              || pageProvider.page == 0 && childCount == 0))
             return const _EndLinearProgressIndicator();
           else if (index >= childCount) return null;
           return ProviderScope(
@@ -164,9 +165,19 @@ class _EndLinearProgressIndicator extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
+    final S translate = S.of(context);
     final games = watch(savedGamesPageProvider.state);
     return games.when(
-      data: (_) => const SizedBox(height: 4.0),
+      data: (cb) {
+        if (context.read(savedGamesPageProvider).page == 0 && cb.isEmpty)
+          return Center(
+            child: Text(
+              translate.no_game_saved,
+              style: Theme.of(context).textTheme.headline5,
+            ),
+          );
+        return const SizedBox(height: 4.0);
+      },
       loading: () => const Align(
         alignment: Alignment.topCenter,
         child: const LinearProgressIndicator(),
@@ -254,7 +265,7 @@ class _PageVisualizerState extends State<PageVisualizer> {
             String label;
             if (maxPage != 0 && _currentPage < maxPage)
               label =
-                '${_currentPage + 1}: ${games[keys[_currentPage]]?.info?.title ?? ''}';
+                  '${_currentPage + 1}: ${games[keys[_currentPage]]?.info?.title ?? ''}';
             _currentPage = _currentPage.clamp(0, isEmpty ? 0 : maxPage - 1);
             String current = '${_currentPage + 1}';
             current = current.padLeft(2, ' ').padLeft(3, ' ');
@@ -296,8 +307,9 @@ class _PageVisualizerState extends State<PageVisualizer> {
                   iconSize: DefaultTextStyle.of(context).style.fontSize,
                   icon: const Icon(Icons.skip_next_outlined),
                   onPressed: () => widget.controller.hasClients
-                    ? widget.controller.jumpToPage(isEmpty ? 0 : (maxPage - 1))
-                    : null,
+                      ? widget.controller
+                          .jumpToPage(isEmpty ? 0 : (maxPage - 1))
+                      : null,
                 ),
               ],
             );

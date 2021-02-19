@@ -24,7 +24,8 @@ class GameListView extends ConsumerWidget {
                 return ProviderScope(
                   overrides: [
                     indexGameLookup.overrideWithValue(index),
-                    singleGameLookup.overrideAs((watch) => watch(savedGamesProvider.state)[games[index]])
+                    singleGameLookup.overrideAs((watch) =>
+                        watch(savedGamesProvider.state)[games[index]])
                   ],
                   child: const GridGameLookup(),
                 );
@@ -47,7 +48,8 @@ class GameListView extends ConsumerWidget {
               return ProviderScope(
                 overrides: [
                   indexGameLookup.overrideWithValue(index),
-                  singleGameLookup.overrideAs((watch) => watch(savedGamesProvider.state)[games[index]])
+                  singleGameLookup.overrideAs(
+                      (watch) => watch(savedGamesProvider.state)[games[index]])
                 ],
                 child: const DetailedGameLookup(),
               );
@@ -63,7 +65,8 @@ class GameListView extends ConsumerWidget {
               return ProviderScope(
                 overrides: [
                   indexGameLookup.overrideWithValue(index),
-                  singleGameLookup.overrideAs((watch) => watch(savedGamesProvider.state)[games[index]])
+                  singleGameLookup.overrideAs(
+                      (watch) => watch(savedGamesProvider.state)[games[index]])
                 ],
                 child: const CompactGameLookup(),
               );
@@ -79,7 +82,8 @@ class GameListView extends ConsumerWidget {
               return ProviderScope(
                 overrides: [
                   indexGameLookup.overrideWithValue(index),
-                  singleGameLookup.overrideAs((watch) => watch(savedGamesProvider.state)[games[index]])
+                  singleGameLookup.overrideAs(
+                      (watch) => watch(savedGamesProvider.state)[games[index]])
                 ],
                 child: const ListGameLookup(),
               );

@@ -25,7 +25,7 @@ Features:
             - PCWiki (if available)
             - Steam reviews (if available)
             - Go to the deal website
-            - Save the deal to receive notifiations
+            - Save the game in your personal list (notifications coming soon)
     - **Swipe** to see all the information related of an specific deal in a page, including visualization of the same deal in multiple stores to compare prices
 - Search by name, with filter availability specific to that search, so each search can be unique
 

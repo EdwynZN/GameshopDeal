@@ -92,7 +92,7 @@
     },
     "internal_browser_checkbox": "Navegador Interno",
     "@internal_browser_checkbox": {
-        "type": "text",
+        "type": "texto",
         "description": "casilla para seleccionar navegador interno o externo"
     },
     "notifications": "Notificaciones",
@@ -470,7 +470,7 @@
     },
     "alert_price": "{tag, plural, zero{Notificar cuando sea gratis} other{Notificar cuando el precio baje a ${tag} o menos}}",
     "@alert_price": {
-        "type": "text",
+        "type": "texto",
         "description": "Notificar cuando el precio sea más bajo que el mencionado en la etiqueta",
         "placeholders": {
             "tag": {
@@ -478,5 +478,10 @@
                 "description": "cantidad de dinero"
             }
         }
+    },
+    "no_game_saved": "No tienes ningun juego guardado",
+    "@no_game_saved": {
+        "type": "texto",
+        "description": "Text centrado mencionando que la lista de juegos guardados esta vacía"
     }
   }

@@ -847,6 +847,16 @@ class S {
       args: [tag],
     );
   }
+
+  /// `There are no games saved`
+  String get no_game_saved {
+    return Intl.message(
+      'There are no games saved',
+      name: 'no_game_saved',
+      desc: 'Center text showed when there are no games saved in the list',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

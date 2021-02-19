@@ -93,6 +93,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "last_tooltip" : MessageLookupByLibrary.simpleMessage("Último"),
     "light" : MessageLookupByLibrary.simpleMessage("Claro"),
     "no_date" : MessageLookupByLibrary.simpleMessage("N/A"),
+    "no_game_saved" : MessageLookupByLibrary.simpleMessage("No tienes ningun juego guardado"),
     "no_score" : MessageLookupByLibrary.simpleMessage("N/A"),
     "notifications" : MessageLookupByLibrary.simpleMessage("Notificaciones"),
     "now" : MessageLookupByLibrary.simpleMessage("ahora"),

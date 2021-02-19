@@ -478,5 +478,10 @@
                 "description": "money tag"
             }
         }
+    },
+    "no_game_saved": "There are no games saved",
+    "@no_game_saved": {
+        "type": "text",
+        "description": "Center text showed when there are no games saved in the list"
     }
   }

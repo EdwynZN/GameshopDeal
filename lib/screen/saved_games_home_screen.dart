@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/riverpod/saved_deals_provider.dart';
 import 'package:gameshop_deals/screen/filter_screen.dart';
 import 'package:gameshop_deals/widget/appbar.dart';
@@ -12,7 +13,8 @@ import 'package:pull_to_refresh/pull_to_refresh.dart' hide RefreshIndicator;
 class GameHome extends StatefulWidget {
   final String title;
   const GameHome({Key key})
-      : title = '', super(key: key);
+      : title = '',
+        super(key: key);
 
   @override
   _GameHomeState createState() => _GameHomeState();
@@ -83,10 +85,11 @@ class _GameHomeState extends State<GameHome> with PrincipalState {
                         context.refresh(savedGamesPageProvider);
                       },
                       onLoading: () async {
-                        final gamesPage =
-                            context.read(savedGamesPageProvider);
-                        if (!gamesPage.isLastPage) await gamesPage.retrieveNextPage();
-                        else refreshController.loadNoData();
+                        final gamesPage = context.read(savedGamesPageProvider);
+                        if (!gamesPage.isLastPage)
+                          await gamesPage.retrieveNextPage();
+                        else
+                          refreshController.loadNoData();
                       },
                     ),
                   ),
@@ -129,9 +132,19 @@ class _ScrollFooterState extends LoadIndicatorState<ScrollFooter> {
   Widget buildContent(BuildContext context, LoadStatus mode) {
     return Consumer(
       builder: (context, watch, _) {
+        final S translate = S.of(context);
         final deals = watch(savedGamesPageProvider.state);
         return deals.when(
-          data: (_) => const SizedBox(height: 4.0),
+          data: (cb) {
+            if (context.read(savedGamesPageProvider).page == 0 && cb.isEmpty)
+              return Center(
+                child: Text(
+                  translate.no_game_saved,
+                  style: Theme.of(context).textTheme.headline5,
+                ),
+              );
+            return const SizedBox(height: 4.0);
+          },
           loading: () => const Align(
             alignment: Alignment.topCenter,
             child: const LinearProgressIndicator(),
