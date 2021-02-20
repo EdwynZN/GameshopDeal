@@ -31,6 +31,14 @@ Features:
 
 
 ##### [Powered by CheapShark](https://www.cheapshark.com/)
+
+## Screenshots
+
+<img src="screenshots/home.png" height="350">  <img src="screenshots/dark_home.png" height="350">
+<img src="screenshots/detail.png" height="350">  <img src="screenshots/filter.png" height="350">
+<img src="screenshots/saved_games.png" height="350">  <img src="screenshots/view.png" height="350">
+<img src="screenshots/deal_buttons.png" height="350">
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
