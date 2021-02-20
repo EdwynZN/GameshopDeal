@@ -24,7 +24,7 @@ mixin PrincipalState<T extends StatefulWidget> on State<T> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     translate = S.of(context);
-    _isTablet ??= MediaQuery.of(context).size.shortestSide >= 700;
+    _isTablet ??= MediaQuery.of(context).size.longestSide >= 800;
     final container = ProviderScope.containerOf(context);
     if (container != _container) {
       _container = container;

@@ -94,7 +94,8 @@ class _HomeState extends State<Home> with PrincipalState {
                       onLoading: () async {
                         final dealPage =
                             context.read(dealPageProvider(widget.title));
-                        if (!dealPage.isLastPage) await dealPage.retrieveNextPage();
+                        if (!dealPage.isLastPage)
+                          await dealPage.retrieveNextPage();
                       },
                     ),
                   ),
