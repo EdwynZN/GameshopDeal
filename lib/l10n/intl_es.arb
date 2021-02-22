@@ -194,7 +194,7 @@
         "type": "texto",
         "description": "Descuento en tienda física"
     },
-    "retail_discount_tooltip": "Juegos con precio menores a 29 dolares en tiendas",
+    "retail_discount_tooltip": "Juegos con precio menor a 29 dolares en tiendas",
     "@retail_discount_tooltip": {
         "type": "texto",
         "description": "Games that are already discounted at local stores"

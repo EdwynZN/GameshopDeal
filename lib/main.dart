@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
+import 'package:gameshop_deals/model/cache_object_adapter.dart';
 import 'package:gameshop_deals/model/cheapest_price.dart';
 import 'package:gameshop_deals/model/deal.dart';
 import 'package:gameshop_deals/model/filter.dart';
@@ -18,6 +19,7 @@ import 'package:gameshop_deals/model/theme_mode_adapter_enum.dart';
 import 'package:gameshop_deals/model/view_enum.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart' show preferenceHiveBox;
+import 'package:flutter_cache_manager/src/storage/cache_object.dart';
 
 class Logger extends ProviderObserver {
   @override
@@ -57,6 +59,7 @@ class Logger extends ProviderObserver {
 Future<void> _initHive() async {
   await Hive.initFlutter();
   Hive
+    ..registerAdapter<CacheObject>(CacheObjectAdapter())
     ..registerAdapter<ThemeMode>(ThemeModeAdapter())
     ..registerAdapter<View>(ViewAdapter())
     ..registerAdapter<GameLookup>(GameLookupAdapter())

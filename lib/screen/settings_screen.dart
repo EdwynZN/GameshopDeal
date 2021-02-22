@@ -115,6 +115,14 @@ class SettingsScreen extends StatelessWidget {
                           icon: const Icon(Icons.star),
                           label: Text(translate.rate_me),
                         ),
+                        TextButton.icon(
+                          onPressed: () async {
+                            final url = Uri.https('www.cheapshark.com', '');
+                            await launch(url.toString());
+                          },
+                          icon: const Icon(Icons.gamepad_rounded),
+                          label: Text('CheapShark'),
+                        ),
                       ],
                       applicationName: 'Gameshop',
                     ),

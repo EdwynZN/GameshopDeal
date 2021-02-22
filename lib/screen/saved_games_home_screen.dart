@@ -136,7 +136,7 @@ class _ScrollFooterState extends LoadIndicatorState<ScrollFooter> {
         final deals = watch(savedGamesPageProvider.state);
         return deals.when(
           data: (cb) {
-            if (context.read(savedGamesPageProvider).page == 0 && cb.isEmpty)
+            if (cb.isEmpty && context.read(savedBoxProvider) is AsyncData)
               return Center(
                 child: Text(
                   translate.no_game_saved,

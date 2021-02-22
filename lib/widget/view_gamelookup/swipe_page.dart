@@ -169,7 +169,7 @@ class _EndLinearProgressIndicator extends ConsumerWidget {
     final games = watch(savedGamesPageProvider.state);
     return games.when(
       data: (cb) {
-        if (context.read(savedGamesPageProvider).page == 0 && cb.isEmpty)
+        if (cb.isEmpty && context.read(savedBoxProvider) is AsyncData)
           return Center(
             child: Text(
               translate.no_game_saved,

@@ -109,7 +109,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "report_bug" : MessageLookupByLibrary.simpleMessage("Reportar Error"),
     "restart_tooltip" : MessageLookupByLibrary.simpleMessage("Reiniciar"),
     "retail_discount" : MessageLookupByLibrary.simpleMessage("Descuento en tienda"),
-    "retail_discount_tooltip" : MessageLookupByLibrary.simpleMessage("Juegos con precio menores a 29 dolares en tiendas"),
+    "retail_discount_tooltip" : MessageLookupByLibrary.simpleMessage("Juegos con precio menor a 29 dolares en tiendas"),
     "review" : m12,
     "review_tooltip" : MessageLookupByLibrary.simpleMessage("Reseña"),
     "save_game" : MessageLookupByLibrary.simpleMessage("Guardar juego"),
