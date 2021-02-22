@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/all.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart' show singleStoreProvider;
 import 'package:flutter/material.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';

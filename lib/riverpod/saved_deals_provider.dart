@@ -1,9 +1,8 @@
-import 'package:flutter_riverpod/all.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/model/price_alert.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:hive/hive.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/service/cheap_shark_retrofit.dart';
 import 'package:gameshop_deals/model/game_lookup.dart';
 import 'package:gameshop_deals/riverpod/repository_provider.dart';

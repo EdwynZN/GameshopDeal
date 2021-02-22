@@ -1,4 +1,4 @@
-import 'package:flutter_riverpod/all.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart' show singleDeal;
 import 'package:flutter/material.dart';
 

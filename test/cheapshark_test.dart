@@ -11,7 +11,7 @@ import 'package:gameshop_deals/model/game_lookup.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart';
 import 'package:gameshop_deals/service/cheap_shark_retrofit.dart';
 import 'package:gameshop_deals/riverpod/repository_provider.dart';
-import 'package:flutter_riverpod/all.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mockito/mockito.dart';
 import 'dart:io';
 
