@@ -1,5 +1,10 @@
 # Gameshop Deals [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+<p align='left'>
+    <a href='https://play.google.com/store/apps/details?id=com.dartz.gameshop_deals'>
+       <img height="56" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' />
+    </a>
+</p>
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/N4N8169NZ)
 
@@ -51,3 +56,54 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+##### STEP 1
+
+go to [android/app/build.gradle](android/app/build.gradle) and comment (or delete) signingConfigs (unless you have your own keys to publish apps in google play store, in that case just save it as key.properties in the android folder)
+
+```
+/// line 55 comment or delete this block
+*/signingConfigs {
+    release {
+        keyAlias keystoreProperties['keyAlias']
+        keyPassword keystoreProperties['keyPassword']
+        storeFile file(keystoreProperties['storeFile'])
+        storePassword keystoreProperties['storePassword']
+    }
+}/*
+
+/// return to debug mode and clear all other properties (minify, etc.)
+buildTypes {
+    release {
+        // TODO: Add your own signing config for the release build.
+        // Signing with the debug keys for now, so `flutter run --release` works.
+        signingConfig signingConfigs.debug
+    }
+}
+
+You can also delete line 28-33 if you're not interested in using key.properties to build your app
+*/def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}/*
+```
+
+##### STEP 2
+
+Run `flutter pub get` and `flutter pub run build_runner build` to generate all `.g.dart files`. Once generated you can run the app and it will show no error but actually the generator have an inconveninence when creating `Set()` (It creates them as `List()` with the Hive adapter, there will be no warning or lint error, but it will crash the app when finally uses it) in the models, specifically `filter` and `price_alert` models.
+
+Go to [model](/lib/model) and localize `filter.g.dart` and `price_alert.g.dart` (after running build_runner)
+
+In `filter.g.dart` line 20 and 28 add `.toSet()` at the end of the line:
+
+```
+line 20: storeId: (fields[0] as List)?.cast<String>().toSet(),
+line 28: steamAppId: (fields[8] as List)?.cast<String>().toSet(),
+```
+
+In `price_alert.g.dart` line 21 add `.toSet()` at the en of the line:
+
+`line 21: storeId: (fields[1] as List)?.cast<String>().toSet(),`
+
+###### You're now ready to try the app and build your app
