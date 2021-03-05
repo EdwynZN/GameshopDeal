@@ -155,8 +155,6 @@ class ThemeImpl extends ThemeRepository {
       primaryColorLight: accentColor[100],
       primaryColorDark: accentColor[600],
       primaryIconTheme: const IconThemeData(color: Colors.black),
-      textSelectionHandleColor: color[300],
-      textSelectionColor: accentColor.withOpacity(0.5),
       brightness: Brightness.light,
       appBarTheme: AppBarTheme(
         brightness: _brightnessColor,
@@ -195,7 +193,11 @@ class ThemeImpl extends ThemeRepository {
       canvasColor: Colors.grey[300],
       primarySwatch: color,
       primaryColor: color,
-      cursorColor: Colors.white10,
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: Colors.white10,
+        selectionHandleColor: color[300],
+        selectionColor: accentColor.withOpacity(0.5),
+      ),
       backgroundColor: color[100],
       selectedRowColor: color[200],
       cardColor: Colors.grey[300],
@@ -364,8 +366,6 @@ class ThemeImpl extends ThemeRepository {
           splashFactory: InkRipple.splashFactory,
           primaryColorLight: Colors.blueGrey[800],
           primaryColorDark: Colors.blueGrey[900],
-          textSelectionHandleColor: _darkAccentColor,
-          textSelectionColor: _darkAccentColor.withOpacity(0.5),
           appBarTheme: AppBarTheme(
             brightness: _brightness,
             elevation: 0.0,
@@ -390,7 +390,11 @@ class ThemeImpl extends ThemeRepository {
           canvasColor: Colors.blueGrey[900],
           primarySwatch: Colors.blueGrey,
           primaryColor: Colors.blueGrey[900],
-          cursorColor: Colors.white10,
+          textSelectionTheme: TextSelectionThemeData(
+            cursorColor: Colors.white10,
+            selectionHandleColor: _darkAccentColor,
+            selectionColor: _darkAccentColor.withOpacity(0.5),
+          ),
           backgroundColor: Colors.blueGrey[800],
           selectedRowColor: Colors.blueGrey[700],
           cardColor: Colors.blueGrey[800],
@@ -550,8 +554,6 @@ class ThemeImpl extends ThemeRepository {
           splashFactory: InkRipple.splashFactory,
           primaryColorLight: Colors.grey[850],
           primaryColorDark: Colors.grey[900],
-          textSelectionHandleColor: _darkAccentColor,
-          textSelectionColor: _darkAccentColor.withOpacity(0.5),
           appBarTheme: AppBarTheme(
             brightness: _brightness,
             elevation: 0.0,
@@ -581,7 +583,11 @@ class ThemeImpl extends ThemeRepository {
           canvasColor: Colors.grey[900],
           primarySwatch: Colors.grey,
           primaryColor: Colors.grey[900],
-          cursorColor: Colors.white10,
+          textSelectionTheme: TextSelectionThemeData(
+            cursorColor: Colors.white10,
+            selectionHandleColor: _darkAccentColor,
+            selectionColor: _darkAccentColor.withOpacity(0.5),
+          ),
           backgroundColor: Colors.grey[850],
           selectedRowColor: Colors.grey[800],
           cardColor: Colors.grey[850],
@@ -750,8 +756,6 @@ class ThemeImpl extends ThemeRepository {
           primaryColorLight:
               Colors.transparent, //_darkAccentColor.withOpacity(0.55),
           primaryColorDark: _darkAccentColor,
-          textSelectionHandleColor: _darkAccentColor,
-          textSelectionColor: _darkAccentColor.withOpacity(0.5),
           appBarTheme: AppBarTheme(
             brightness: _brightness,
             elevation: 0.0,
@@ -776,7 +780,11 @@ class ThemeImpl extends ThemeRepository {
           canvasColor: Colors.black,
           primarySwatch: Colors.blueGrey,
           primaryColor: Colors.grey[900],
-          cursorColor: Colors.white10,
+          textSelectionTheme: TextSelectionThemeData(
+            cursorColor: Colors.white10,
+            selectionHandleColor: _darkAccentColor,
+            selectionColor: _darkAccentColor.withOpacity(0.5),
+          ),
           backgroundColor: Colors.black,
           selectedRowColor: Colors.grey[900],
           cardColor: Colors.black,

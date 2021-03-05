@@ -158,10 +158,10 @@ class _ClearCacheWidget extends StatelessWidget {
       onTap: () async {
         final bool clear = await showDialog<bool>(
           context: context,
-          child: const _CacheDialog(),
+          builder: (_) => const _CacheDialog(),
         );
         if (clear ?? false) {
-          ScaffoldState scaffold = Scaffold.of(context, nullOk: true);
+          ScaffoldMessengerState scaffold = ScaffoldMessenger.maybeOf(context);
           await context
               .read(cacheManagerFamilyProvider(cacheKeyDeals))
               .emptyCache();

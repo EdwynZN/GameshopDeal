@@ -28,7 +28,7 @@ dependencies:
   dio: ^3.0.10
   connectivity: ^2.0.2
   cached_network_image: ^2.5.0
-  intl: ^0.16.1
+  intl: ^0.17.0
   dio_http_cache: ^0.2.11
   flutter_riverpod: ^0.12.4
   freezed_annotation: ^0.12.0

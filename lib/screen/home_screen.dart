@@ -45,7 +45,7 @@ class _HomeState extends State<Home> with PrincipalState {
               refreshController.loadFailed();
               if (ModalRoute.of(context).isCurrent) {
                 String message = errorRequestMessage(deal);
-                Scaffold.of(context)
+                ScaffoldMessenger.of(context)
                   ..hideCurrentSnackBar()
                   ..showSnackBar(
                     SnackBar(

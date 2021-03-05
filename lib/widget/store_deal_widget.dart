@@ -28,7 +28,7 @@ class StoreDealGrid extends ConsumerWidget {
           final bool webView = context.read(preferenceProvider.state).webView;
           await launch(_dealLink, forceWebView: webView, enableJavaScript: webView);
         } else {
-          Scaffold.of(context).showSnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error Launching url')),
           );
         }
@@ -79,7 +79,7 @@ class StoreDealTile extends ConsumerWidget {
             final bool webView = context.read(preferenceProvider.state).webView;
             await launch(_dealLink, forceWebView: webView, enableJavaScript: webView);
           } else {
-            Scaffold.of(context).showSnackBar(
+            ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Error Launching url: $_dealLink')));
           }
         },

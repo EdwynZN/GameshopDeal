@@ -228,7 +228,7 @@ class _Stats extends ConsumerWidget {
                   enableJavaScript: webView,
                 );
               } else {
-                Scaffold.of(context).showSnackBar(
+                ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Error Launching url')),
                 );
               }
@@ -272,7 +272,7 @@ class _Stats extends ConsumerWidget {
                 await launch(_metacriticLink.toString(),
                     forceWebView: webView, enableJavaScript: webView);
               } else {
-                Scaffold.of(context).showSnackBar(
+                ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Error Launching url')),
                 );
               }
@@ -343,7 +343,7 @@ class _ButtonsDeal extends ConsumerWidget {
                   await launch(_pcGamingWikiUri.toString(),
                       forceWebView: webView, enableJavaScript: webView);
                 } else {
-                  Scaffold.of(context).showSnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Error Launching url')),
                   );
                 }

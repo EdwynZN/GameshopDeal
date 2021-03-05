@@ -38,7 +38,7 @@ class _GameHomeState extends State<GameHome> with PrincipalState {
               refreshController.loadFailed();
               if (ModalRoute.of(context).isCurrent) {
                 String message = errorRequestMessage(savedGames);
-                Scaffold.of(context)
+                ScaffoldMessenger.of(context)
                   ..hideCurrentSnackBar()
                   ..showSnackBar(
                     SnackBar(

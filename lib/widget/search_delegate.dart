@@ -25,11 +25,10 @@ class AppSearchDelegate extends SearchDelegate<String> {
   ThemeData appBarTheme(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     return theme.copyWith(
-      primaryIconTheme: theme.appBarTheme.iconTheme,
-      primaryTextTheme: theme.appBarTheme.textTheme,
-      textTheme: theme.appBarTheme.textTheme,
+      textTheme: theme.accentTextTheme,
       inputDecorationTheme: theme.inputDecorationTheme.copyWith(
         hintStyle: theme.appBarTheme.textTheme.headline6,
+        border: InputBorder.none
       ),
       primaryColorBrightness: theme.appBarTheme.brightness,
     );
@@ -65,7 +64,7 @@ class AppSearchDelegate extends SearchDelegate<String> {
                 child: ListTile(
                   title: Text(
                     translate.recent_searches,
-                    style: Theme.of(context).textTheme.bodyText1,
+                    style: Theme.of(context).primaryTextTheme.bodyText1,
                   ),
                   trailing: IconButton(
                     icon: const Icon(Icons.clear_all),
@@ -86,7 +85,10 @@ class AppSearchDelegate extends SearchDelegate<String> {
               child: ListTile(
                 onTap: () => showResults(context),
                 leading: const Icon(Icons.search_rounded),
-                title: Text(translate.title_search(trimmed)),
+                title: Text(
+                  translate.title_search(trimmed),
+                  style: Theme.of(context).primaryTextTheme.bodyText1,
+                ),
               ),
             ),
             SliverPadding(
@@ -95,7 +97,7 @@ class AppSearchDelegate extends SearchDelegate<String> {
               sliver: SliverToBoxAdapter(
                 child: Text(
                   translate.suggested_searches,
-                  style: Theme.of(context).textTheme.bodyText1,
+                  style: Theme.of(context).primaryTextTheme.bodyText1,
                 ),
               ),
             ),
@@ -107,7 +109,10 @@ class AppSearchDelegate extends SearchDelegate<String> {
                 return ListTile(
                   onTap: () => close(context, list[index]),
                   leading: const Icon(Icons.history),
-                  title: Text(list[index]),
+                  title: Text
+                    (list[index],
+                    style: Theme.of(context).primaryTextTheme.bodyText1,
+                  ),
                   trailing: IconButton(
                     icon: const Icon(Icons.north_west_outlined),
                     onPressed: () => query = list[index],
