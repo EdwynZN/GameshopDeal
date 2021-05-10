@@ -134,6 +134,7 @@ mixin _$Filter {
   bool get exact;
 
   Map<String, dynamic> toJson();
+  @JsonKey(ignore: true)
   $FilterCopyWith<Filter> get copyWith;
 }
 
@@ -568,6 +569,7 @@ class _$_Filter with DiagnosticableTreeMixin implements _Filter {
       const DeepCollectionEquality().hash(title) ^
       const DeepCollectionEquality().hash(exact);
 
+  @JsonKey(ignore: true)
   @override
   _$FilterCopyWith<_Filter> get copyWith =>
       __$FilterCopyWithImpl<_Filter>(this, _$identity);
@@ -682,5 +684,6 @@ abstract class _Filter implements Filter {
   @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
   bool get exact;
   @override
+  @JsonKey(ignore: true)
   _$FilterCopyWith<_Filter> get copyWith;
 }

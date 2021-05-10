@@ -9,7 +9,7 @@ part of 'cheap_shark_retrofit.dart';
 class _DiscountApi implements DiscountApi {
   _DiscountApi(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    this.baseUrl ??= 'https://www.cheapshark.com/api/1.0/';
+    baseUrl ??= 'https://www.cheapshark.com/api/1.0/';
   }
 
   final Dio _dio;
@@ -17,13 +17,13 @@ class _DiscountApi implements DiscountApi {
   String baseUrl;
 
   @override
-  getDeals([parameters, cancelToken]) async {
+  Future<List<Deal>> getDeals([parameters, cancelToken]) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.addAll(parameters ?? <String, dynamic>{});
     queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    final Response<List<dynamic>> _result = await _dio.request('/deals',
+    final _result = await _dio.request<List<dynamic>>('/deals',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -39,14 +39,13 @@ class _DiscountApi implements DiscountApi {
   }
 
   @override
-  getDealsById(id, [cancelToken]) async {
+  Future<DealLookup> getDealsById(id, [cancelToken]) async {
     ArgumentError.checkNotNull(id, 'id');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    final Response<Map<String, dynamic>> _result = await _dio.request(
-        '/deals?id=$id',
+    final _result = await _dio.request<Map<String, dynamic>>('/deals?id=$id',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -60,14 +59,14 @@ class _DiscountApi implements DiscountApi {
   }
 
   @override
-  getGames(parameters, [cancelToken]) async {
+  Future<List<Game>> getGames(parameters, [cancelToken]) async {
     ArgumentError.checkNotNull(parameters, 'parameters');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.addAll(parameters ?? <String, dynamic>{});
     queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    final Response<List<dynamic>> _result = await _dio.request('/games',
+    final _result = await _dio.request<List<dynamic>>('/games',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -83,7 +82,7 @@ class _DiscountApi implements DiscountApi {
   }
 
   @override
-  getGamesById(id, [options, cancelToken]) async {
+  Future<GameLookup> getGamesById(id, [options, cancelToken]) async {
     ArgumentError.checkNotNull(id, 'id');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'id': id};
@@ -92,7 +91,7 @@ class _DiscountApi implements DiscountApi {
     final newOptions = newRequestOptions(options);
     newOptions.extra.addAll(_extra);
     newOptions.headers.addAll(<String, dynamic>{});
-    final Response<Map<String, dynamic>> _result = await _dio.request('/games',
+    final _result = await _dio.request<Map<String, dynamic>>('/games',
         queryParameters: queryParameters,
         options: newOptions.merge(method: 'GET', baseUrl: baseUrl),
         data: _data,
@@ -102,13 +101,14 @@ class _DiscountApi implements DiscountApi {
   }
 
   @override
-  getGamesByMultipleId(ids, [cancelToken]) async {
+  Future<Map<String, GameLookup>> getGamesByMultipleId(ids,
+      [cancelToken]) async {
     ArgumentError.checkNotNull(ids, 'ids');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'ids': ids};
     queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
-    final Response<Map<String, dynamic>> _result = await _dio.request('/games',
+    final _result = await _dio.request<Map<String, dynamic>>('/games',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -124,7 +124,7 @@ class _DiscountApi implements DiscountApi {
   }
 
   @override
-  getStores(options, [cancelToken]) async {
+  Future<List<Store>> getStores(options, [cancelToken]) async {
     ArgumentError.checkNotNull(options, 'options');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -133,7 +133,7 @@ class _DiscountApi implements DiscountApi {
     final newOptions = newRequestOptions(options);
     newOptions.extra.addAll(_extra);
     newOptions.headers.addAll(<String, dynamic>{});
-    final Response<List<dynamic>> _result = await _dio.request('/stores',
+    final _result = await _dio.request<List<dynamic>>('/stores',
         queryParameters: queryParameters,
         options: newOptions.merge(method: 'GET', baseUrl: baseUrl),
         data: _data,
