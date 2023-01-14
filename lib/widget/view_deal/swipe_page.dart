@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/preference_provider.dart';
 import 'package:gameshop_deals/riverpod/saved_deals_provider.dart' show singleGameLookup;

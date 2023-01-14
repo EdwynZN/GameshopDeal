@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gameshop_deals/utils/theme_constants.dart';
-import 'package:flutter/rendering.dart';
 
 abstract class ThemeRepository {
   Color _darkAccentColor;

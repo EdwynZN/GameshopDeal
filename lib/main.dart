@@ -95,7 +95,7 @@ class GameShop extends ConsumerWidget {
       enableLoadingWhenFailed: false,
       autoLoad: true,
       headerBuilder: () => WaterDropMaterialHeader(
-        backgroundColor: themeData.lightTheme.appBarTheme.color,
+        backgroundColor: themeData.lightTheme.appBarTheme.backgroundColor,
       ),
       //enableScrollWhenRefreshCompleted: true,
       child: MaterialApp(

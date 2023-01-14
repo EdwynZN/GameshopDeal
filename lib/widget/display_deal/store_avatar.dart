@@ -1,13 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart' show singleStoreProvider;
 import 'package:flutter/material.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:gameshop_deals/riverpod/cache_manager_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/services.dart';
-import 'package:gameshop_deals/utils/preferences_constants.dart'
-  show cheapsharkUrl;
 
 final storeIdProvider = ScopedProvider<String>(null);
 

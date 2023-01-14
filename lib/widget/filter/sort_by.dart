@@ -4,7 +4,6 @@ import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/model/sort_by_enum.dart';
 import 'package:gameshop_deals/model/filter.dart';
-import 'package:flutter/foundation.dart';
 
 final _sortByProvider = ScopedProvider<SortBy>((watch) {
   final title = watch(titleProvider);

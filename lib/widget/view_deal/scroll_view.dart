@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/model/view_enum.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart'

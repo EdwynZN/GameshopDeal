@@ -8,8 +8,6 @@ import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart' show storesProvider;
 import 'package:gameshop_deals/model/filter.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
-import 'package:gameshop_deals/utils/preferences_constants.dart'
-    show cheapsharkUrl;
 
 final _storesProvider = ScopedProvider<Set<String>>((watch) {
   final title = watch(titleProvider);
