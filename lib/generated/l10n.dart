@@ -10,28 +10,43 @@ import 'intl/messages_all.dart';
 
 // ignore_for_file: non_constant_identifier_names, lines_longer_than_80_chars
 // ignore_for_file: join_return_with_assignment, prefer_final_in_for_each
-// ignore_for_file: avoid_redundant_argument_values
+// ignore_for_file: avoid_redundant_argument_values, avoid_escaping_inner_quotes
 
 class S {
   S();
-  
-  static S current;
-  
-  static const AppLocalizationDelegate delegate =
-    AppLocalizationDelegate();
+
+  static S? _current;
+
+  static S get current {
+    assert(_current != null,
+        'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.');
+    return _current!;
+  }
+
+  static const AppLocalizationDelegate delegate = AppLocalizationDelegate();
 
   static Future<S> load(Locale locale) {
-    final name = (locale.countryCode?.isEmpty ?? false) ? locale.languageCode : locale.toString();
-    final localeName = Intl.canonicalizedLocale(name); 
+    final name = (locale.countryCode?.isEmpty ?? false)
+        ? locale.languageCode
+        : locale.toString();
+    final localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
-      S.current = S();
-      
-      return S.current;
+      final instance = S();
+      S._current = instance;
+
+      return instance;
     });
-  } 
+  }
 
   static S of(BuildContext context) {
+    final instance = S.maybeOf(context);
+    assert(instance != null,
+        'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?');
+    return instance!;
+  }
+
+  static S? maybeOf(BuildContext context) {
     return Localizations.of<S>(context, S);
   }
 
@@ -118,7 +133,8 @@ class S {
     return Intl.select(
       sort,
       {
-        'Deal_Rating': 'On a scale from 0 to 10, it factors in price, percent off, metacritic, release date, price history, etc',
+        'Deal_Rating':
+            'On a scale from 0 to 10, it factors in price, percent off, metacritic, release date, price history, etc',
         'Title': 'Title',
         'Savings': 'Savings',
         'Price': 'Price',
@@ -127,7 +143,8 @@ class S {
         'Release': 'Release',
         'Store': 'Store',
         'Recent': 'How recently a deal was found',
-        'other': 'On a scale from 0 to 10, it factors in price, percent off, metacritic, release date, price history, etc',
+        'other':
+            'On a scale from 0 to 10, it factors in price, percent off, metacritic, release date, price history, etc',
       },
       name: 'sort_tooltip',
       desc: 'SortBy tooltip, useful to explain how deal rating works',
@@ -228,7 +245,8 @@ class S {
     return Intl.message(
       'Internal Browser',
       name: 'internal_browser_checkbox',
-      desc: 'Internal Browser checkbox to decide if use an external or internal app to navigate',
+      desc:
+          'Internal Browser checkbox to decide if use an external or internal app to navigate',
       args: [],
     );
   }
@@ -278,7 +296,8 @@ class S {
     return Intl.message(
       'Restart',
       name: 'restart_tooltip',
-      desc: 'Tooltip indiciating the restart of the filter to the default values',
+      desc:
+          'Tooltip indiciating the restart of the filter to the default values',
       args: [],
     );
   }
@@ -787,7 +806,8 @@ class S {
         'CANCEL': 'Request has been canceled',
         'CONNECT_TIMEOUT': 'Connection Timeout: very slow connection',
         'RECEIVE_TIMEOUT': 'Server took too long to respond',
-        'SEND_TIMEOUT': 'Send Timeout, might want to try with a better connection',
+        'SEND_TIMEOUT':
+            'Send Timeout, might want to try with a better connection',
         'other': '$message',
       },
       name: 'dio_error',
@@ -877,11 +897,9 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   bool shouldReload(AppLocalizationDelegate old) => false;
 
   bool _isSupported(Locale locale) {
-    if (locale != null) {
-      for (var supportedLocale in supportedLocales) {
-        if (supportedLocale.languageCode == locale.languageCode) {
-          return true;
-        }
+    for (var supportedLocale in supportedLocales) {
+      if (supportedLocale.languageCode == locale.languageCode) {
+        return true;
       }
     }
     return false;
