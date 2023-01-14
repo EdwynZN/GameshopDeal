@@ -6,10 +6,9 @@ class Tile extends StatelessWidget{
   final bool score;
   final int store;
 
-  Tile({Key key, this.deal}) :
+  Tile({super.key, required this.deal}) :
     score = deal.metacriticScore != '0',
-    store = int.tryParse(deal.storeId),
-    super(key: key);
+    store = int.parse(deal.storeId);
 
   @override
   Widget build(BuildContext context) {
@@ -85,8 +84,14 @@ class _DealWidget extends StatelessWidget {
   final int savings;
   final bool discount;
 
-  const _DealWidget(this.score, this.metacritic, this.store, this.normalPrice, this.salePrice, this.savings) :
-    discount = savings != 0 && savings != null;
+  const _DealWidget(
+    this.score,
+    this.metacritic,
+    this.store,
+    this.normalPrice,
+    this.salePrice,
+    this.savings,
+  ) : discount = savings != 0;
 
   @override
   Widget build(BuildContext context) {
@@ -112,14 +117,14 @@ class _DealWidget extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: '\$$normalPrice\n',
-                    style: Theme.of(context).textTheme.subtitle2.copyWith(
+                    style: Theme.of(context).textTheme.subtitle2?.copyWith(
                       decoration: TextDecoration.lineThrough,
                       color: Colors.red,
                     ),
                   ),
                   TextSpan(
                     text: '\$$salePrice',
-                    style: Theme.of(context).textTheme.subtitle2.copyWith(
+                    style: Theme.of(context).textTheme.subtitle2?.copyWith(
                       color: Colors.greenAccent,
                     ),
                   ),
@@ -138,7 +143,7 @@ class _DealWidget extends StatelessWidget {
             ),
             child: Center(
               child: Text('-$savings%',
-                style: Theme.of(context).textTheme.subtitle2.copyWith(
+                style: Theme.of(context).textTheme.subtitle2?.copyWith(
                     color: Colors.black
                 )
               ),
@@ -152,7 +157,7 @@ class _DealWidget extends StatelessWidget {
 }
 
 class _Released extends StatelessWidget{
-  final DateTime released;
+  final DateTime? released;
 
   _Released(int releaseDate) :
     released = releaseDate == 0 ? null : DateTime.fromMillisecondsSinceEpoch(releaseDate * 1000);
@@ -160,7 +165,7 @@ class _Released extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     if(released != null)
-      return Text('Released on: ${MaterialLocalizations.of(context).formatShortDate(released)}',
+      return Text('Released on: ${MaterialLocalizations.of(context).formatShortDate(released!)}',
         style: Theme.of(context).textTheme.subtitle2,
       );
     else
@@ -168,7 +173,7 @@ class _Released extends StatelessWidget{
         padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         color: Colors.orangeAccent,
         child: Text('To be released',
-          style: Theme.of(context).textTheme.subtitle2.copyWith(
+          style: Theme.of(context).textTheme.subtitle2?.copyWith(
               color: Colors.black
           )
         ),

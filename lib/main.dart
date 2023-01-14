@@ -23,12 +23,12 @@ import 'package:flutter_cache_manager/src/storage/cache_object.dart';
 
 class Logger extends ProviderObserver {
   @override
-  void didDisposeProvider(ProviderBase provider) {
+  void didDisposeProvider(ProviderBase provider, ProviderContainer container) {
     print('disposed: ${provider.name}');
   }
 
   @override
-  void didUpdateProvider(ProviderBase provider, Object newValue) {
+  void didUpdateProvider(ProviderBase provider, Object? newValue, Object? old, ProviderContainer container) {
     print('''
 {
   "provider": "${provider.name ?? provider.runtimeType}",
@@ -37,22 +37,13 @@ class Logger extends ProviderObserver {
   }
 
   @override
-  void mayHaveChanged(ProviderBase provider) {
-    print('''
-      {
-        "provider changed": "${provider.name ?? provider.runtimeType}",
-      }''');
-    super.mayHaveChanged(provider);
-  }
-
-  @override
-  void didAddProvider(ProviderBase provider, Object value) {
+  void didAddProvider(ProviderBase provider, Object? value, ProviderContainer container) {
     print('''
     {
       "providerAdded": "${provider.name ?? provider.runtimeType}",
       "valueType": "${value.runtimeType}"
     }''');
-    super.didAddProvider(provider, value);
+    super.didAddProvider(provider, value, container);
   }
 }
 
@@ -85,12 +76,12 @@ void main() async {
 }
 
 class GameShop extends ConsumerWidget {
-  const GameShop({Key key}) : super(key: key);
+  const GameShop({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final themeMode = watch(themeProvider.state);
-    final themeData = watch(themeProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+    final themeData = ref.watch(themeProvider.notifier);
     return RefreshConfiguration(
       enableLoadingWhenFailed: false,
       autoLoad: true,

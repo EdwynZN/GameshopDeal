@@ -2,8 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 
-final searchSyncBox = Provider.autoDispose<Box<String>>((ref) {
-  Box<String> box;
+final searchSyncBox = Provider.autoDispose<Box<String>?>((ref) {
+  Box<String>? box;
 
   if (Hive.isBoxOpen(searchHistoryHiveBox)) box = Hive.box<String>(searchHistoryHiveBox);
 
@@ -13,22 +13,22 @@ final searchSyncBox = Provider.autoDispose<Box<String>>((ref) {
 }, name: 'Sync Search Hivebox');
 
 final searchBox = FutureProvider.autoDispose<Box<String>>((ref) async {
-  Box<String> box;
+  final Box<String> box;
 
   if (Hive.isBoxOpen(searchHistoryHiveBox))
     box = Hive.box<String>(searchHistoryHiveBox);
   else
     box = await Hive.openBox<String>(searchHistoryHiveBox);
 
-  ref.onDispose(() async => await box?.close());
+  ref.onDispose(() async => await box.close());
 
   return box;
 }, name: 'Search Hivebox');
 
 final suggestions =
     Provider.autoDispose.family<List<String>, String>((ref, query) {
-  final asyncBox = ref.watch(searchBox).data;
-  Box<String> box;
+  final asyncBox = ref.watch(searchBox).asData;
+  Box<String>? box;
 
   if (asyncBox != null) box = asyncBox.value;
 

@@ -4,7 +4,7 @@ import 'package:gameshop_deals/model/preference.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 
 final preferenceProvider =
-    StateNotifierProvider<HiveNotifier<Preference>>((ref) {
+    StateNotifierProvider<HiveNotifier<Preference>, Preference>((ref) {
   final Preference mode = ref
       .watch(hivePreferencesProvider)
       .get(preferenceKey, defaultValue: const Preference());

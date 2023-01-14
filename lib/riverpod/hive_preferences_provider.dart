@@ -4,12 +4,12 @@ import 'package:gameshop_deals/utils/preferences_constants.dart' show preference
 
 final hiveBoxProvider =
     FutureProvider.autoDispose.family<Box<dynamic>, String>((ref, name) async {
-  Box<dynamic> box;
+  final Box<dynamic> box;
 
   if (Hive.isBoxOpen(name)) box = Hive.box<dynamic>(name);
-  box = await Hive.openBox<dynamic>(name);
+  else box = await Hive.openBox<dynamic>(name);
 
-  ref.onDispose(() async => await box?.close());
+  ref.onDispose(() async => await box.close());
 
   return box;
 }, name: 'HiveBox');
@@ -20,10 +20,7 @@ final hivePreferencesProvider = Provider<Box<dynamic>>(
 );
 
 class HiveNotifier<T extends Object> extends StateNotifier<T> {
-  HiveNotifier(this._read, this._key, T mode)
-      : assert(_key != null),
-        assert(mode != null),
-        super(mode);
+  HiveNotifier(this._read, this._key, super.mode);
 
   final Reader _read;
   final String _key;

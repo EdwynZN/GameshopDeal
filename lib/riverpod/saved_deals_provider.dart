@@ -11,17 +11,17 @@ import 'package:gameshop_deals/model/pagination_model.dart';
 /// Maximum of 25 games id as documented by CheapShark API
 const int _kMaximumGamesId = 25;
 
-final singleGameLookup = ScopedProvider<GameLookup>(null);
+final singleGameLookup = Provider<GameLookup>((_) => throw UnimplementedError());
 
 final savedBoxProvider = FutureProvider<LazyBox<PriceAlert>>((ref) async {
-  LazyBox<PriceAlert> lazyBox;
+  final LazyBox<PriceAlert> lazyBox;
 
   if (Hive.isBoxOpen(alertHiveBox))
     lazyBox = Hive.lazyBox<PriceAlert>(alertHiveBox);
   else
     lazyBox = await Hive.openLazyBox<PriceAlert>(alertHiveBox);
 
-  ref.onDispose(() => lazyBox?.close());
+  ref.onDispose(() => lazyBox.close());
 
   return lazyBox;
 }, name: 'Saved Box Provider');
@@ -35,7 +35,7 @@ final savedStreamProvider =
 }, name: 'Saved Game Provider');
 
 final savedGamesPageProvider =
-    StateNotifierProvider.autoDispose<GamesPagination>((ref) {
+    StateNotifierProvider.autoDispose<GamesPagination, AsyncValue<Map<String, GameLookup>>>((ref) {
   final CancelToken cancelToken = CancelToken();
   final DiscountApi api = ref.watch(cheapSharkProvider);
 
@@ -59,16 +59,15 @@ final savedGamesPageProvider =
 }, name: 'dealList');
 
 final savedGamesProvider =
-    StateNotifierProvider.autoDispose<StateController<Map<String, GameLookup>>>(
+    Provider.autoDispose<Map<String, GameLookup>>(
         (ref) {
-  final notifier =
-      StateController<Map<String, GameLookup>>(const <String, GameLookup>{});
-
-  final dealList = ref.watch(savedGamesPageProvider);
+  final notifier = const <String, GameLookup>{};
+  
+  final dealList = ref.watch(savedGamesPageProvider.notifier);
   final pageListener = dealList.addListener((value) {
-    if (value.data != null)
-      notifier.state = Map<String, GameLookup>.from(notifier.state)
-        ..addAll(value.data.value);
+    if (value.asData != null)
+      ref.state = Map<String, GameLookup>.from(ref.state)
+        ..addAll(value.asData!.value);
   });
   ref.onDispose(pageListener);
 
@@ -76,7 +75,7 @@ final savedGamesProvider =
 });
 
 final gameKeysProvider = Provider.autoDispose<List<String>>((ref) {
-  return ref.watch(savedGamesProvider.state).keys.toList();
+  return ref.watch(savedGamesProvider).keys.toList();
 }, name: 'List of GamesID Provider');
 
 class GamesPagination extends StateNotifier<AsyncValue<Map<String, GameLookup>>>

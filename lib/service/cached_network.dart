@@ -8,8 +8,7 @@ import 'dart:io';
 ///Converts the most common MIME types to the most expected file extension.
 extension _ContentTypeConverter on ContentType {
   String get fileExtension {
-    if (this == null) return null;
-    if (mimeTypes.containsKey(mimeType)) return mimeTypes[mimeType];
+    if (mimeTypes.containsKey(mimeType)) return mimeTypes[mimeType]!;
     return '.$subType';
   }
 }
@@ -98,14 +97,15 @@ const mimeTypes = {
 };
 
 class DioFileService extends FileService {
-  Dio _dioClient;
-  DioFileService({Dio dioClient}) {
+  late final Dio _dioClient;
+
+  DioFileService({Dio? dioClient}) {
     _dioClient = dioClient ?? Dio();
   }
 
   @override
   Future<FileServiceResponse> get(String url,
-      {Map<String, String> headers = const {}}) async {
+      {Map<String, String>? headers = const {}}) async {
     final Future<Response<ResponseBody>> req =
       _dioClient.requestUri<ResponseBody>(
         Uri.parse(url),
@@ -126,25 +126,27 @@ class _DioGetResponse implements FileServiceResponse {
 
   final DateTime _receivedTime = clock.now();
 
-  final ResponseBody _response;
+  final ResponseBody? _response;
 
   @override
-  int get statusCode => _response.statusCode;
+  int get statusCode => _response?.statusCode! ?? 0;
 
   bool _hasHeader(String name) {
-    return _response.headers.containsKey(name);
+    return _response == null ? false : _response!.headers.containsKey(name);
   }
 
-  String _header(String name) {
-    return _response.headers[name].first;
+  String? _header(String name) {
+    return _response == null ? null : _response!.headers[name]?.first;
   }
 
   @override
-  Stream<Uint8List> get content => _response.stream;
+  Stream<Uint8List> get content => _response == null ? Stream.empty() : _response!.stream;
 
   @override
-  int get contentLength {
-    final String key = _response.headers[Headers.contentLengthHeader]?.first;
+  int? get contentLength {
+    final String? key = _response == null
+      ? null
+      : _response!.headers[Headers.contentLengthHeader]?.first;
     if (key == null) return null;
     return int.tryParse(key);
   }
@@ -154,7 +156,7 @@ class _DioGetResponse implements FileServiceResponse {
     var ageDuration = const Duration(days: 7);
     if (_hasHeader(HttpHeaders.cacheControlHeader)) {
       final controlSettings =
-          _header(HttpHeaders.cacheControlHeader).split(',');
+          _header(HttpHeaders.cacheControlHeader)!.split(',');
       for (final setting in controlSettings) {
         final sanitizedSetting = setting.trim().toLowerCase();
         if (sanitizedSetting == 'no-cache') {
@@ -173,7 +175,7 @@ class _DioGetResponse implements FileServiceResponse {
   }
 
   @override
-  String get eTag => _hasHeader(HttpHeaders.etagHeader)
+  String? get eTag => _hasHeader(HttpHeaders.etagHeader)
       ? _header(HttpHeaders.etagHeader)
       : null;
 
@@ -181,8 +183,8 @@ class _DioGetResponse implements FileServiceResponse {
   String get fileExtension {
     var fileExtension = '';
     if (_hasHeader(Headers.contentTypeHeader)) {
-      var contentType = ContentType.parse(_header(Headers.contentTypeHeader));
-      fileExtension = contentType.fileExtension ?? '';
+      var contentType = ContentType.parse(_header(Headers.contentTypeHeader)!);
+      fileExtension = contentType.fileExtension;
     }
     return fileExtension;
   }

@@ -1,16 +1,17 @@
+import 'package:dio_http_cache_lts/dio_http_cache_lts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/service/cheap_shark_retrofit.dart';
 import 'package:gameshop_deals/model/deal.dart';
 import 'package:gameshop_deals/model/store.dart';
 import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/riverpod/repository_provider.dart';
 import 'package:gameshop_deals/model/game_lookup.dart';
 import 'package:gameshop_deals/model/filter.dart';
 import 'package:gameshop_deals/model/pagination_model.dart';
+import 'package:collection/collection.dart';
 
-final singleDeal = ScopedProvider<Deal>(null);
+final singleDeal = Provider<Deal>((_) => throw UnimplementedError());
 
 final storesProvider = FutureProvider.autoDispose<List<Store>>((ref) async {
   final cancelToken = CancelToken();
@@ -34,10 +35,10 @@ final storesProvider = FutureProvider.autoDispose<List<Store>>((ref) async {
 }, name: 'StoresProvider');
 
 final singleStoreProvider =
-    Provider.autoDispose.family<Store, String>((ref, id) {
-  final asyncStores = ref.watch(storesProvider).data;
-  final store = asyncStores?.value
-      ?.firstWhere((element) => element.storeId == id, orElse: () => null);
+    Provider.autoDispose.family<Store?, String>((ref, id) {
+  final asyncStores = ref.watch(storesProvider).asData;
+  final store =
+      asyncStores?.value.firstWhereOrNull((element) => element.storeId == id);
 
   ref.maintainState = store != null;
 
@@ -45,24 +46,23 @@ final singleStoreProvider =
 }, name: 'SingleStore');
 
 final dealPageProvider = StateNotifierProvider.autoDispose
-    .family<DealListPagination, String>((ref, title) {
+    .family<DealListPagination, AsyncValue<List<Deal>>, String>((ref, title) {
   final CancelToken cancelToken = CancelToken();
-  final Filter filter = ref.watch(filterProvider(title)).state;
+  final Filter filter = ref.watch(filterProvider(title));
   ref.onDispose(cancelToken.cancel);
 
   final DiscountApi api = ref.watch(cheapSharkProvider);
   return DealListPagination(filter, api, cancelToken);
 }, name: 'dealList');
 
-final dealsProvider = StateNotifierProvider.autoDispose
-    .family<StateController<List<Deal>>, String>((ref, title) {
-  final notifier = StateController<List<Deal>>(const <Deal>[]);
+final dealsProvider =
+    Provider.autoDispose.family<List<Deal>, String>((ref, title) {
+  final notifier = const <Deal>[];
 
-  final dealList = ref.watch(dealPageProvider(title));
+  final dealList = ref.watch(dealPageProvider(title).notifier);
   final pageListener = dealList.addListener((value) {
-    if (value.data != null)
-      notifier.state = List<Deal>.from(notifier.state)
-        ..addAll(value.data.value);
+    if (value.asData != null)
+      ref.state = List<Deal>.from(ref.state)..addAll(value.asData!.value);
   });
   ref.onDispose(pageListener);
 
@@ -83,7 +83,9 @@ final gameDealLookupProvider =
     dio..interceptors.remove(dioCacheManager.interceptor);
   });
 
-  return ref.watch(cheapSharkProvider).getGamesById(id, _cacheOptions, cancelToken);
+  return ref
+      .watch(cheapSharkProvider)
+      .getGamesById(id, _cacheOptions, cancelToken);
 }, name: 'Game Deal Lookup');
 
 final dealsOfGameProvider =
@@ -128,7 +130,7 @@ class DealListPagination extends StateNotifier<AsyncValue<List<Deal>>>
   bool get isLastPage {
     if (_lastPage) return _lastPage;
     if (state is AsyncData &&
-        (state.data.value?.length ?? filter.pageSize) < filter.pageSize) {
+        (state.asData?.value.length ?? filter.pageSize) < filter.pageSize) {
       _lastPage = true;
     }
     return _lastPage;

@@ -14,7 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 final InAppReview _inAppReview = InAppReview.instance;
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({Key key}) : super(key: key);
+  const SettingsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

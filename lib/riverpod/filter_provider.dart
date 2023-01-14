@@ -3,10 +3,10 @@ import 'package:gameshop_deals/model/filter.dart';
 import 'package:gameshop_deals/riverpod/hive_preferences_provider.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 
-final titleProvider = ScopedProvider<String>((_) => '', name: 'TitleSearch');
+final titleProvider = Provider<String>((_) => '', name: 'TitleSearch');
 
 final filterProviderCopy = StateProvider.autoDispose.family<Filter, String>(
-  (ref, title) => ref.read(filterProvider(title)).state.copyWith(),
+  (ref, title) => ref.read(filterProvider(title)).copyWith(),
   name: 'FilterScreen',
 );
 

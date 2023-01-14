@@ -4,11 +4,11 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'deal.freezed.dart';
 part 'deal.g.dart';
 
-int _stringToInt(String value) =>
+int? _stringToInt(String? value) =>
     value == null ? null : double.tryParse(value)?.round();
-String _intToString(int value) => value?.toString();
+String? _intToString(int? value) => value?.toString();
 
-String _trimString(String value) => value?.trim();
+String? _trimString(String? value) => value?.trim();
 
 @freezed
 abstract class Deal with _$Deal {

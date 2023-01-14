@@ -6,7 +6,7 @@ import 'package:gameshop_deals/riverpod/display_provider.dart';
 import 'package:gameshop_deals/widget/dialog_preference_provider.dart';
 
 class DisplayPreference extends ConsumerWidget {
-  const DisplayPreference({Key key}) : super(key: key);
+  const DisplayPreference({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {

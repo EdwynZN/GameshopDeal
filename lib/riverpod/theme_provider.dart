@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/repository/theme_repository.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 
-final themeProvider = StateNotifierProvider<ThemeNotifier>((ref) {
+final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
   final ThemeMode mode = ref
     .watch(hivePreferencesProvider)
     .get(themeModeKey, defaultValue: ThemeMode.system);
