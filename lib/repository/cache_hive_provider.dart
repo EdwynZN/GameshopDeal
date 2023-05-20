@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:flutter_cache_manager/src/storage/cache_info_repositories/helper_methods.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_cache_manager/src/storage/cache_object.dart';
+import 'package:collection/collection.dart';
 
 extension _setTouchedToNow on CacheObject {
   CacheObject updateSetTouched({bool setTouchedToNow = true}) {
@@ -22,15 +23,15 @@ extension _setTouchedToNow on CacheObject {
 class CacheHiveProvider extends CacheInfoRepository
     with CacheInfoRepositoryHelperMethods {
   final String databaseName;
-  Box<CacheObject> box;
+  late Box<CacheObject> box;
 
   CacheHiveProvider([this.databaseName = 'kDefaultCacheBox']);
 
   @override
   Future<bool> open() async {
-    if (!shouldOpenOnNewConnection()) return openCompleter.future;
+    if (!shouldOpenOnNewConnection()) return openCompleter!.future;
     if (Hive.isBoxOpen(databaseName))
-      box ??= Hive.box<CacheObject>(databaseName);
+      box = Hive.box<CacheObject>(databaseName);
     else
       box = await Hive.openBox<CacheObject>(databaseName);
     return opened();
@@ -54,9 +55,9 @@ class CacheHiveProvider extends CacheInfoRepository
   }
 
   @override
-  Future<CacheObject> get(String key) async {
+  Future<CacheObject?> get(String key) async {
     if (box.isEmpty) return null;
-    return box.values.firstWhere((cb) => cb.key == key, orElse: () => null);
+    return box.values.firstWhereOrNull((cb) => cb.key == key);
   }
 
   @override
@@ -90,8 +91,10 @@ class CacheHiveProvider extends CacheInfoRepository
   @override
   Future<List<CacheObject>> getObjectsOverCapacity(int capacity) async {
     final age = DateTime.now().subtract(const Duration(days: 1));
-    final list = box.values.where((cb) => cb.touched.isBefore(age)).toList()
-      ..sort((a, b) => b.touched.compareTo(a.touched));
+    final list = box.values.where((cb) => 
+      cb.touched != null && cb.touched!.isBefore(age)
+    ).toList()
+      ..sort((a, b) => b.touched!.compareTo(a.touched!));
     if (list.length > capacity)
       return list.sublist(
           capacity, (capacity + 100).clamp(capacity, list.length));
@@ -101,7 +104,9 @@ class CacheHiveProvider extends CacheInfoRepository
   @override
   Future<List<CacheObject>> getOldObjects(Duration maxAge) async {
     final age = DateTime.now().subtract(maxAge);
-    final list = box.values.where((cb) => cb.touched.isBefore(age)).toList();
+    final list = box.values.where((cb) => 
+      cb.touched != null && cb.touched!.isBefore(age)
+    ).toList();
     if (list.length > 100) return list.sublist(0, 100);
     return list;
   }
@@ -116,7 +121,6 @@ class CacheHiveProvider extends CacheInfoRepository
   @override
   Future<void> deleteDataFile() async {
     await box.deleteFromDisk();
-    box = null;
     box = await Hive.openBox<CacheObject>(databaseName);
   }
 

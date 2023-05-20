@@ -13,16 +13,15 @@ import 'package:gameshop_deals/widget/display_deal/thumb_image.dart';
 import 'package:gameshop_deals/widget/display_gamelookup/cheapest_ever.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-final indexGameLookup = ScopedProvider<int>(null);
+final indexGameLookup = Provider<int>(null);
 
 class DetailedGameLookup extends ConsumerWidget {
-  const DetailedGameLookup({Key key}) : super(key: key);
+  const DetailedGameLookup({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final game = watch(singleGameLookup);
-    assert(game != null);
-    final int index = watch(indexGameLookup);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final game = ref.watch(singleGameLookup);
+    final int index = ref.watch(indexGameLookup);
     final Widget child = Container(
       decoration: BoxDecoration(
         border: Border(
@@ -46,7 +45,7 @@ class DetailedGameLookup extends ConsumerWidget {
               child: ProviderScope(
                 overrides: [
                   singleDeal.overrideAs(
-                      (watch) => watch(singleGameLookup).deals.first)
+                      (watch) => ref.watch(singleGameLookup).deals.first)
                 ],
                 child: const PriceWidget(),
               ),
@@ -77,14 +76,13 @@ class DetailedGameLookup extends ConsumerWidget {
 }
 
 class CompactGameLookup extends ConsumerWidget {
-  const CompactGameLookup({Key key}) : super(key: key);
+  const CompactGameLookup({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final game = watch(singleGameLookup);
-    assert(game != null);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final game = ref.watch(singleGameLookup);
     final String title = game.info.title;
-    final int index = watch(indexGameLookup);
+    final int index = ref.watch(indexGameLookup);
     return DecoratedBox(
       decoration: BoxDecoration(
         border: Border(bottom: Divider.createBorderSide(context)),
@@ -112,7 +110,7 @@ class CompactGameLookup extends ConsumerWidget {
                 ProviderScope(
                   overrides: [storeIdProvider.overrideWithValue(deal.storeId)],
                   child: StoreAvatarIcon(
-                    size: Theme.of(context).textTheme.bodyText2.fontSize,
+                    size: Theme.of(context).textTheme.bodyMedium?.fontSize,
                   ),
                 ),
             ],
@@ -121,7 +119,7 @@ class CompactGameLookup extends ConsumerWidget {
         trailing: ProviderScope(
           overrides: [
             singleDeal
-                .overrideAs((watch) => watch(singleGameLookup).deals.first)
+                .overrideAs((watch) => ref.watch(singleGameLookup).deals.first)
           ],
           child: const PriceWidget(),
         ),
@@ -146,13 +144,13 @@ class CompactGameLookup extends ConsumerWidget {
 }
 
 class GridGameLookup extends ConsumerWidget {
-  const GridGameLookup({Key key}) : super(key: key);
+  const GridGameLookup({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, watch) {
-    final game = watch(singleGameLookup);
+    final game = ref.watch(singleGameLookup);
     assert(game != null);
-    final int index = watch(indexGameLookup);
+    final int index = ref.watch(indexGameLookup);
     final color = Colors.grey[850];
     final theme = Theme.of(context);
     final Color borderColor = theme.brightness == Brightness.light
@@ -185,7 +183,7 @@ class GridGameLookup extends ConsumerWidget {
               storeIdProvider.overrideWithValue(game.deals.first.storeId)
             ],
             child: StoreAvatarIcon(
-              size: Theme.of(context).textTheme.bodyText2.fontSize,
+              size: Theme.of(context).textTheme.bodyMedium.fontSize,
             ),
           ),
         ),
@@ -208,7 +206,7 @@ class GridGameLookup extends ConsumerWidget {
           child: ProviderScope(
             overrides: [
               thumbProvider
-                  .overrideAs((watch) => watch(singleGameLookup).info.thumb)
+                  .overrideAs((watch) => ref.watch(singleGameLookup).info.thumb)
             ],
             child: const ThumbImage(
               alignment: Alignment.center,
@@ -223,8 +221,8 @@ class GridGameLookup extends ConsumerWidget {
             fit: BoxFit.scaleDown,
             child: ProviderScope(
               overrides: [
-                singleDeal
-                    .overrideAs((watch) => watch(singleGameLookup).deals.first)
+                singleDeal.overrideAs(
+                    (watch) => ref.watch(singleGameLookup).deals.first)
               ],
               child: const PriceWidget(),
             ),
@@ -236,7 +234,7 @@ class GridGameLookup extends ConsumerWidget {
 }
 
 class ListGameLookup extends StatelessWidget {
-  const ListGameLookup({Key key}) : super(key: key);
+  const ListGameLookup({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -259,7 +257,7 @@ class ListGameLookup extends StatelessWidget {
                   child: ProviderScope(
                     overrides: [
                       thumbProvider.overrideAs(
-                          (watch) => watch(singleGameLookup).info.thumb)
+                          (watch) => ref.watch(singleGameLookup).info.thumb)
                     ],
                     child: const ThumbImage(),
                   )),
@@ -275,8 +273,8 @@ class ListGameLookup extends StatelessWidget {
             flex: null,
             child: ProviderScope(
               overrides: [
-                singleDeal
-                    .overrideAs((watch) => watch(singleGameLookup).deals.first)
+                singleDeal.overrideAs(
+                    (watch) => ref.watch(singleGameLookup).deals.first)
               ],
               child: const PriceWidget(),
             ),
@@ -287,8 +285,8 @@ class ListGameLookup extends StatelessWidget {
     return Consumer(
       child: child,
       builder: (context, watch, child) {
-        final game = watch(singleGameLookup);
-        final int index = watch(indexGameLookup);
+        final game = ref.watch(singleGameLookup);
+        final int index = ref.watch(indexGameLookup);
         return InkWell(
           onTap: () =>
               Navigator.of(context).pushNamed(detailRoute, arguments: index),
@@ -299,9 +297,9 @@ class ListGameLookup extends StatelessWidget {
               isScrollControlled: true,
               builder: (context) => ProviderScope(
                 overrides: [
-                singleGameLookup.overrideWithValue(game),
-                indexGameLookup.overrideWithValue(index),
-              ],
+                  singleGameLookup.overrideWithValue(game),
+                  indexGameLookup.overrideWithValue(index),
+                ],
                 child: const _BottomSheetButtonsGameLookup(),
               ),
             );
@@ -315,14 +313,12 @@ class ListGameLookup extends StatelessWidget {
 
 class _TitleGameLookup extends ConsumerWidget {
   final bool showCheapest;
-  const _TitleGameLookup({Key key, this.showCheapest = false})
-      : assert(showCheapest != null),
-        super(key: key);
+  const _TitleGameLookup({Key? key, this.showCheapest = false})
+      : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final game = watch(singleGameLookup);
-    assert(game != null);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final game = ref.watch(singleGameLookup);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -351,7 +347,7 @@ class _TitleGameLookup extends ConsumerWidget {
                 ProviderScope(
                   overrides: [storeIdProvider.overrideWithValue(deal.storeId)],
                   child: StoreAvatarIcon(
-                    size: Theme.of(context).textTheme.bodyText2.fontSize,
+                    size: Theme.of(context).textTheme.bodyMedium.fontSize,
                   ),
                 ),
             ],
@@ -363,12 +359,11 @@ class _TitleGameLookup extends ConsumerWidget {
 }
 
 class _BottomSheetButtonsGameLookup extends ConsumerWidget {
-  const _BottomSheetButtonsGameLookup({Key key}) : super(key: key);
+  const _BottomSheetButtonsGameLookup({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final game = watch(singleGameLookup);
-    assert(game != null, 'GameLookup cannot be null');
+  Widget build(BuildContext context, WidgetRef ref) {
+    final game = ref.watch(singleGameLookup);
     final title = game.info.title;
     return SingleChildScrollView(
       primary: true,
@@ -382,29 +377,27 @@ class _BottomSheetButtonsGameLookup extends ConsumerWidget {
               decoration: BoxDecoration(
                   border: Border(bottom: Divider.createBorderSide(context))),
               child: Text.rich(
-                TextSpan(
-                  text: '$title\n',
-                  children: [
-                    const WidgetSpan(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
-                        child: CheapestEverWidget(),
-                      ),
+                TextSpan(text: '$title\n', children: [
+                  const WidgetSpan(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: CheapestEverWidget(),
                     ),
-                  ]
-                ),
+                  ),
+                ]),
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
           ProviderScope(
             overrides: [
               singleDeal.overrideAs((watch) {
-                final index = watch(indexGameLookup);
-                final keys = watch(gameKeysProvider);
-                return game.deals.first.copyWith(gameId: keys[index], title: game.info.title);
+                final index = ref.watch(indexGameLookup);
+                final keys = ref.watch(gameKeysProvider);
+                return game.deals.first
+                    .copyWith(gameId: keys[index], title: game.info.title);
               }),
-            ], 
+            ],
             child: const SavedTextDealButton(),
           ),
           Wrap(
@@ -418,7 +411,7 @@ class _BottomSheetButtonsGameLookup extends ConsumerWidget {
                       storeIdProvider.overrideWithValue(deal.storeId)
                     ],
                     child: StoreAvatarIcon(
-                      size: Theme.of(context).textTheme.bodyText2.fontSize,
+                      size: Theme.of(context).textTheme.bodyMedium.fontSize,
                     ),
                   ),
                   label: Text('\$${deal.salePrice}'),
@@ -427,7 +420,7 @@ class _BottomSheetButtonsGameLookup extends ConsumerWidget {
                         '${cheapsharkUrl}/redirect?dealID=${deal.dealId}';
                     if (await canLaunch(_gameLookupLink)) {
                       final bool webView =
-                          context.read(preferenceProvider.state).webView;
+                          ref.read(preferenceProvider.state).webView;
                       await launch(_gameLookupLink,
                           forceWebView: webView, enableJavaScript: webView);
                     }

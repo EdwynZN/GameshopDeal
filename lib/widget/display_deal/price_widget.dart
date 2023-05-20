@@ -3,20 +3,19 @@ import 'package:gameshop_deals/riverpod/deal_provider.dart' show singleDeal;
 import 'package:flutter/material.dart';
 
 class PriceWidget extends ConsumerWidget {
-  const PriceWidget({Key key}) : super(key: key);
+  const PriceWidget({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final deal = watch(singleDeal);
-    assert(deal != null);
-    final bool discount = deal.savings != null && deal.savings != 0;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final deal = ref.watch(singleDeal);
+    final bool discount = deal.savings != 0;
     final brightness = ThemeData.estimateBrightnessForColor(
         Theme.of(context).scaffoldBackgroundColor);
     final Color discountColor =
-        brightness == Brightness.light ? Colors.green[300] : Colors.greenAccent;
+        brightness == Brightness.light ? Colors.green.shade300 : Colors.greenAccent;
     final Color normalPriceColor =
         brightness == Brightness.light ? Colors.red : Colors.orange;
-    final textTheme = Theme.of(context).textTheme.subtitle2;
+    final textTheme = Theme.of(context).textTheme.titleSmall;
     if (discount)
       return Row(
         mainAxisSize: MainAxisSize.min,
@@ -26,7 +25,7 @@ class PriceWidget extends ConsumerWidget {
             text: TextSpan(children: [
               TextSpan(
                 text: '\$${deal.normalPrice}\n',
-                style: textTheme.copyWith(
+                style: textTheme?.copyWith(
                   decoration: TextDecoration.lineThrough,
                   decorationStyle: TextDecorationStyle.solid,
                   decorationThickness: 2.0,
@@ -35,7 +34,7 @@ class PriceWidget extends ConsumerWidget {
               ),
               TextSpan(
                 text: '\$${deal.salePrice}',
-                style: textTheme.copyWith(color: discountColor),
+                style: textTheme?.copyWith(color: discountColor),
               ),
             ]),
             maxLines: 2,
@@ -60,7 +59,8 @@ class PriceWidget extends ConsumerWidget {
           Container(
             margin: const EdgeInsetsDirectional.only(start: 4),
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-            constraints: BoxConstraints.tightForFinite(height: textTheme.fontSize * 2 + (textTheme.height ?? 2.0)),
+            constraints: BoxConstraints.tightForFinite(
+                height: (textTheme?.fontSize ?? 0 * 2) + (textTheme?.height ?? 2.0)),
             decoration: BoxDecoration(
               color: discountColor,
               borderRadius: const BorderRadius.all(Radius.circular(4)),
@@ -69,14 +69,14 @@ class PriceWidget extends ConsumerWidget {
             child: Text(
               '-${deal.savings}%',
               style: Theme.of(context)
-                .textTheme
-                .subtitle2
-                .copyWith(color: Colors.black),
+                  .textTheme
+                  .titleSmall
+                  ?.copyWith(color: Colors.black),
             ),
           ),
         ],
       );
     return Text('\$${deal.salePrice}',
-        style: Theme.of(context).textTheme.subtitle1);
+        style: Theme.of(context).textTheme.titleMedium);
   }
 }

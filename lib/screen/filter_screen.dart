@@ -14,11 +14,11 @@ import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/model/filter.dart';
 
 class FilterScreen extends StatelessWidget {
-  const FilterScreen({Key key}) : super(key: key);
+  const FilterScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final bool isDrawer = ModalRoute.of(context).isFirst;
+    final bool isDrawer = ModalRoute.of(context)?.isFirst ?? false;
     if (isDrawer) return const Drawer(child: const FilterPage());
     return const SafeArea(child: const Material(child: const FilterPage()));
   }
@@ -66,30 +66,30 @@ class FilterPage extends StatelessWidget {
                     child: const FlagFilterWidget(),
                   ),
                   Text(translate.price_range,
-                      style: Theme.of(context).textTheme.headline5),
+                      style: Theme.of(context).textTheme.headlineSmall),
                   const Padding(
                       padding: const EdgeInsets.only(bottom: 19),
                       child: const PriceSlider()),
                   Text('Metacritic',
-                      style: Theme.of(context).textTheme.headline5),
+                      style: Theme.of(context).textTheme.headlineSmall),
                   const Padding(
                     padding: const EdgeInsets.only(bottom: 19),
                     child: const MetacriticFilter(),
                   ),
                   Text(translate.steam_rating,
-                      style: Theme.of(context).textTheme.headline5),
+                      style: Theme.of(context).textTheme.headlineSmall),
                   const Padding(
                     padding: const EdgeInsets.only(bottom: 19),
                     child: const SteamRating(),
                   ),
                   Text(translate.sortBy,
-                      style: Theme.of(context).textTheme.headline5),
+                      style: Theme.of(context).textTheme.headlineSmall),
                   const Padding(
                     padding: const EdgeInsets.only(bottom: 19),
                     child: const SortByWidget(),
                   ),
                   Text(translate.stores,
-                      style: Theme.of(context).textTheme.headline5),
+                      style: Theme.of(context).textTheme.headlineSmall),
                   const StoreWidget()
                 ]),
               ),
@@ -112,19 +112,19 @@ class FilterPage extends StatelessWidget {
 }
 
 class _SaveButton extends ConsumerWidget {
-  const _SaveButton({Key key}) : super(key: key);
+  const _SaveButton({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final title = watch(titleProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final title = ref.watch(titleProvider);
     //final S translate = S.of(context);
     return IconButton(
       icon: const Icon(Icons.save_outlined),
       tooltip: MaterialLocalizations.of(context).saveButtonLabel,
       onPressed: () async {
-        final preferedBox = context.read(hivePreferencesProvider);
+        final preferedBox = ref.read(hivePreferencesProvider);
         final StateController<Filter> filterCopy =
-            context.read(filterProviderCopy(title));
+          ref.read(filterProviderCopy(title).notifier);
         await preferedBox.put(filterKey, filterCopy.state);
       },
     );
@@ -132,33 +132,33 @@ class _SaveButton extends ConsumerWidget {
 }
 
 class _RestartButton extends ConsumerWidget {
-  const _RestartButton({Key key}) : super(key: key);
+  const _RestartButton({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final title = watch(titleProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final title = ref.watch(titleProvider);
     final S translate = S.of(context);
     return IconButton(
       icon: const Icon(Icons.refresh),
       tooltip: translate.restart_tooltip,
-      onPressed: () => context.refresh(filterProviderCopy(title)),
+      onPressed: () => ref.refresh(filterProviderCopy(title)),
     );
   }
 }
 
 class _ApplyButton extends ConsumerWidget {
-  const _ApplyButton({Key key}) : super(key: key);
+  const _ApplyButton({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final title = watch(titleProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final title = ref.watch(titleProvider);
     final S translate = S.of(context);
     return ElevatedButton(
       onPressed: () {
         final StateController<Filter> filterCopy =
-            context.read(filterProviderCopy(title));
+            ref.read(filterProviderCopy(title).notifier);
         final StateController<Filter> filter =
-            context.read(filterProvider(title));
+            ref.read(filterProvider(title).notifier);
         if (filter.state == filterCopy.state) return;
         filter.state = filterCopy.state.copyWith();
         Navigator.maybePop(context);

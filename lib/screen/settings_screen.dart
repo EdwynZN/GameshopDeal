@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/cache_manager_provider.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/riverpod/theme_provider.dart';
@@ -56,8 +55,7 @@ class SettingsScreen extends StatelessWidget {
                             values: ThemeMode.values,
                           ),
                         );
-                        if (mode != null)
-                          context.read(themeProvider).changeState(mode);
+                        ref.read(themeProvider).changeState(mode);
                       },
                     ),
                   ),
@@ -82,8 +80,8 @@ class SettingsScreen extends StatelessWidget {
                       aboutBoxChildren: [
                         TextButton.icon(
                           onPressed: () async {
-                            final url =
-                              Uri.https(githubUrl, projectPath + privacyPolicyPath);
+                            final url = Uri.https(
+                                githubUrl, projectPath + privacyPolicyPath);
                             await launch(url.toString());
                           },
                           icon: const Icon(Icons.privacy_tip_outlined),
@@ -91,8 +89,7 @@ class SettingsScreen extends StatelessWidget {
                         ),
                         TextButton.icon(
                           onPressed: () async {
-                            final url =
-                              Uri.https(githubUrl, projectPath);
+                            final url = Uri.https(githubUrl, projectPath);
                             await launch(url.toString());
                           },
                           icon: const Icon(Icons.code_outlined),
@@ -101,7 +98,7 @@ class SettingsScreen extends StatelessWidget {
                         TextButton.icon(
                           onPressed: () async {
                             final url =
-                              Uri.https(githubUrl, projectPath + issuesPath);
+                                Uri.https(githubUrl, projectPath + issuesPath);
                             await launch(url.toString());
                           },
                           icon: const Icon(Icons.bug_report_outlined),
@@ -109,8 +106,10 @@ class SettingsScreen extends StatelessWidget {
                         ),
                         TextButton.icon(
                           onPressed: () async {
-                            if (await _inAppReview.isAvailable()) _inAppReview.requestReview();
-                            else _inAppReview.openStoreListing();
+                            if (await _inAppReview.isAvailable())
+                              _inAppReview.requestReview();
+                            else
+                              _inAppReview.openStoreListing();
                           },
                           icon: const Icon(Icons.star),
                           label: Text(translate.rate_me),
@@ -146,7 +145,7 @@ class SettingsScreen extends StatelessWidget {
 }
 
 class _ClearCacheWidget extends StatelessWidget {
-  const _ClearCacheWidget({Key key}) : super(key: key);
+  const _ClearCacheWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -170,9 +169,9 @@ class _ClearCacheWidget extends StatelessWidget {
               .emptyCache();
           final box = await Hive.openBox<String>(searchHistoryHiveBox);
           if (box.isOpen && box.isNotEmpty) await box.clear();
-          if (scaffold?.mounted ?? false) {
-            scaffold?.hideCurrentSnackBar();
-            scaffold?.showSnackBar(
+          if (scaffold.mounted ?? false) {
+            scaffold.hideCurrentSnackBar();
+            scaffold.showSnackBar(
                 SnackBar(content: Text(translate.cache_snackbar_cleared)));
           }
         }
@@ -182,7 +181,7 @@ class _ClearCacheWidget extends StatelessWidget {
 }
 
 class _CacheDialog extends StatelessWidget {
-  const _CacheDialog({Key key}) : super(key: key);
+  const _CacheDialog({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -207,14 +206,14 @@ class _CacheDialog extends StatelessWidget {
 class _CardSettings extends StatelessWidget {
   final Widget child;
 
-  const _CardSettings({Key key, this.child}) : super(key: key);
+  const _CardSettings({Key? key, this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTileTheme(
         iconColor: Theme.of(context).iconTheme.color,
-        textColor: Theme.of(context).textTheme.bodyText2.color,
+        textColor: Theme.of(context).textTheme.bodyMedium.color,
         dense: true,
         child: Material(
           color: Colors.transparent,

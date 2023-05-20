@@ -4,15 +4,15 @@ import 'package:gameshop_deals/generated/l10n.dart';
 
 class FAB extends StatefulWidget {
   final ScrollController controller;
-  const FAB({Key key, @required this.controller}) : super(key: key);
+  const FAB({Key? key, required this.controller}) : super(key: key);
 
   @override
   _FABState createState() => _FABState();
 }
 
 class _FABState extends State<FAB> with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation<Offset> positionAnimation;
+  late final AnimationController _controller;
+  late final Animation<Offset> positionAnimation;
 
   @override
   void initState() {
@@ -25,20 +25,20 @@ class _FABState extends State<FAB> with SingleTickerProviderStateMixin {
       parent: _controller,
       curve: Interval(0.0, 1, curve: Curves.decelerate),
     ));
-    widget.controller?.addListener(_scrollAnimationListener);
+    widget.controller.addListener(_scrollAnimationListener);
   }
 
   @override
   void didUpdateWidget(covariant FAB oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.controller != oldWidget.controller) {
-      oldWidget.controller?.removeListener(_scrollAnimationListener);
-      widget.controller?.addListener(_scrollAnimationListener);
+      oldWidget.controller.removeListener(_scrollAnimationListener);
+      widget.controller.addListener(_scrollAnimationListener);
     }
   }
 
   void _scrollAnimationListener() {
-    if ((widget.controller?.hasClients ?? false) && !_controller.isAnimating) {
+    if ((widget.controller.hasClients) && !_controller.isAnimating) {
       switch (widget.controller.position.userScrollDirection) {
         case ScrollDirection.forward:
           if (_controller.isDismissed) _controller.forward();
@@ -56,7 +56,7 @@ class _FABState extends State<FAB> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     super.dispose();
-    widget.controller?.removeListener(_scrollAnimationListener);
+    widget.controller.removeListener(_scrollAnimationListener);
     _controller.dispose();
   }
 

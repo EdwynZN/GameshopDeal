@@ -4,7 +4,7 @@ import 'package:gameshop_deals/riverpod/deal_provider.dart' show singleDeal;
 import 'package:flutter/material.dart';
 
 class DealDate extends ConsumerWidget {
-  const DealDate({Key key}) : super(key: key);
+  const DealDate({Key? key}) : super(key: key);
 
   String _difference(S translate, int mEpoch) {
     final DateTime change = DateTime.fromMillisecondsSinceEpoch(mEpoch * 1000);
@@ -23,14 +23,13 @@ class DealDate extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final S translate = S.of(context);
-    final deal = watch(singleDeal);
-    assert(deal != null && deal.lastChange != null);
+    final deal = ref.watch(singleDeal);
     String time = _difference(translate, deal.lastChange);
     return Text(
       time,
-      style: Theme.of(context).textTheme.overline,
+      style: Theme.of(context).textTheme.labelSmall,
       overflow: TextOverflow.clip,
       softWrap: true,
     );

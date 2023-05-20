@@ -7,7 +7,7 @@ import 'package:gameshop_deals/utils/routes_constants.dart';
 class SearchScreen extends StatelessWidget {
   final String title;
   final GlobalKey<NavigatorState> navigationKey = GlobalKey<NavigatorState>();
-  SearchScreen({Key key, this.title}) : super(key: key);
+  SearchScreen({Key? key, this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

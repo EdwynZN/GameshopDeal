@@ -3,13 +3,12 @@ import 'package:gameshop_deals/riverpod/deal_provider.dart' show singleDeal;
 import 'package:flutter/material.dart';
 
 class Metacritic extends ConsumerWidget {
-  const Metacritic({Key key}) : super(key: key);
+  const Metacritic({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final deal = watch(singleDeal);
-    assert(deal != null);
-    final int metaScore = int.tryParse(deal.metacriticScore);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final deal = ref.watch(singleDeal);
+    final int? metaScore = int.tryParse(deal.metacriticScore);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -19,9 +18,7 @@ class Metacritic extends ConsumerWidget {
         ),
         Text(
           ' ${metaScore}%',
-          style: Theme.of(context).textTheme.overline.copyWith(
-            //color: textColor,
-          ),        
+          style: Theme.of(context).textTheme.labelSmall,
         ),
       ],
     );

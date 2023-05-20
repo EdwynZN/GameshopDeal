@@ -12,7 +12,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart' hide RefreshIndicator;
 
 class GameHome extends StatefulWidget {
   final String title;
-  const GameHome({Key key})
+  const GameHome({Key? key})
       : title = '',
         super(key: key);
 
@@ -32,7 +32,7 @@ class _GameHomeState extends State<GameHome> with PrincipalState {
             if (!mounted) return;
             if (savedGames is AsyncError) {
               if (refreshController.headerStatus != RefreshStatus.failed &&
-                  context.read(savedGamesProvider).state.isEmpty) {
+                  ref.read(savedGamesProvider).state.isEmpty) {
                 refreshController.refreshFailed();
               }
               refreshController.loadFailed();
@@ -49,8 +49,7 @@ class _GameHomeState extends State<GameHome> with PrincipalState {
             } else if (savedGames is AsyncData) {
               if (refreshController.isRefresh)
                 refreshController.refreshCompleted();
-              final noMoreData =
-                  context.read(savedGamesPageProvider).isLastPage;
+              final noMoreData = ref.read(savedGamesPageProvider).isLastPage;
               if (noMoreData)
                 refreshController.loadNoData();
               else
@@ -82,10 +81,10 @@ class _GameHomeState extends State<GameHome> with PrincipalState {
                       ),
                       onRefresh: () async {
                         refreshController.loadComplete();
-                        context.refresh(savedGamesPageProvider);
+                        ref.refresh(savedGamesPageProvider);
                       },
                       onLoading: () async {
-                        final gamesPage = context.read(savedGamesPageProvider);
+                        final gamesPage = ref.read(savedGamesPageProvider);
                         if (!gamesPage.isLastPage)
                           await gamesPage.retrieveNextPage();
                         else
@@ -108,7 +107,7 @@ class ScrollFooter extends LoadIndicator {
   /// load more display style
   final LoadStyle loadStyle;
 
-  const ScrollFooter({Key key, LoadStyle loadStyle})
+  const ScrollFooter({Key? key, LoadStyle loadStyle})
       : this.loadStyle = loadStyle ?? LoadStyle.ShowWhenLoading,
         super(key: key);
 
@@ -133,14 +132,14 @@ class _ScrollFooterState extends LoadIndicatorState<ScrollFooter> {
     return Consumer(
       builder: (context, watch, _) {
         final S translate = S.of(context);
-        final deals = watch(savedGamesPageProvider.state);
+        final deals = ref.watch(savedGamesPageProvider.state);
         return deals.when(
           data: (cb) {
-            if (cb.isEmpty && context.read(savedBoxProvider) is AsyncData)
+            if (cb.isEmpty && ref.read(savedBoxProvider) is AsyncData)
               return Center(
                 child: Text(
                   translate.no_game_saved,
-                  style: Theme.of(context).textTheme.headline5,
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
               );
             return const SizedBox(height: 4.0);
@@ -155,7 +154,7 @@ class _ScrollFooterState extends LoadIndicatorState<ScrollFooter> {
                   .currentLocalization
                   .loadFailedText),
               onPressed: () async {
-                context.read(savedGamesPageProvider).retrieveNextPage();
+                ref.read(savedGamesPageProvider).retrieveNextPage();
                 mode = LoadStatus.loading;
               },
             ),

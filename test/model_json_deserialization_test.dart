@@ -139,7 +139,7 @@ void main() {
     }, skip: 'Real Retrofit: Only active if the API changes');
 
     tearDownAll(() {
-      dio?.close();
+      dio.close();
     });
   });
 
@@ -279,7 +279,7 @@ void main() {
     }, skip: 'Real Retrofit: Only active if the API changes');
 
     tearDownAll(() {
-      dio?.close();
+      dio.close();
     });
   });
 
@@ -321,7 +321,7 @@ void main() {
     });
 
     tearDownAll(() {
-      dio?.close();
+      dio.close();
     });
   });
 }

@@ -4,20 +4,17 @@ import 'package:gameshop_deals/riverpod/hive_preferences_provider.dart';
 
 class RadioPopupMenuItem<T extends Object> extends PopupMenuItem<T> {
   const RadioPopupMenuItem({
-    Key key,
+    Key? key,
     T value,
     bool enabled = true,
     @required this.provider,
     Widget child,
-  }) : 
-    assert(enabled != null),
-    assert(provider != null),
-    super(
-      key: key,
-      value: value,
-      enabled: enabled,
-      child: child,
-    );
+  }) : super(
+          key: key,
+          value: value,
+          enabled: enabled,
+          child: child,
+        );
 
   final StateNotifierProvider<HiveNotifier<T>> provider;
 
@@ -30,10 +27,9 @@ class RadioPopupMenuItem<T extends Object> extends PopupMenuItem<T> {
 
 class _RadioPopupMenuItemState<T>
     extends PopupMenuItemState<T, RadioPopupMenuItem<T>> {
-
   @override
   void handleTap() {
-    context.read(widget.provider).changeState(widget.value);
+    ref.read(widget.provider).changeState(widget.value);
     super.handleTap();
   }
 
@@ -46,7 +42,7 @@ class _RadioPopupMenuItemState<T>
       child: ListTile(
         enabled: widget.enabled,
         trailing: Consumer(builder: (_, watch, __) {
-          final groupValue = watch(widget.provider.state);
+          final groupValue = ref.watch(widget.provider.state);
           return Radio<T>(
             value: widget.value,
             groupValue: groupValue,

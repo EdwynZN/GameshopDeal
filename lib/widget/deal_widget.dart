@@ -14,21 +14,20 @@ import 'package:gameshop_deals/widget/display_deal/store_avatar.dart';
 import 'package:gameshop_deals/widget/display_deal/thumb_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-final indexDeal = ScopedProvider<int>(null);
+final indexDeal = Provider.autoDispose<int>((_) => throw UnimplementedError());
 
-final _sortByProvider = ScopedProvider<SortBy>((watch) {
-  final title = watch(titleProvider);
-  return watch(filterProviderCopy(title)).state.sortBy;
+final _sortByProvider = Provider.autoDispose<SortBy>((ref) {
+  final title = ref.watch(titleProvider);
+  return ref.watch(filterProviderCopy(title).select((f) => f.sortBy));
 }, name: 'Sort By');
 
 class DetailedDeal extends ConsumerWidget {
-  const DetailedDeal({Key key}) : super(key: key);
+  const DetailedDeal({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final deal = watch(singleDeal);
-    assert(deal != null);
-    final int index = watch(indexDeal);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final deal = ref.watch(singleDeal);
+    final int index = ref.watch(indexDeal);
 
     final Widget child = Container(
       decoration: BoxDecoration(
@@ -37,17 +36,17 @@ class DetailedDeal extends ConsumerWidget {
         ),
       ),
       padding: const EdgeInsets.only(left: 4, right: 4, top: 8, bottom: 8),
-      child: Row(
+      child: const Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Expanded(
             child: Padding(
-              padding: const EdgeInsetsDirectional.only(
+              padding: EdgeInsetsDirectional.only(
                   start: 8.0, bottom: 4, end: 4),
-              child: const _TitleDeal(),
+              child: _TitleDeal(),
             ),
           ),
-          Flexible(flex: null, child: Center(child: const PriceWidget())),
+          const Flexible(child: Center(child: PriceWidget())),
         ],
       ),
     );
@@ -70,15 +69,14 @@ class DetailedDeal extends ConsumerWidget {
 }
 
 class CompactDeal extends ConsumerWidget {
-  const CompactDeal({Key key}) : super(key: key);
+  const CompactDeal({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final deal = watch(singleDeal);
-    assert(deal != null);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final deal = ref.watch(singleDeal);
     final String title = deal.title;
-    final int index = watch(indexDeal);
-    final view = watch(_sortByProvider);
+    final int index = ref.watch(indexDeal);
+    final view = ref.watch(_sortByProvider);
     final bool showMetacritic = view == SortBy.Metacritic;
     final bool showRating = view == SortBy.Reviews;
     return DecoratedBox(
@@ -87,9 +85,7 @@ class CompactDeal extends ConsumerWidget {
       ),
       child: ListTile(
         leading: ProviderScope(
-          overrides: [
-            storeIdProvider.overrideWithValue(deal.storeId)
-          ],
+          overrides: [storeIdProvider.overrideWithValue(deal.storeId)],
           child: const StoreAvatarIcon(),
         ),
         dense: true,
@@ -122,14 +118,13 @@ class CompactDeal extends ConsumerWidget {
 }
 
 class GridDeal extends ConsumerWidget {
-  const GridDeal({Key key}) : super(key: key);
+  const GridDeal({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, watch) {
-    final deal = watch(singleDeal);
-    assert(deal != null);
-    final int index = watch(indexDeal);
-    final color = Colors.grey[850];
+  Widget build(BuildContext context, WidgetRef ref) {
+    final deal = ref.watch(singleDeal);
+    final int index = ref.watch(indexDeal);
+    final color = Colors.grey[850]!;
     final theme = Theme.of(context);
     final Color borderColor = theme.brightness == Brightness.light
         ? Colors.black38
@@ -154,10 +149,10 @@ class GridDeal extends ConsumerWidget {
             maxLines: 2,
           ),
           leading: ProviderScope(
-            overrides: [
-              storeIdProvider.overrideWithValue(deal.storeId)
-            ],
-            child: StoreAvatarIcon(size: Theme.of(context).textTheme.bodyText2.fontSize),
+            overrides: [storeIdProvider.overrideWithValue(deal.storeId)],
+            child: StoreAvatarIcon(
+              size: Theme.of(context).textTheme.bodyMedium?.fontSize,
+            ),
           ),
         ),
         child: DecoratedBox(
@@ -177,7 +172,9 @@ class GridDeal extends ConsumerWidget {
             ),
           ),
           child: ProviderScope(
-            overrides: [thumbProvider.overrideAs((watch) => watch(singleDeal).thumb)],
+            overrides: [
+              thumbProvider.overrideAs((WidgetRef ref) => ref.watch(singleDeal).thumb)
+            ],
             child: const ThumbImage(
               alignment: Alignment.center,
               fit: BoxFit.scaleDown,
@@ -198,7 +195,7 @@ class GridDeal extends ConsumerWidget {
 }
 
 class ListDeal extends StatelessWidget {
-  const ListDeal({Key key}) : super(key: key);
+  const ListDeal({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -219,7 +216,10 @@ class ListDeal extends StatelessWidget {
               child: ConstrainedBox(
                 constraints: BoxConstraints(maxHeight: 70, maxWidth: 120),
                 child: ProviderScope(
-                  overrides: [thumbProvider.overrideAs((watch) => watch(singleDeal).thumb)],
+                  overrides: [
+                    thumbProvider
+                        .overrideAs((WidgetRef ref) => ref.watch(singleDeal).thumb)
+                  ],
                   child: const ThumbImage(),
                 ),
               ),
@@ -238,8 +238,8 @@ class ListDeal extends StatelessWidget {
     return Consumer(
       child: child,
       builder: (context, watch, child) {
-        final deal = watch(singleDeal);
-        final int index = watch(indexDeal);
+        final deal = ref.watch(singleDeal);
+        final int index = ref.watch(indexDeal);
         return InkWell(
           onTap: () =>
               Navigator.of(context).pushNamed(detailRoute, arguments: index),
@@ -261,12 +261,11 @@ class ListDeal extends StatelessWidget {
 }
 
 class _TitleDeal extends ConsumerWidget {
-  const _TitleDeal({Key key}) : super(key: key);
+  const _TitleDeal({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final deal = watch(singleDeal);
-    assert(deal != null);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final deal = ref.watch(singleDeal);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -298,7 +297,7 @@ class _Subtitle extends ConsumerWidget {
   final bool showLastChange;
 
   const _Subtitle({
-    Key key,
+    Key? key,
     bool showStore,
     bool showMetacritic,
     bool showReleaseDate,
@@ -329,26 +328,23 @@ class _Subtitle extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final S translate = S.of(context);
-    final deal = watch(singleDeal);
-    assert(deal != null);
+    final deal = ref.watch(singleDeal);
     List<InlineSpan> span = <InlineSpan>[
       if (showStore)
         WidgetSpan(
           alignment: PlaceholderAlignment.middle,
           child: ProviderScope(
-            overrides: [
-              storeIdProvider.overrideWithValue(deal.storeId)
-            ],
+            overrides: [storeIdProvider.overrideWithValue(deal.storeId)],
             child: StoreAvatarIcon(
-              size: Theme.of(context).textTheme.bodyText2.fontSize,
+              size: Theme.of(context).textTheme.bodyMedium.fontSize,
             ),
           ),
         ),
     ];
     final int releaseDate = deal.releaseDate;
-    if (showReleaseDate && releaseDate != null && releaseDate != 0) {
+    if (showReleaseDate && releaseDate != 0) {
       final dateTime = DateTime.fromMillisecondsSinceEpoch(releaseDate * 1000);
       final formatShortDate =
           MaterialLocalizations.of(context).formatShortDate(dateTime);
@@ -361,7 +357,7 @@ class _Subtitle extends ConsumerWidget {
           text: time,
           style: alreadyRealeased
               ? null
-              : Theme.of(context).textTheme.overline.copyWith(
+              : Theme.of(context).textTheme.labelSmall.copyWith(
                     color: Colors.black,
                     backgroundColor: Colors.orangeAccent,
                   ),
@@ -374,44 +370,40 @@ class _Subtitle extends ConsumerWidget {
         child: const Metacritic(),
       ));
     }
-    if (showRating &&
-        deal.steamRatingPercent != null &&
-        deal.steamRatingText != null) {
+    if (showRating) {
       Color color, textColor = Colors.white;
-      final int rating = int.tryParse(deal.steamRatingPercent);
+      final int? rating = int.tryParse(deal.steamRatingPercent);
       final String ratingText = deal.steamRatingText.replaceAll(' ', '_');
       if (rating >= 95) {
-        color = Colors.green[300];
+        color = Colors.green.shade300;
         textColor = Colors.black;
       } else if (rating >= 65) {
-        color = Colors.lightGreen[300];
+        color = Colors.lightGreen.shade300;
         textColor = Colors.black;
       } else if (rating >= 40) {
         color = Colors.orange;
         textColor = Colors.black;
       } else {
-        color = Colors.red[600];
+        color = Colors.red.shade600;
       }
       span.add(
         TextSpan(
           text: '${translate.review(ratingText)}',
-          style: Theme.of(context).textTheme.overline.copyWith(
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 backgroundColor: color,
                 color: textColor,
               ),
         ),
       );
     }
-    if (deal.publisher != null) {
-      span.add(TextSpan(
-        text: deal.publisher,
-        style: Theme.of(context).accentTextTheme.overline.copyWith(
-              height: 1.5,
-              backgroundColor: Theme.of(context).accentColor,
-            ),
-      ));
-    }
-    if (showLastChange && deal.lastChange != null) {
+    span.add(TextSpan(
+      text: deal.publisher,
+      style: Theme.of(context).primaryTextTheme.labelSmall?.copyWith(
+            height: 1.5,
+            backgroundColor: Theme.of(context).colorScheme.secondary,
+          ),
+    ));
+    if (showLastChange) {
       String time = _difference(translate, deal.lastChange);
       span.add(
         TextSpan(text: time),
@@ -426,7 +418,7 @@ class _Subtitle extends ConsumerWidget {
       textAlign: TextAlign.left,
       overflow: TextOverflow.fade,
       text: TextSpan(
-        style: Theme.of(context).textTheme.overline,
+        style: Theme.of(context).textTheme.labelSmall,
         children: span,
       ),
     );
@@ -434,13 +426,12 @@ class _Subtitle extends ConsumerWidget {
 }
 
 class _BottomSheetButtonsDeal extends ConsumerWidget {
-  const _BottomSheetButtonsDeal({Key key}) : super(key: key);
+  const _BottomSheetButtonsDeal({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final S translate = S.of(context);
-    final deal = watch(singleDeal);
-    assert(deal != null, 'deal cannot be null');
+    final deal = ref.watch(singleDeal);
     final title = deal.title;
     final metacriticLink = deal.metacriticLink;
     final steamAppId = deal.steamAppId;
@@ -456,7 +447,7 @@ class _BottomSheetButtonsDeal extends ConsumerWidget {
             child: Text(
               title,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
         Wrap(
@@ -466,11 +457,9 @@ class _BottomSheetButtonsDeal extends ConsumerWidget {
             const SavedTextDealButton(),
             TextButton.icon(
               icon: ProviderScope(
-                overrides: [
-                  storeIdProvider.overrideWithValue(deal.storeId)
-                ],
+                overrides: [storeIdProvider.overrideWithValue(deal.storeId)],
                 child: StoreAvatarIcon(
-                  size: Theme.of(context).textTheme.bodyText2.fontSize,
+                  size: Theme.of(context).textTheme.bodyMedium.fontSize,
                 ),
               ),
               label: Text(translate.go_to_deal),
@@ -478,8 +467,10 @@ class _BottomSheetButtonsDeal extends ConsumerWidget {
                 String _dealLink =
                     '${cheapsharkUrl}/redirect?dealID=${deal.dealId}';
                 if (await canLaunch(_dealLink)) {
-                  final bool webView = context.read(preferenceProvider.state).webView;
-                  await launch(_dealLink, forceWebView: webView, enableJavaScript: webView);
+                  final bool webView =
+                      ref.read(preferenceProvider.state).webView;
+                  await launch(_dealLink,
+                      forceWebView: webView, enableJavaScript: webView);
                 }
               },
             ),
@@ -493,8 +484,10 @@ class _BottomSheetButtonsDeal extends ConsumerWidget {
                     '/app/${deal.steamAppId}',
                   );
                   if (await canLaunch(_steamLink.toString())) {
-                    final bool webView = context.read(preferenceProvider.state).webView;
-                    await launch(_steamLink.toString(), forceWebView: webView, enableJavaScript: webView);
+                    final bool webView =
+                        ref.read(preferenceProvider.state).webView;
+                    await launch(_steamLink.toString(),
+                        forceWebView: webView, enableJavaScript: webView);
                   }
                 },
               ),
@@ -505,8 +498,10 @@ class _BottomSheetButtonsDeal extends ConsumerWidget {
                   final Uri _pcGamingWikiUri = Uri.https(
                       pcWikiUrl, '/api/appid.php', {'appid': steamAppId});
                   if (await canLaunch(_pcGamingWikiUri.toString())) {
-                    final bool webView = context.read(preferenceProvider.state).webView;
-                    await launch(_pcGamingWikiUri.toString(), forceWebView: webView, enableJavaScript: webView);
+                    final bool webView =
+                        ref.read(preferenceProvider.state).webView;
+                    await launch(_pcGamingWikiUri.toString(),
+                        forceWebView: webView, enableJavaScript: webView);
                   }
                 },
               ),
@@ -525,7 +520,8 @@ class _BottomSheetButtonsDeal extends ConsumerWidget {
                     metacriticLink,
                   );
                   if (await canLaunch(_metacriticLink.toString())) {
-                    final bool webView = context.read(preferenceProvider.state).webView;
+                    final bool webView =
+                        ref.read(preferenceProvider.state).webView;
                     await launch(
                       _metacriticLink.toString(),
                       forceWebView: webView,

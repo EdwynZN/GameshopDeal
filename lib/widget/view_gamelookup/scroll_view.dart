@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gameshop_deals/model/view_enum.dart';
 import 'package:gameshop_deals/riverpod/saved_deals_provider.dart'
-  show savedGamesProvider, singleGameLookup, gameKeysProvider;
+    show savedGamesProvider, singleGameLookup, gameKeysProvider;
 import 'package:gameshop_deals/riverpod/display_provider.dart';
 import 'package:gameshop_deals/widget/gamelookup_widget.dart';
+import 'package:gameshop_deals/model/view_enum.dart' as viewEnum;
 
 class GameListView extends ConsumerWidget {
-  const GameListView({Key key}) : super(key: key);
+  const GameListView({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final games = watch(gameKeysProvider);
-    final View view = watch(displayProvider.state);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final games = ref.watch(gameKeysProvider);
+    final viewEnum.View view = ref.watch(displayProvider);
     if (games.isEmpty) return const SliverToBoxAdapter();
     switch (view) {
-      case View.Grid:
+      case viewEnum.View.Grid:
         return SliverPadding(
           padding: const EdgeInsets.all(4.0),
           sliver: SliverGrid(
@@ -24,8 +24,11 @@ class GameListView extends ConsumerWidget {
                 return ProviderScope(
                   overrides: [
                     indexGameLookup.overrideWithValue(index),
-                    singleGameLookup.overrideAs((watch) =>
-                        watch(savedGamesProvider.state)[games[index]])
+                    singleGameLookup.overrideWithProvider(
+                      Provider.autoDispose((ref) =>
+                        ref.watch(savedGamesProvider)[games[index]]!,
+                      ),
+                    ),
                   ],
                   child: const GridGameLookup(),
                 );
@@ -40,7 +43,7 @@ class GameListView extends ConsumerWidget {
             ),
           ),
         );
-      case View.Detail:
+      case viewEnum.View.Detail:
         return SliverList(
           //itemExtent: 86.0,
           delegate: SliverChildBuilderDelegate(
@@ -48,16 +51,19 @@ class GameListView extends ConsumerWidget {
               return ProviderScope(
                 overrides: [
                   indexGameLookup.overrideWithValue(index),
-                  singleGameLookup.overrideAs(
-                      (watch) => watch(savedGamesProvider.state)[games[index]])
+                  singleGameLookup.overrideWithProvider(
+                    Provider.autoDispose((ref) =>
+                      ref.watch(savedGamesProvider)[games[index]]!,
+                    ),
+                  ),
                 ],
                 child: const DetailedGameLookup(),
               );
             },
-            childCount: games?.length ?? 0,
+            childCount: games.length,
           ),
         );
-      case View.Compact:
+      case viewEnum.View.Compact:
         return SliverList(
           //itemExtent: 64.0,
           delegate: SliverChildBuilderDelegate(
@@ -65,16 +71,19 @@ class GameListView extends ConsumerWidget {
               return ProviderScope(
                 overrides: [
                   indexGameLookup.overrideWithValue(index),
-                  singleGameLookup.overrideAs(
-                      (watch) => watch(savedGamesProvider.state)[games[index]])
+                  singleGameLookup.overrideWithProvider(
+                    Provider.autoDispose((ref) =>
+                      ref.watch(savedGamesProvider)[games[index]]!,
+                    ),
+                  ),
                 ],
                 child: const CompactGameLookup(),
               );
             },
-            childCount: games?.length ?? 0,
+            childCount: games.length,
           ),
         );
-      case View.List:
+      case viewEnum.View.List:
       default:
         return SliverList(
           delegate: SliverChildBuilderDelegate(
@@ -82,13 +91,16 @@ class GameListView extends ConsumerWidget {
               return ProviderScope(
                 overrides: [
                   indexGameLookup.overrideWithValue(index),
-                  singleGameLookup.overrideAs(
-                      (watch) => watch(savedGamesProvider.state)[games[index]])
+                  singleGameLookup.overrideWithProvider(
+                    Provider.autoDispose((ref) =>
+                      ref.watch(savedGamesProvider)[games[index]]!,
+                    ),
+                  ),
                 ],
                 child: const ListGameLookup(),
               );
             },
-            childCount: games?.length ?? 0,
+            childCount: games.length,
           ),
         );
     }

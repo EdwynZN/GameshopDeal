@@ -129,7 +129,7 @@ class _DioGetResponse implements FileServiceResponse {
   final ResponseBody? _response;
 
   @override
-  int get statusCode => _response?.statusCode! ?? 0;
+  int get statusCode => _response?.statusCode ?? 0;
 
   bool _hasHeader(String name) {
     return _response == null ? false : _response!.headers.containsKey(name);

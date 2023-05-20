@@ -5,7 +5,7 @@ part 'preference.freezed.dart';
 part 'preference.g.dart';
 
 @freezed
-abstract class Preference with _$Preference {
+class Preference with _$Preference {
 
   @HiveType(typeId: 11, adapterName: 'PreferenceAdapter')
   const factory Preference({

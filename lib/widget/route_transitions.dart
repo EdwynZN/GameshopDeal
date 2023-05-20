@@ -62,7 +62,7 @@ class Routes {
       default:
         return materialRoute(
           child: Consumer(builder: (context, watch, _) {
-            final title = watch(titleProvider);
+            final title = ref.watch(titleProvider);
             return Home.Search(title: title);
           }),
           settings: settings,
@@ -95,15 +95,15 @@ CupertinoPageRoute cupertinoRoute(
     builder: (ctx) => AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarIconBrightness:
-            Theme.of(ctx).appBarTheme.brightness == Brightness.light
+            Theme.of(ctx).appBarTheme.systemOverlayStyle == Brightness.light
                 ? Brightness.dark
                 : Brightness.light,
         systemNavigationBarIconBrightness:
-            Theme.of(ctx).appBarTheme.brightness == Brightness.light
+            Theme.of(ctx).appBarTheme.systemOverlayStyle == Brightness.light
                 ? Brightness.dark
                 : Brightness.light,
-        statusBarColor: Theme.of(ctx).appBarTheme.color,
-        systemNavigationBarColor: Theme.of(ctx).appBarTheme.color,
+        statusBarColor: Theme.of(ctx).appBarTheme.backgroundColor,
+        systemNavigationBarColor: Theme.of(ctx).appBarTheme.backgroundColor,
       ),
       child: child,
     ),
@@ -118,15 +118,15 @@ MaterialPageRoute materialRoute(
     builder: (ctx) => AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarIconBrightness:
-            Theme.of(ctx).appBarTheme.brightness == Brightness.light
+            Theme.of(ctx).appBarTheme.systemOverlayStyle == Brightness.light
                 ? Brightness.dark
                 : Brightness.light,
         systemNavigationBarIconBrightness:
-            Theme.of(ctx).appBarTheme.brightness == Brightness.light
+            Theme.of(ctx).appBarTheme.systemOverlayStyle == Brightness.light
                 ? Brightness.dark
                 : Brightness.light,
-        statusBarColor: Theme.of(ctx).appBarTheme.color,
-        systemNavigationBarColor: Theme.of(ctx).appBarTheme.color,
+        statusBarColor: Theme.of(ctx).appBarTheme.backgroundColor,
+        systemNavigationBarColor: Theme.of(ctx).appBarTheme.backgroundColor,
       ),
       child: child,
     ),
@@ -149,15 +149,15 @@ class FadeRoute<T> extends MaterialPageRoute<T> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarIconBrightness:
-            Theme.of(context).appBarTheme.brightness == Brightness.light
+            Theme.of(context).appBarTheme.systemOverlayStyle == Brightness.light
                 ? Brightness.dark
                 : Brightness.light,
         systemNavigationBarIconBrightness:
-            Theme.of(context).appBarTheme.brightness == Brightness.light
+            Theme.of(context).appBarTheme.systemOverlayStyle == Brightness.light
                 ? Brightness.dark
                 : Brightness.light,
-        statusBarColor: Theme.of(context).appBarTheme.color,
-        systemNavigationBarColor: Theme.of(context).appBarTheme.color,
+        statusBarColor: Theme.of(context).appBarTheme.backgroundColor,
+        systemNavigationBarColor: Theme.of(context).appBarTheme.backgroundColor,
       ),
       child: FadeTransition(opacity: animation, child: child),
     );
@@ -166,7 +166,7 @@ class FadeRoute<T> extends MaterialPageRoute<T> {
 
 class VerticalSlideRoute<T> extends PageRoute<T> {
   VerticalSlideRoute(
-      {Key key,
+      {Key? key,
       this.builder,
       RouteSettings settings,
       bool fullscreenDialog = false})
@@ -205,15 +205,18 @@ class VerticalSlideRoute<T> extends PageRoute<T> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle(
           statusBarIconBrightness:
-              Theme.of(context).appBarTheme.brightness == Brightness.light
+              Theme.of(context).appBarTheme.systemOverlayStyle ==
+                      Brightness.light
                   ? Brightness.dark
                   : Brightness.light,
           systemNavigationBarIconBrightness:
-              Theme.of(context).appBarTheme.brightness == Brightness.light
+              Theme.of(context).appBarTheme.systemOverlayStyle ==
+                      Brightness.light
                   ? Brightness.dark
                   : Brightness.light,
-          statusBarColor: Theme.of(context).appBarTheme.color,
-          systemNavigationBarColor: Theme.of(context).appBarTheme.color,
+          statusBarColor: Theme.of(context).appBarTheme.backgroundColor,
+          systemNavigationBarColor:
+              Theme.of(context).appBarTheme.backgroundColor,
         ),
         child: SlideTransition(
             position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
@@ -268,7 +271,7 @@ class VerticalSlideRoute<T> extends PageRoute<T> {
 
 class SlideRoute<T> extends PageRoute<T> {
   SlideRoute(
-      {Key key,
+      {Key? key,
       this.builder,
       RouteSettings settings,
       bool fullscreenDialog = false})
@@ -306,15 +309,15 @@ class SlideRoute<T> extends PageRoute<T> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarIconBrightness:
-            Theme.of(context).appBarTheme.brightness == Brightness.light
+            Theme.of(context).appBarTheme.systemOverlayStyle == Brightness.light
                 ? Brightness.dark
                 : Brightness.light,
         systemNavigationBarIconBrightness:
-            Theme.of(context).appBarTheme.brightness == Brightness.light
+            Theme.of(context).appBarTheme.systemOverlayStyle == Brightness.light
                 ? Brightness.dark
                 : Brightness.light,
-        statusBarColor: Theme.of(context).appBarTheme.color,
-        systemNavigationBarColor: Theme.of(context).appBarTheme.color,
+        statusBarColor: Theme.of(context).appBarTheme.backgroundColor,
+        systemNavigationBarColor: Theme.of(context).appBarTheme.backgroundColor,
       ),
       child: SlideTransition(
         position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
@@ -341,7 +344,7 @@ class SlideRoute<T> extends PageRoute<T> {
     bool animateForward;
 
     final double flingVelocity =
-      details.primaryVelocity / navigator.context.size.width;
+        details.primaryVelocity / navigator.context.size.width;
     if (flingVelocity.abs() >= 2.0)
       animateForward = flingVelocity <= 0;
     else

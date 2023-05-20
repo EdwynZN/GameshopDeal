@@ -3,14 +3,14 @@ import 'package:gameshop_deals/widget/view_gamelookup/swipe_page.dart';
 
 class DetailGamePageView extends StatefulWidget {
   final int offset;
-  const DetailGamePageView({Key key, this.offset}) : super(key: key);
+  const DetailGamePageView({Key? key, this.offset = 0}) : super(key: key);
 
   @override
   _DetailGamePageViewState createState() => _DetailGamePageViewState();
 }
 
 class _DetailGamePageViewState extends State<DetailGamePageView> {
-  PageController pageController;
+  late final PageController pageController;
 
   @override
   void initState() {
@@ -20,7 +20,7 @@ class _DetailGamePageViewState extends State<DetailGamePageView> {
 
   @override
   void dispose() {
-    pageController?.dispose();
+    pageController.dispose();
     super.dispose();
   }
 

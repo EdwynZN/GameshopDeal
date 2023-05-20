@@ -10,7 +10,7 @@ class AppSearchDelegate extends SearchDelegate<String> {
   void showResults(BuildContext context) async {
     final String trimmed = query.trim();
     if (trimmed.isNotEmpty) {
-      final box = await context.read(searchBox.future);
+      final box = await ref.read(searchBox.future);
       if (box != null && box.isOpen) {
         final exp = RegExp('\^$trimmed\$', caseSensitive: false);
         final exist = box.values.any((e) => exp.hasMatch(e));
@@ -26,10 +26,8 @@ class AppSearchDelegate extends SearchDelegate<String> {
     return theme.copyWith(
       textTheme: theme.accentTextTheme,
       inputDecorationTheme: theme.inputDecorationTheme.copyWith(
-        hintStyle: theme.appBarTheme.textTheme.headline6,
-        border: InputBorder.none
-      ),
-      primaryColorBrightness: theme.appBarTheme.brightness,
+          hintStyle: theme.appBarTheme.textTheme.headline6,
+          border: InputBorder.none),
     );
   }
 
@@ -53,7 +51,7 @@ class AppSearchDelegate extends SearchDelegate<String> {
     return Consumer(builder: (context, watch, _) {
       final S translate = S.of(context);
       final String trimmed = query.trim();
-      final list = watch(suggestions(trimmed));
+      final list = ref.watch(suggestions(trimmed));
       return CustomScrollView(
         slivers: [
           if (trimmed.isEmpty)
@@ -63,16 +61,16 @@ class AppSearchDelegate extends SearchDelegate<String> {
                 child: ListTile(
                   title: Text(
                     translate.recent_searches,
-                    style: Theme.of(context).primaryTextTheme.bodyText1,
+                    style: Theme.of(context).primaryTextTheme.bodyLarge,
                   ),
                   trailing: IconButton(
                     icon: const Icon(Icons.clear_all),
                     tooltip: translate.clear_tooltip,
                     onPressed: () async {
-                      final box = await context.read(searchBox.future);
+                      final box = await ref.read(searchBox.future);
                       if (box != null && box.isOpen) {
                         await box.clear();
-                        context.refresh(suggestions(trimmed));
+                        ref.refresh(suggestions(trimmed));
                       }
                     },
                   ),
@@ -86,7 +84,7 @@ class AppSearchDelegate extends SearchDelegate<String> {
                 leading: const Icon(Icons.search_rounded),
                 title: Text(
                   translate.title_search(trimmed),
-                  style: Theme.of(context).primaryTextTheme.bodyText1,
+                  style: Theme.of(context).primaryTextTheme.bodyLarge,
                 ),
               ),
             ),
@@ -96,7 +94,7 @@ class AppSearchDelegate extends SearchDelegate<String> {
               sliver: SliverToBoxAdapter(
                 child: Text(
                   translate.suggested_searches,
-                  style: Theme.of(context).primaryTextTheme.bodyText1,
+                  style: Theme.of(context).primaryTextTheme.bodyLarge,
                 ),
               ),
             ),
@@ -108,9 +106,9 @@ class AppSearchDelegate extends SearchDelegate<String> {
                 return ListTile(
                   onTap: () => close(context, list[index]),
                   leading: const Icon(Icons.history),
-                  title: Text
-                    (list[index],
-                    style: Theme.of(context).primaryTextTheme.bodyText1,
+                  title: Text(
+                    list[index],
+                    style: Theme.of(context).primaryTextTheme.bodyLarge,
                   ),
                   trailing: IconButton(
                     icon: const Icon(Icons.north_west_outlined),

@@ -5,8 +5,8 @@ import 'package:dio/dio.dart';
 final dioProvider = Provider.autoDispose<Dio>((ref) {
   final Dio dio = Dio(
     BaseOptions(
-      connectTimeout: 5000,
-      receiveTimeout: 3000,
+      connectTimeout: const Duration(seconds: 5),
+      receiveTimeout: const Duration(seconds: 3),
       responseType: ResponseType.json
     )
   );

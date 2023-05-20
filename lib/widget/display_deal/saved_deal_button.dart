@@ -10,23 +10,22 @@ import 'package:gameshop_deals/riverpod/saved_deals_provider.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-final _titleDialog = ScopedProvider<String>(null);
+final _titleDialog = Provider<String>((_) => throw UnimplementedError());
 
 class SavedDealButton extends ConsumerWidget {
-  const SavedDealButton({Key key}) : super(key: key);
+  const SavedDealButton({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final S translate = S.of(context);
-    final deal = watch(singleDeal);
-    assert(
-        deal != null && deal.gameId != null, 'A deal ought to have a gameId');
-    final savedDeal = watch(savedStreamProvider(deal.gameId));
+    final deal = ref.watch(singleDeal);
+    final savedDeal = ref.watch(savedStreamProvider(deal.gameId));
     return savedDeal.maybeWhen(
       orElse: () => OutlinedButton(
         onPressed: null,
         child: Text(
-          RefreshLocalizations.of(context).currentLocalization.loadingText,
+          RefreshLocalizations.of(context)?.currentLocalization?.loadingText ??
+              '',
         ),
       ),
       data: (isSaved) {
@@ -41,7 +40,7 @@ class SavedDealButton extends ConsumerWidget {
               ),
             ),
             onPressed: () async {
-              final box = await context.read(savedBoxProvider.future);
+              final box = await ref.read(savedBoxProvider.future);
               await box.put(deal.gameId, PriceAlert());
               /* final priceAlert = await showDialog<PriceAlert>(
                 context: context,
@@ -66,7 +65,7 @@ class SavedDealButton extends ConsumerWidget {
             ),
           ),
           onPressed: () async {
-            final box = await context.read(savedBoxProvider.future);
+            final box = await ref.read(savedBoxProvider.future);
             await box.delete(deal.gameId);
           },
         );
@@ -76,21 +75,20 @@ class SavedDealButton extends ConsumerWidget {
 }
 
 class SavedTextDealButton extends ConsumerWidget {
-  const SavedTextDealButton({Key key}) : super(key: key);
+  const SavedTextDealButton({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final S translate = S.of(context);
-    final deal = watch(singleDeal);
-    assert(
-        deal != null && deal.gameId != null, 'A deal ought to have a gameId');
-    final savedDeal = watch(savedStreamProvider(deal.gameId));
+    final deal = ref.watch(singleDeal);
+    final savedDeal = ref.watch(savedStreamProvider(deal.gameId));
     return savedDeal.maybeWhen(
       orElse: () => TextButton.icon(
         onPressed: null,
         icon: const SizedBox(),
         label: Text(
-          RefreshLocalizations.of(context).currentLocalization.loadingText,
+          RefreshLocalizations.of(context)?.currentLocalization?.loadingText ??
+              '',
         ),
       ),
       data: (isSaved) {
@@ -105,7 +103,7 @@ class SavedTextDealButton extends ConsumerWidget {
               ),
             ),
             onPressed: () async {
-              final box = await context.read(savedBoxProvider.future);
+              final box = await ref.read(savedBoxProvider.future);
               await box.put(deal.gameId, PriceAlert());
               /* final priceAlert = await showDialog<PriceAlert>(
                 context: context,
@@ -130,7 +128,7 @@ class SavedTextDealButton extends ConsumerWidget {
             ),
           ),
           onPressed: () async {
-            final box = await context.read(savedBoxProvider.future);
+            final box = await ref.read(savedBoxProvider.future);
             await box.delete(deal.gameId);
           },
         );
@@ -140,7 +138,7 @@ class SavedTextDealButton extends ConsumerWidget {
 }
 
 class _PriceAlertDialog extends StatefulWidget {
-  const _PriceAlertDialog({Key key}) : super(key: key);
+  const _PriceAlertDialog({Key? key}) : super(key: key);
 
   @override
   __PriceAlertDialogState createState() => __PriceAlertDialogState();
@@ -148,8 +146,8 @@ class _PriceAlertDialog extends StatefulWidget {
 
 class __PriceAlertDialogState extends State<_PriceAlertDialog> {
   PriceAlert alertPrice = PriceAlert();
-  S translate;
-  MaterialLocalizations localizations;
+  late S translate;
+  late MaterialLocalizations localizations;
 
   @override
   void didChangeDependencies() {
@@ -163,8 +161,8 @@ class __PriceAlertDialogState extends State<_PriceAlertDialog> {
     return AlertDialog(
       scrollable: true,
       title: Consumer(
-        builder: (context, watch, _) => Text(
-          watch(_titleDialog),
+        builder: (context, ref, _) => Text(
+          ref.watch(_titleDialog),
           textAlign: TextAlign.center,
         ),
       ),
@@ -194,8 +192,8 @@ class __PriceAlertDialogState extends State<_PriceAlertDialog> {
               textAlign: TextAlign.left,
             ),
             Consumer(
-              builder: (context, watch, _) {
-                final stores = watch(storesProvider);
+              builder: (context, ref, _) {
+                final stores = ref.watch(storesProvider);
                 return stores.when(
                   loading: () => const Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -203,7 +201,7 @@ class __PriceAlertDialogState extends State<_PriceAlertDialog> {
                   ),
                   error: (err, stack) => OutlinedButton(
                     child: Text('Error fetching the stores'),
-                    onPressed: () => context.refresh(storesProvider),
+                    onPressed: () => ref.refresh(storesProvider),
                   ),
                   data: (stores) {
                     return Wrap(
@@ -246,7 +244,7 @@ class __PriceAlertDialogState extends State<_PriceAlertDialog> {
                             },
                             label: Text(store.storeName),
                             avatar: CachedNetworkImage(
-                              cacheManager: watch(
+                              cacheManager: ref.watch(
                                   cacheManagerFamilyProvider(cacheKeyStores)),
                               imageUrl: cheapsharkUrl + store.images.icon,
                               fit: BoxFit.contain,

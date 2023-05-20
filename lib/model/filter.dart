@@ -10,19 +10,25 @@ int _boolToInt(bool value) => value ? 1 : 0;
 bool _intToBool(int value) => value == 1;
 
 @freezed
-abstract class Filter with _$Filter {  
+class Filter with _$Filter {
+  Filter._();
+
   @HiveType(typeId: 9, adapterName: 'FilterAdapter')
   factory Filter({
     @HiveField(0)
     @Default(const <String>{})
     @JsonKey(defaultValue: const <String>{})
-        Set<String> storeId,
+    Set<String> storeId,
     @HiveField(1) @Default(60) @JsonKey(defaultValue: 60) int pageSize,
     @HiveField(2) @Default(SortBy.Deal_Rating) SortBy sortBy,
     @HiveField(3)
     @Default(false)
-    @JsonKey(name: 'desc', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
-        bool isAscendant,
+    @JsonKey(
+        name: 'desc',
+        defaultValue: false,
+        toJson: _boolToInt,
+        fromJson: _intToBool)
+    bool isAscendant,
     @HiveField(4) @Default(0) @JsonKey(defaultValue: 0) int lowerPrice,
     @HiveField(5) @Default(50) @JsonKey(defaultValue: 0) int upperPrice,
     @HiveField(6) @Default(0) @JsonKey(defaultValue: 0) int metacritic,
@@ -30,23 +36,28 @@ abstract class Filter with _$Filter {
     @HiveField(8)
     @Default(const <String>{})
     @JsonKey(defaultValue: const <String>{})
-        Set<String> steamAppId,
+    Set<String> steamAppId,
     @HiveField(9)
     @Default(false)
-    @JsonKey(name: 'AAA', defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
-        bool onlyRetail,
+    @JsonKey(
+        name: 'AAA',
+        defaultValue: false,
+        toJson: _boolToInt,
+        fromJson: _intToBool)
+    bool onlyRetail,
     @HiveField(10)
     @Default(false)
     @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
-        bool steamWorks,
+    bool steamWorks,
     @HiveField(11)
     @Default(false)
     @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
-        bool onSale,
+    bool onSale,
+    @Default('')
     String title,
     @Default(false)
     @JsonKey(defaultValue: false, toJson: _boolToInt, fromJson: _intToBool)
-        bool exact,
+    bool exact,
   }) = _Filter;
 
   Map<String, dynamic> get parameters => <String, dynamic>{
@@ -59,7 +70,7 @@ abstract class Filter with _$Filter {
         if (metacritic != 0) 'metacritic': metacritic,
         if (steamRating > 40) 'steamRating': steamRating,
         if (steamAppId.isNotEmpty) 'steamAppID ': steamAppId.join(','),
-        if (title != null && title.isNotEmpty) ...<String, dynamic>{
+        if (title.isNotEmpty) ...<String, dynamic>{
           'title': title,
           if (exact) 'exact': 1,
         },

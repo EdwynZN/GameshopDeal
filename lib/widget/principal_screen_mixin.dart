@@ -3,16 +3,16 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
-import 'package:gameshop_deals/model/view_enum.dart';
 import 'package:gameshop_deals/riverpod/display_provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart' hide RefreshIndicator;
 import 'package:flutter_riverpod/src/internals.dart';
+import 'package:gameshop_deals/model/view_enum.dart' as viewEnum;
 
 mixin PrincipalState<T extends StatefulWidget> on State<T> {
   final ScrollController scrollController = ScrollController();
   final PageController pageController = PageController(keepPage: false);
-  bool _isTablet, _isPageView = false;
-  ProviderSubscription<View> _subscription;
+  late bool _isTablet, _isPageView = false;
+  ProviderSubscription<viewEnum.View>? _subscription;
   ProviderContainer _container;
   RefreshController refreshController = RefreshController();
   S translate;
@@ -24,7 +24,7 @@ mixin PrincipalState<T extends StatefulWidget> on State<T> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     translate = S.of(context);
-    _isTablet ??= MediaQuery.of(context).size.longestSide >= 800;
+    _isTablet = MediaQuery.of(context).size.longestSide >= 800;
     final container = ProviderScope.containerOf(context);
     if (container != _container) {
       _container = container;
@@ -44,8 +44,8 @@ mixin PrincipalState<T extends StatefulWidget> on State<T> {
   }
 
   void _mayHaveChanged(ProviderSubscription<View> subscription) {
-    if (subscription.flush()) {
-      bool _isPage = subscription.read() == View.Swipe;
+    if (subscription?.flush()) {
+      bool _isPage = subscription.read() == viewEnum.View.Swipe;
       if (_isPage != isPageView) setState(() => _isPageView = _isPage);
     }
   }
@@ -54,22 +54,22 @@ mixin PrincipalState<T extends StatefulWidget> on State<T> {
     if (e.error is DioError) {
       DioError dioError = e.error as DioError;
       switch (dioError.type) {
-        case DioErrorType.DEFAULT:
+        case DioErrorType.unknown:
           if (dioError.error is SocketException) {
             SocketException socketException = dioError.error as SocketException;
             if (socketException.osError != null &&
-                socketException.osError.errorCode == 7)
+                socketException.osError!.errorCode == 7)
               return translate.connection_error;
           }
-          return translate.dio_error(dioError.type, dioError.message);
-        case DioErrorType.RESPONSE:
-          return '${dioError.response.statusCode} : ${dioError.response.statusMessage}';
-        case DioErrorType.CANCEL:
-        case DioErrorType.CONNECT_TIMEOUT:
-        case DioErrorType.RECEIVE_TIMEOUT:
-        case DioErrorType.SEND_TIMEOUT:
+          return translate.dio_error(dioError.type, dioError.message ?? '');
+        case DioErrorType.badResponse:
+          return '${dioError.response!.statusCode} : ${dioError.response!.statusMessage}';
+        case DioErrorType.cancel:
+        case DioErrorType.connectionError:
+        case DioErrorType.receiveTimeout:
+        case DioErrorType.sendTimeout:
         default:
-          return translate.dio_error(dioError.type, dioError.message);
+          return translate.dio_error(dioError.type, dioError.message ?? '');
       }
     }
     return e.error.toString();
@@ -78,8 +78,8 @@ mixin PrincipalState<T extends StatefulWidget> on State<T> {
   @override
   void dispose() {
     _subscription?.close();
-    scrollController?.dispose();
-    pageController?.dispose();
+    scrollController.dispose();
+    pageController.dispose();
     refreshController.dispose();
     super.dispose();
   }

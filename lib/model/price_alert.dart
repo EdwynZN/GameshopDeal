@@ -5,7 +5,7 @@ part 'price_alert.freezed.dart';
 part 'price_alert.g.dart';
 
 @freezed
-abstract class PriceAlert with _$PriceAlert {
+class PriceAlert with _$PriceAlert {
 
   @HiveType(typeId: 12, adapterName: 'PriceAlertAdapter')
   const factory PriceAlert({

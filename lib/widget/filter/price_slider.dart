@@ -4,27 +4,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/model/filter.dart';
 
-final _rangePrice = ScopedProvider<RangeValues>((watch) {
-  final title = watch(titleProvider);
-  double lower = watch(filterProviderCopy(title)).state.lowerPrice.toDouble();
-  double upper = watch(filterProviderCopy(title)).state.upperPrice.toDouble();
-
-  return RangeValues(lower, upper);
+final _rangePrice = Provider.autoDispose<RangeValues>((ref) {
+  final title = ref.watch(titleProvider);
+  return ref.watch(filterProviderCopy(title).select(
+    (f) {
+      final lower = f.lowerPrice.toDouble();
+      final upper = f.upperPrice.toDouble();
+      return RangeValues(lower, upper);
+    },
+  ));
 }, name: 'RangePrice');
 
 class PriceSlider extends ConsumerWidget {
-  const PriceSlider({Key key}) : super(key: key);
+  const PriceSlider({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final S translate = S.of(context);
-    final title = watch(titleProvider);
-    final RangeValues range = watch(_rangePrice);
+    final title = ref.watch(titleProvider);
+    final RangeValues range = ref.watch(_rangePrice);
     return RangeSlider(
       values: range,
       onChanged: (newRange) {
         final StateController<Filter> filter =
-          context.read(filterProviderCopy(title));
+            ref.read(filterProviderCopy(title).notifier);
         filter.state = filter.state.copyWith(
           lowerPrice: newRange.start.round(),
           upperPrice: newRange.end.round(),

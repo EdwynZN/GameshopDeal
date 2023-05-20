@@ -8,25 +8,26 @@ import 'package:gameshop_deals/widget/display_deal/store_avatar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class StoreDealGrid extends ConsumerWidget {
-  const StoreDealGrid({Key key}) : super(key: key);
+  const StoreDealGrid({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, watch) {
-    final deal = watch(singleDeal);
+    final deal = ref.watch(singleDeal);
     assert(deal != null);
     return ElevatedButton(
       style: Theme.of(context).elevatedButtonTheme.style.copyWith(
-        padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.zero),
-        backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-          if (states.contains(MaterialState.disabled)) return null;
-          return Theme.of(context).cardColor;
-        }),
-      ),
+            padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.zero),
+            backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+              if (states.contains(MaterialState.disabled)) return null;
+              return Theme.of(context).cardColor;
+            }),
+          ),
       onPressed: () async {
         String _dealLink = '${cheapsharkUrl}/redirect?dealID=${deal.dealId}';
         if (await canLaunch(_dealLink)) {
-          final bool webView = context.read(preferenceProvider.state).webView;
-          await launch(_dealLink, forceWebView: webView, enableJavaScript: webView);
+          final bool webView = ref.read(preferenceProvider.state).webView;
+          await launch(_dealLink,
+              forceWebView: webView, enableJavaScript: webView);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error Launching url')),
@@ -43,9 +44,7 @@ class StoreDealGrid extends ConsumerWidget {
               child: ConstrainedBox(
                 constraints: BoxConstraints(minWidth: 56.0, maxHeight: 48),
                 child: ProviderScope(
-                  overrides: [
-                    storeIdProvider.overrideWithValue(deal.storeId)
-                  ],
+                  overrides: [storeIdProvider.overrideWithValue(deal.storeId)],
                   child: const StoreAvatarBanner(),
                 ),
               ),
@@ -59,12 +58,11 @@ class StoreDealGrid extends ConsumerWidget {
 }
 
 class StoreDealTile extends ConsumerWidget {
-  const StoreDealTile({Key key}) : super(key: key);
+  const StoreDealTile({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final deal = watch(singleDeal);
-    assert(deal != null);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final deal = ref.watch(singleDeal);
     return DecoratedBox(
       decoration: BoxDecoration(
         border: Border(
@@ -76,8 +74,9 @@ class StoreDealTile extends ConsumerWidget {
           String _dealLink =
               'https://www.cheapshark.com/redirect?dealID=${deal.dealId}';
           if (await canLaunch(_dealLink)) {
-            final bool webView = context.read(preferenceProvider.state).webView;
-            await launch(_dealLink, forceWebView: webView, enableJavaScript: webView);
+            final bool webView = ref.read(preferenceProvider.state).webView;
+            await launch(_dealLink,
+                forceWebView: webView, enableJavaScript: webView);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Error Launching url: $_dealLink')));
@@ -86,9 +85,7 @@ class StoreDealTile extends ConsumerWidget {
         title: ConstrainedBox(
           constraints: BoxConstraints(minWidth: 56.0, maxHeight: 48),
           child: ProviderScope(
-            overrides: [
-              storeIdProvider.overrideWithValue(deal.storeId)
-            ],
+            overrides: [storeIdProvider.overrideWithValue(deal.storeId)],
             child: const StoreAvatarBanner(
               alignment: Alignment.centerLeft,
             ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
-import 'package:gameshop_deals/model/view_enum.dart';
 import 'package:gameshop_deals/model/sort_by_enum.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart'
     show dealPageProvider;
@@ -14,19 +13,21 @@ import 'package:gameshop_deals/widget/dialog_preference_provider.dart';
 import 'package:gameshop_deals/widget/radio_popup_menu_item.dart';
 import 'package:gameshop_deals/widget/search_delegate.dart';
 import 'package:in_app_review/in_app_review.dart';
+import 'package:gameshop_deals/model/view_enum.dart' as viewEnum;
 
 final InAppReview _inAppReview = InAppReview.instance;
 
-final _sortByProvider = ScopedProvider<SortBy>(
-  (watch) => watch(filterProvider(watch(titleProvider))).state.sortBy,
+final _sortByProvider = Provider.autoDispose<SortBy>(
+  (ref) => ref
+      .watch(filterProvider(ref.watch(titleProvider)).select((f) => f.sortBy)),
   name: 'Sort By',
 );
 
-class HomeAppBar extends StatelessWidget with PreferredSizeWidget {
+class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   final Size preferredSize;
 
-  const HomeAppBar({Key key})
+  const HomeAppBar({Key? key})
       : preferredSize = const Size.fromHeight(56.0),
         super(key: key);
 
@@ -35,9 +36,9 @@ class HomeAppBar extends StatelessWidget with PreferredSizeWidget {
     return AppBar(
       automaticallyImplyLeading: false,
       title: Consumer(
-        builder: (context, watch, _) {
+        builder: (context, ref, _) {
           final S translate = S.of(context);
-          return Text(translate.sort(watch(_sortByProvider)));
+          return Text(translate.sort(ref.watch(_sortByProvider)));
         },
       ),
       actions: const <Widget>[
@@ -50,11 +51,11 @@ class HomeAppBar extends StatelessWidget with PreferredSizeWidget {
   }
 }
 
-class SearchAppBar extends StatelessWidget with PreferredSizeWidget {
+class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   final Size preferredSize;
 
-  const SearchAppBar({Key key})
+  const SearchAppBar({Key? key})
       : preferredSize = const Size.fromHeight(56.0),
         super(key: key);
 
@@ -66,8 +67,8 @@ class SearchAppBar extends StatelessWidget with PreferredSizeWidget {
         onPressed: () => Navigator.of(context, rootNavigator: true).maybePop(),
       ),
       title: Consumer(
-        builder: (context, watch, _) {
-          final title = watch(titleProvider);
+        builder: (context, ref, _) {
+          final title = ref.watch(titleProvider);
           return Text(
             title,
             overflow: TextOverflow.fade,
@@ -83,11 +84,11 @@ class SearchAppBar extends StatelessWidget with PreferredSizeWidget {
   }
 }
 
-class SavedAppBar extends StatelessWidget with PreferredSizeWidget {
+class SavedAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   final Size preferredSize;
 
-  const SavedAppBar({Key key})
+  const SavedAppBar({Key? key})
       : preferredSize = const Size.fromHeight(56.0),
         super(key: key);
 
@@ -102,14 +103,16 @@ class SavedAppBar extends StatelessWidget with PreferredSizeWidget {
       title: Text(translate.save_game_title),
       actions: const <Widget>[
         //const _SearchButton(),
-        const _MoreSettings(savedGamesRefresh: true,),
+        const _MoreSettings(
+          savedGamesRefresh: true,
+        ),
       ],
     );
   }
 }
 
 class HomeSliverAppBar extends StatelessWidget {
-  const HomeSliverAppBar({Key key}) : super(key: key);
+  const HomeSliverAppBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -118,9 +121,9 @@ class HomeSliverAppBar extends StatelessWidget {
       primary: true,
       forceElevated: true,
       title: Consumer(
-        builder: (context, watch, _) {
+        builder: (context, ref, _) {
           final S translate = S.of(context);
-          return Text(translate.sort(watch(_sortByProvider)));
+          return Text(translate.sort(ref.watch(_sortByProvider)));
         },
       ),
       actions: const <Widget>[
@@ -133,7 +136,7 @@ class HomeSliverAppBar extends StatelessWidget {
 }
 
 class SearchSliverAppBar extends StatelessWidget {
-  const SearchSliverAppBar({Key key}) : super(key: key);
+  const SearchSliverAppBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -145,8 +148,8 @@ class SearchSliverAppBar extends StatelessWidget {
         onPressed: () => Navigator.of(context, rootNavigator: true).maybePop(),
       ),
       title: Consumer(
-        builder: (context, watch, _) {
-          final title = watch(titleProvider);
+        builder: (context, ref, _) {
+          final title = ref.watch(titleProvider);
           return Text(title);
         },
       ),
@@ -159,11 +162,11 @@ class SearchSliverAppBar extends StatelessWidget {
 }
 
 class _SearchButton extends ConsumerWidget {
-  const _SearchButton({Key key}) : super(key: key);
+  const _SearchButton({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final title = watch(titleProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final title = ref.watch(titleProvider);
     return IconButton(
       icon: const Icon(Icons.search_rounded),
       onPressed: () async {
@@ -181,16 +184,17 @@ class _SearchButton extends ConsumerWidget {
   }
 }
 
-class _MoreSettings extends StatefulWidget {
+class _MoreSettings extends ConsumerStatefulWidget {
   final bool savedGamesRefresh;
-  const _MoreSettings({Key key, this.savedGamesRefresh = false}) : super(key: key);
+  const _MoreSettings({Key? key, this.savedGamesRefresh = false})
+      : super(key: key);
 
   @override
   __MoreSettingsState createState() => __MoreSettingsState();
 }
 
-class __MoreSettingsState extends State<_MoreSettings> {
-  S translate;
+class __MoreSettingsState extends ConsumerState<_MoreSettings> {
+  late S translate;
 
   @override
   void didChangeDependencies() {
@@ -198,10 +202,10 @@ class __MoreSettingsState extends State<_MoreSettings> {
     translate = S.of(context);
   }
 
-  Future<int> _selectedOption() {
-    final double size = Theme.of(context).appBarTheme.iconTheme.size ?? 24;
+  Future<int?> _selectedOption() {
+    final double size = Theme.of(context).appBarTheme.iconTheme?.size ?? 24;
     Offset offset =
-        context.size.centerRight(Size.square(size).center(Offset.zero));
+        context.size!.centerRight(Size.square(size).center(Offset.zero));
     return showMenu<int>(
       context: context,
       position: RelativeRect.fromLTRB(offset.dx, offset.dy, 0, 0),
@@ -218,20 +222,20 @@ class __MoreSettingsState extends State<_MoreSettings> {
 
   // ignore: unused_element
   Future<void> _postViewMenu() {
-    final double size = Theme.of(context).appBarTheme.iconTheme.size ?? 24;
+    final double size = Theme.of(context).appBarTheme.iconTheme?.size ?? 24;
     Offset offset =
-        context.size.centerRight(Size.square(size).center(Offset.zero));
-    return showMenu<View>(
+        context.size!.centerRight(Size.square(size).center(Offset.zero));
+    return showMenu<viewEnum.View>(
       context: context,
       position: RelativeRect.fromLTRB(offset.dx, offset.dy, 0, 0),
       items: [
         PopupMenuItem(
           child: Text(translate.view),
           enabled: false,
-          textStyle: Theme.of(context).textTheme.subtitle2,
+          textStyle: Theme.of(context).textTheme.titleSmall,
         ),
-        for (View view in View.values)
-          RadioPopupMenuItem<View>(
+        for (viewEnum.View view in viewEnum.View.values)
+          RadioPopupMenuItem<viewEnum.View>(
             child: Text(translate.choose_view(view)),
             value: view,
             provider: displayProvider,
@@ -242,9 +246,9 @@ class __MoreSettingsState extends State<_MoreSettings> {
 
   // ignore: unused_element
   Future<void> _themeMenu() {
-    final double size = Theme.of(context).appBarTheme.iconTheme.size ?? 24;
+    final double size = Theme.of(context).appBarTheme.iconTheme?.size ?? 24;
     Offset offset =
-        context.size.centerRight(Size.square(size).center(Offset.zero));
+        context.size!.centerRight(Size.square(size).center(Offset.zero));
     return showMenu<ThemeMode>(
       context: context,
       position: RelativeRect.fromLTRB(offset.dx, offset.dy, 0, 0),
@@ -252,7 +256,7 @@ class __MoreSettingsState extends State<_MoreSettings> {
         PopupMenuItem(
           child: Text(translate.choose_theme),
           enabled: false,
-          textStyle: Theme.of(context).textTheme.subtitle2,
+          textStyle: Theme.of(context).textTheme.titleSmall,
         ),
         for (ThemeMode mode in ThemeMode.values)
           RadioPopupMenuItem<ThemeMode>(
@@ -269,19 +273,21 @@ class __MoreSettingsState extends State<_MoreSettings> {
 
   // ignore: unused_element
   Future<void> _postViewDialog() async {
-    final View mode = await showDialog<View>(
+    final viewEnum.View? mode = await showDialog<viewEnum.View>(
       context: context,
-      builder: (_) => PreferenceDialog<View>(
-          title: translate.view,
-          provider: displayProvider,
-          values: View.values),
+      builder: (_) => PreferenceDialog<viewEnum.View>(
+        title: translate.view,
+        provider: displayProvider,
+        values: viewEnum.View.values,
+      ),
     );
-    if (mode != null) context.read(displayProvider).changeState(mode);
+    if (mode == null) return;
+    ref.read(displayProvider.notifier).changeState(mode);
   }
 
   // ignore: unused_element
   Future<void> _themeDialog() async {
-    final ThemeMode mode = await showDialog<ThemeMode>(
+    final ThemeMode? mode = await showDialog<ThemeMode>(
       context: context,
       builder: (_) => PreferenceDialog<ThemeMode>(
         title: translate.choose_theme,
@@ -289,7 +295,8 @@ class __MoreSettingsState extends State<_MoreSettings> {
         values: ThemeMode.values,
       ),
     );
-    if (mode != null) context.read(themeProvider).changeState(mode);
+    if (mode == null) return;
+    ref.read(themeProvider.notifier).changeState(mode);
   }
 
   @override
@@ -297,13 +304,13 @@ class __MoreSettingsState extends State<_MoreSettings> {
     return Consumer(
       child: const Icon(Icons.more_vert_outlined),
       builder: (context, watch, child) {
-        final title = watch(titleProvider);
+        final title = ref.watch(titleProvider);
         return IconButton(
           tooltip: MaterialLocalizations.of(context).moreButtonTooltip,
-          icon: child,
+          icon: child!,
           onPressed: () async {
-            int selectedOption = await _selectedOption();
-            if (!mounted) return;
+            int? selectedOption = await _selectedOption();
+            if (!mounted || selectedOption == null) return;
             switch (selectedOption) {
               case 0:
                 _postViewMenu();
@@ -318,10 +325,10 @@ class __MoreSettingsState extends State<_MoreSettings> {
                   _inAppReview.openStoreListing();
                 break;
               case 3:
-                if(widget.savedGamesRefresh)
-                  context.refresh(savedGamesPageProvider);
+                if (widget.savedGamesRefresh)
+                  ref.refresh(savedGamesPageProvider);
                 else
-                  context.refresh(dealPageProvider(title));
+                  ref.refresh(dealPageProvider(title));
                 break;
               case 4:
                 Navigator.of(context, rootNavigator: true)
@@ -336,7 +343,7 @@ class __MoreSettingsState extends State<_MoreSettings> {
 }
 
 class _FilterButton extends StatelessWidget {
-  const _FilterButton({Key key}) : super(key: key);
+  const _FilterButton({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -352,7 +359,7 @@ class _FilterButton extends StatelessWidget {
 }
 
 class _SavedGamesButton extends StatelessWidget {
-  const _SavedGamesButton({Key key}) : super(key: key);
+  const _SavedGamesButton({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

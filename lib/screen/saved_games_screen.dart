@@ -4,7 +4,7 @@ import 'package:gameshop_deals/utils/routes_constants.dart';
 
 class GameLookupScreen extends StatelessWidget {
   final GlobalKey<NavigatorState> navigationKey = GlobalKey<NavigatorState>();
-  GameLookupScreen({Key key}) : super(key: key);
+  GameLookupScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

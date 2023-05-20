@@ -14,9 +14,8 @@ import 'package:gameshop_deals/utils/routes_constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/theme_provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:hive/hive.dart';
 import 'package:gameshop_deals/model/theme_mode_adapter_enum.dart';
-import 'package:gameshop_deals/model/view_enum.dart';
+import 'package:gameshop_deals/model/view_enum.dart' as viewEnum;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart' show preferenceHiveBox;
 import 'package:flutter_cache_manager/src/storage/cache_object.dart';
@@ -52,7 +51,7 @@ Future<void> _initHive() async {
   Hive
     ..registerAdapter<CacheObject>(CacheObjectAdapter())
     ..registerAdapter<ThemeMode>(ThemeModeAdapter())
-    ..registerAdapter<View>(ViewAdapter())
+    ..registerAdapter<viewEnum.View>(viewEnum.ViewAdapter())
     ..registerAdapter<GameLookup>(GameLookupAdapter())
     ..registerAdapter<Info>(InfoAdapter())
     ..registerAdapter<CheapestPrice>(CheapestPriceAdapter())
@@ -84,7 +83,6 @@ class GameShop extends ConsumerWidget {
     final themeData = ref.watch(themeProvider.notifier);
     return RefreshConfiguration(
       enableLoadingWhenFailed: false,
-      autoLoad: true,
       headerBuilder: () => WaterDropMaterialHeader(
         backgroundColor: themeData.lightTheme.appBarTheme.backgroundColor,
       ),

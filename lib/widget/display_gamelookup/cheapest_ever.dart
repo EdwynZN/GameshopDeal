@@ -5,28 +5,28 @@ import 'package:gameshop_deals/riverpod/saved_deals_provider.dart'
     show singleGameLookup;
 
 class CheapestEverWidget extends ConsumerWidget {
-  final TextStyle style;
-  const CheapestEverWidget({Key key, this.style}) : super(key: key);
+  final TextStyle? style;
+  const CheapestEverWidget({Key? key, this.style}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final S translate = S.of(context);
-    final cheap = watch(singleGameLookup).cheapestPrice;
-    if (cheap == null || cheap.price == null || cheap.date == null)
+    final cheap = ref.watch(singleGameLookup).cheapestPrice;
+    if (cheap.price.isEmpty)
       return const SizedBox.shrink();
     final DateTime date =
         DateTime.fromMillisecondsSinceEpoch(cheap.date * 1000);
     final localizedDate =
         MaterialLocalizations.of(context).formatShortDate(date);
-    final textStyle = style ?? Theme.of(context).textTheme.subtitle2;
+    final textStyle = style ?? Theme.of(context).textTheme.titleSmall;
     return RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
-        style: textStyle.copyWith(fontWeight: FontWeight.normal),
+        style: textStyle?.copyWith(fontWeight: FontWeight.normal),
         children: [
           TextSpan(
             text: translate.cheapest_ever,
-            style: textStyle.copyWith(fontWeight: FontWeight.bold),
+            style: textStyle?.copyWith(fontWeight: FontWeight.bold),
           ),
           TextSpan(
             text: translate.cheapest_price_and_date(cheap.price, localizedDate),

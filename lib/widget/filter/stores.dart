@@ -9,20 +9,20 @@ import 'package:gameshop_deals/riverpod/deal_provider.dart' show storesProvider;
 import 'package:gameshop_deals/model/filter.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 
-final _storesProvider = ScopedProvider<Set<String>>((watch) {
-  final title = watch(titleProvider);
-  return watch(filterProviderCopy(title)).state.storeId;
+final _storesProvider = Provider.autoDispose<Set<String>>((ref) {
+  final title = ref.watch(titleProvider);
+  return ref.watch(filterProviderCopy(title).select((f) => f.storeId));
 }, name: 'Stores ID');
 
 class StoreWidget extends ConsumerWidget {
-  const StoreWidget({Key key}) : super(key: key);
+  const StoreWidget({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final S translate = S.of(context);
-    final title = watch(titleProvider);
-    final Set<String> storesSelected = watch(_storesProvider);
-    final stores = watch(storesProvider);
+    final title = ref.watch(titleProvider);
+    final Set<String> storesSelected = ref.watch(_storesProvider);
+    final stores = ref.watch(storesProvider);
     return stores.when(
       loading: () => const Padding(
         padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -30,7 +30,7 @@ class StoreWidget extends ConsumerWidget {
       ),
       error: (err, stack) => OutlinedButton(
         child: Text('Error fetching the stores'),
-        onPressed: () => context.refresh(storesProvider),
+        onPressed: () => ref.refresh(storesProvider),
       ),
       data: (stores) {
         return Wrap(
@@ -40,7 +40,7 @@ class StoreWidget extends ConsumerWidget {
               selected: storesSelected.isEmpty,
               onSelected: (val) {
                 final StateController<Filter> filter =
-                    context.read(filterProviderCopy(title));
+                    ref.read(filterProviderCopy(title).notifier);
                 filter.state = filter.state.copyWith(storeId: const <String>{});
               },
               label: Text(translate.all_choice),
@@ -63,7 +63,7 @@ class StoreWidget extends ConsumerWidget {
                 selected: storesSelected.contains(store.storeId),
                 onSelected: (val) {
                   final StateController<Filter> filter =
-                      context.read(filterProviderCopy(title));
+                      ref.read(filterProviderCopy(title).notifier);
                   Set<String> set = Set<String>.from(storesSelected);
                   if (val)
                     set.add(store.storeId);
@@ -74,7 +74,7 @@ class StoreWidget extends ConsumerWidget {
                 label: Text(store.storeName),
                 avatar: CachedNetworkImage(
                   cacheManager:
-                      watch(cacheManagerFamilyProvider(cacheKeyStores)),
+                      ref.watch(cacheManagerFamilyProvider(cacheKeyStores)),
                   imageUrl: cheapsharkUrl + store.images.icon,
                   fit: BoxFit.contain,
                 ),

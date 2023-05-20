@@ -12,32 +12,33 @@ import 'package:gameshop_deals/riverpod/deal_provider.dart'
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class PageDeal extends ConsumerWidget {
-  final PageController controller;
-  const PageDeal({Key key, this.controller}) : super(key: key);
+  final PageController? controller;
+  const PageDeal({Key? key, this.controller}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final int childCount = watch(gameKeysProvider).length;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final int childCount = ref.watch(gameKeysProvider).length;
     return PageView.custom(
       controller: controller,
       onPageChanged: (index) {
-        final gamePage = context.read(savedGamesPageProvider);
+        final gamePage = ref.read(savedGamesPageProvider);
         if (!gamePage.isLastPage && index == (childCount - 1)) {
           gamePage.retrieveNextPage();
         }
       },
       childrenDelegate: SliverChildBuilderDelegate(
         (context, index) {
-          final pageProvider = context.read(savedGamesPageProvider);
-          if (childCount == index && (!pageProvider.isLastPage 
-              || pageProvider.page == 0 && childCount == 0))
+          final pageProvider = ref.read(savedGamesPageProvider);
+          if (childCount == index &&
+              (!pageProvider.isLastPage ||
+                  pageProvider.page == 0 && childCount == 0))
             return const _EndLinearProgressIndicator();
           else if (index >= childCount) return null;
           return ProviderScope(
             overrides: [
               singleGameLookup.overrideAs((watch) {
-                final key = watch(gameKeysProvider);
-                return watch(savedGamesProvider.state)[key[index]];
+                final key = ref.watch(gameKeysProvider);
+                return ref.watch(savedGamesProvider.state)[key[index]];
               }),
               indexGameLookup.overrideWithValue(index),
             ],
@@ -50,7 +51,7 @@ class PageDeal extends ConsumerWidget {
 }
 
 class _SwipePage extends StatelessWidget {
-  const _SwipePage({Key key}) : super(key: key);
+  const _SwipePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -70,9 +71,9 @@ class _SwipePage extends StatelessWidget {
             child: ProviderScope(
               overrides: [
                 singleDeal.overrideAs((watch) {
-                  final index = watch(indexGameLookup);
-                  final keys = watch(gameKeysProvider);
-                  final game = watch(singleGameLookup);
+                  final index = ref.watch(indexGameLookup);
+                  final keys = ref.watch(gameKeysProvider);
+                  final game = ref.watch(singleGameLookup);
                   return game.deals.first
                       .copyWith(gameId: keys[index], title: game.info.title);
                 }),
@@ -85,7 +86,7 @@ class _SwipePage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           sliver: SliverToBoxAdapter(
             child: CheapestEverWidget(
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
         ),
@@ -96,11 +97,11 @@ class _SwipePage extends StatelessWidget {
 }
 
 class _GameInfoWidget extends ConsumerWidget {
-  const _GameInfoWidget({Key key}) : super(key: key);
+  const _GameInfoWidget({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final info = watch(singleGameLookup).info;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final info = ref.watch(singleGameLookup).info;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -112,8 +113,8 @@ class _GameInfoWidget extends ConsumerWidget {
               constraints: BoxConstraints(maxHeight: 70, maxWidth: 120),
               child: ProviderScope(
                 overrides: [
-                  thumbProvider
-                      .overrideAs((watch) => watch(singleGameLookup).info.thumb)
+                  thumbProvider.overrideAs(
+                      (watch) => ref.watch(singleGameLookup).info.thumb)
                 ],
                 child: const ThumbImage(),
               ),
@@ -132,11 +133,11 @@ class _GameInfoWidget extends ConsumerWidget {
 }
 
 class _DealListWidget extends ConsumerWidget {
-  const _DealListWidget({Key key}) : super(key: key);
+  const _DealListWidget({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final deals = watch(singleGameLookup).deals;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final deals = ref.watch(singleGameLookup).deals;
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
       sliver: SliverGrid(
@@ -152,7 +153,7 @@ class _DealListWidget extends ConsumerWidget {
             child: const StoreDealGrid(),
           ),
           semanticIndexOffset: 1,
-          childCount: deals?.length ?? 0,
+          childCount: deals.length ?? 0,
         ),
       ),
     );
@@ -160,19 +161,19 @@ class _DealListWidget extends ConsumerWidget {
 }
 
 class _EndLinearProgressIndicator extends ConsumerWidget {
-  const _EndLinearProgressIndicator({Key key}) : super(key: key);
+  const _EndLinearProgressIndicator({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final S translate = S.of(context);
-    final games = watch(savedGamesPageProvider.state);
+    final games = ref.watch(savedGamesPageProvider.state);
     return games.when(
       data: (cb) {
-        if (cb.isEmpty && context.read(savedBoxProvider) is AsyncData)
+        if (cb.isEmpty && ref.read(savedBoxProvider) is AsyncData)
           return Center(
             child: Text(
               translate.no_game_saved,
-              style: Theme.of(context).textTheme.headline5,
+              style: Theme.of(context).textTheme.headlineSmall,
             ),
           );
         return const SizedBox(height: 4.0);
@@ -187,7 +188,7 @@ class _EndLinearProgressIndicator extends ConsumerWidget {
             RefreshLocalizations.of(context).currentLocalization.loadFailedText,
           ),
           onPressed: () async =>
-              context.read(savedGamesPageProvider).retrieveNextPage(),
+              ref.read(savedGamesPageProvider).retrieveNextPage(),
         ),
       ),
     );
@@ -196,7 +197,7 @@ class _EndLinearProgressIndicator extends ConsumerWidget {
 
 class PageVisualizer extends StatefulWidget {
   final PageController controller;
-  const PageVisualizer({Key key, this.controller}) : super(key: key);
+  const PageVisualizer({Key? key, this.controller}) : super(key: key);
 
   @override
   _PageVisualizerState createState() => _PageVisualizerState();
@@ -209,13 +210,13 @@ class _PageVisualizerState extends State<PageVisualizer> {
   @override
   void initState() {
     super.initState();
-    if ((widget.controller?.hasClients ?? false) &&
-        (widget.controller?.page != null ?? false)) {
+    if ((widget.controller.hasClients ?? false) &&
+        (widget.controller.page != null ?? false)) {
       _currentPage = widget.controller.page.round();
     } else {
       _currentPage = widget.controller.initialPage;
     }
-    widget.controller?.addListener(_updatePagination);
+    widget.controller.addListener(_updatePagination);
   }
 
   @override
@@ -228,14 +229,14 @@ class _PageVisualizerState extends State<PageVisualizer> {
   void didUpdateWidget(covariant PageVisualizer oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.controller != oldWidget.controller) {
-      oldWidget.controller?.removeListener(_updatePagination);
-      widget.controller?.addListener(_updatePagination);
+      oldWidget.controller.removeListener(_updatePagination);
+      widget.controller.addListener(_updatePagination);
     }
   }
 
   void _updatePagination() {
-    if ((widget.controller?.hasClients ?? false) &&
-        widget.controller?.page != null) {
+    if ((widget.controller.hasClients ?? false) &&
+        widget.controller.page != null) {
       int currentPage = widget.controller.page.round();
       if (currentPage != _currentPage) {
         setState(() => _currentPage = currentPage);
@@ -246,7 +247,7 @@ class _PageVisualizerState extends State<PageVisualizer> {
   @override
   void dispose() {
     super.dispose();
-    widget.controller?.removeListener(_updatePagination);
+    widget.controller.removeListener(_updatePagination);
   }
 
   @override
@@ -257,8 +258,8 @@ class _PageVisualizerState extends State<PageVisualizer> {
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Consumer(
           builder: (context, watch, child) {
-            final games = watch(savedGamesProvider.state);
-            final keys = watch(gameKeysProvider);
+            final games = ref.watch(savedGamesProvider.state);
+            final keys = ref.watch(gameKeysProvider);
             final maxPage = games.length;
             final isEmpty = games.isEmpty;
             String label;

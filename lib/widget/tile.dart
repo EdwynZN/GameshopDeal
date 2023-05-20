@@ -106,7 +106,7 @@ class _DealWidget extends StatelessWidget {
             cacheHeight: 12, cacheWidth: 12,
             width: 12, height: 12, fit: BoxFit.contain,
           ),
-          Text(' $metacritic%', style: Theme.of(context).textTheme.headline2,
+          Text(' $metacritic%', style: Theme.of(context).textTheme.displayMedium,
         ),
         ],
         const Spacer(),
@@ -117,14 +117,14 @@ class _DealWidget extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: '\$$normalPrice\n',
-                    style: Theme.of(context).textTheme.subtitle2?.copyWith(
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       decoration: TextDecoration.lineThrough,
                       color: Colors.red,
                     ),
                   ),
                   TextSpan(
                     text: '\$$salePrice',
-                    style: Theme.of(context).textTheme.subtitle2?.copyWith(
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       color: Colors.greenAccent,
                     ),
                   ),
@@ -143,14 +143,14 @@ class _DealWidget extends StatelessWidget {
             ),
             child: Center(
               child: Text('-$savings%',
-                style: Theme.of(context).textTheme.subtitle2?.copyWith(
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     color: Colors.black
                 )
               ),
             ),
           ),
         ],
-        if(!discount) Text('\$$salePrice', style: Theme.of(context).textTheme.subtitle1),
+        if(!discount) Text('\$$salePrice', style: Theme.of(context).textTheme.titleMedium),
       ],
     );
   }
@@ -166,14 +166,14 @@ class _Released extends StatelessWidget{
   Widget build(BuildContext context) {
     if(released != null)
       return Text('Released on: ${MaterialLocalizations.of(context).formatShortDate(released!)}',
-        style: Theme.of(context).textTheme.subtitle2,
+        style: Theme.of(context).textTheme.titleSmall,
       );
     else
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         color: Colors.orangeAccent,
         child: Text('To be released',
-          style: Theme.of(context).textTheme.subtitle2?.copyWith(
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: Colors.black
           )
         ),

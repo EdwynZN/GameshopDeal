@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gameshop_deals/model/view_enum.dart';
 import 'package:gameshop_deals/riverpod/deal_provider.dart'
-  show dealsProvider, singleDeal;
+    show dealsProvider, singleDeal;
 import 'package:gameshop_deals/riverpod/display_provider.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/widget/deal_widget.dart';
+import 'package:gameshop_deals/model/view_enum.dart' as viewEnum;
 
 class DealListView extends ConsumerWidget {
-  const DealListView({Key key}) : super(key: key);
+  const DealListView({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final title = watch(titleProvider);
-    final deals = watch(dealsProvider(title).state);
-    final View view = watch(displayProvider.state);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final title = ref.watch(titleProvider);
+    final deals = ref.watch(dealsProvider(title));
+    final viewEnum.View view = ref.watch(displayProvider);
     if (deals.isEmpty) return const SliverToBoxAdapter();
     switch (view) {
-      case View.Grid:
+      case viewEnum.View.Grid:
         return SliverPadding(
           padding: const EdgeInsets.all(4.0),
           sliver: SliverGrid(
@@ -41,7 +41,7 @@ class DealListView extends ConsumerWidget {
             ),
           ),
         );
-      case View.Detail:
+      case viewEnum.View.Detail:
         return SliverList(
           //itemExtent: 86.0,
           delegate: SliverChildBuilderDelegate(
@@ -54,10 +54,10 @@ class DealListView extends ConsumerWidget {
                 child: const DetailedDeal(),
               );
             },
-            childCount: deals?.length ?? 0,
+            childCount: deals.length,
           ),
         );
-      case View.Compact:
+      case viewEnum.View.Compact:
         return SliverList(
           //itemExtent: 64.0,
           delegate: SliverChildBuilderDelegate(
@@ -70,10 +70,10 @@ class DealListView extends ConsumerWidget {
                 child: const CompactDeal(),
               );
             },
-            childCount: deals?.length ?? 0,
+            childCount: deals.length,
           ),
         );
-      case View.List:
+      case viewEnum.View.List:
       default:
         return SliverList(
           delegate: SliverChildBuilderDelegate(
@@ -86,7 +86,7 @@ class DealListView extends ConsumerWidget {
                 child: const ListDeal(),
               );
             },
-            childCount: deals?.length ?? 0,
+            childCount: deals.length,
           ),
         );
     }

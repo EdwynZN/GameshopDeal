@@ -3,41 +3,41 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/hive_preferences_provider.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
 
-class PreferenceDialog<T extends Object> extends StatefulWidget {
+class PreferenceDialog<T extends Object> extends ConsumerStatefulWidget {
   const PreferenceDialog({
-    Key key,
-    this.title,
-    @required this.provider,
-    @required this.values,
-    Widget child,
-  })  : assert(provider != null),
-        assert(values != null),
-        super(key: key);
+    Key? key,
+    required this.title,
+    required this.provider,
+    required this.values,
+    Widget? child,
+  }) : super(key: key);
 
   final String title;
 
   final List<T> values;
 
-  final StateNotifierProvider<HiveNotifier<T>> provider;
+  final StateNotifierProvider<HiveNotifier<T>, T> provider;
 
   @override
   _PreferenceDialogState<T> createState() => _PreferenceDialogState<T>();
 }
 
-class _PreferenceDialogState<T> extends State<PreferenceDialog<T>> {
-  T value;
-  S translate;
+class _PreferenceDialogState<T extends Object> extends ConsumerState<PreferenceDialog<T>> {
+  late T? value;
+  late S translate;
 
   @override
   void didChangeDependencies() {
-    value ??= context.read(widget.provider.state);
+    value = ref.read(widget.provider);
     translate = S.of(context);
     super.didChangeDependencies();
   }
 
   String _translatedTitle(T title) {
-    if (title is ThemeMode) return translate.themeMode(title);
-    else return translate.choose_view(title);
+    if (title is ThemeMode)
+      return translate.themeMode(title);
+    else
+      return translate.choose_view(title);
   }
 
   @override

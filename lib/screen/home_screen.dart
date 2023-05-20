@@ -14,12 +14,12 @@ import 'package:pull_to_refresh/pull_to_refresh.dart' hide RefreshIndicator;
 class Home extends StatefulWidget {
   final String title;
   final Widget appBar;
-  const Home({Key key})
+  const Home({Key? key})
       : title = '',
         appBar = const HomeAppBar(),
         super(key: key);
 
-  const Home.Search({Key key, this.title})
+  const Home.Search({Key? key, this.title})
       : appBar = const SearchAppBar(),
         super(key: key);
 
@@ -39,7 +39,7 @@ class _HomeState extends State<Home> with PrincipalState {
             if (!mounted) return;
             if (deal is AsyncError) {
               if (refreshController.headerStatus != RefreshStatus.failed &&
-                  context.read(dealsProvider(widget.title)).state.isEmpty) {
+                  ref.read(dealsProvider(widget.title)).state.isEmpty) {
                 refreshController.refreshFailed();
               }
               refreshController.loadFailed();
@@ -57,7 +57,7 @@ class _HomeState extends State<Home> with PrincipalState {
               if (refreshController.isRefresh)
                 refreshController.refreshCompleted();
               final noMoreData =
-                  context.read(dealPageProvider(widget.title)).isLastPage;
+                  ref.read(dealPageProvider(widget.title)).isLastPage;
               if (noMoreData)
                 refreshController.loadNoData();
               else
@@ -89,11 +89,11 @@ class _HomeState extends State<Home> with PrincipalState {
                       ),
                       onRefresh: () async {
                         refreshController.loadComplete();
-                        context.refresh(dealPageProvider(widget.title));
+                        ref.refresh(dealPageProvider(widget.title));
                       },
                       onLoading: () async {
                         final dealPage =
-                            context.read(dealPageProvider(widget.title));
+                            ref.read(dealPageProvider(widget.title));
                         if (!dealPage.isLastPage)
                           await dealPage.retrieveNextPage();
                       },
@@ -114,7 +114,7 @@ class ScrollFooter extends LoadIndicator {
   /// load more display style
   final LoadStyle loadStyle;
 
-  const ScrollFooter({Key key, LoadStyle loadStyle})
+  const ScrollFooter({Key? key, LoadStyle loadStyle})
       : this.loadStyle = loadStyle ?? LoadStyle.ShowWhenLoading,
         super(key: key);
 
@@ -138,8 +138,8 @@ class _ScrollFooterState extends LoadIndicatorState<ScrollFooter> {
   Widget buildContent(BuildContext context, LoadStatus mode) {
     return Consumer(
       builder: (context, watch, _) {
-        final title = watch(titleProvider);
-        final deals = watch(dealPageProvider(title).state);
+        final title = ref.watch(titleProvider);
+        final deals = ref.watch(dealPageProvider(title).state);
         return deals.when(
           data: (_) => const SizedBox(height: 4.0),
           loading: () => const Align(
@@ -152,7 +152,7 @@ class _ScrollFooterState extends LoadIndicatorState<ScrollFooter> {
                   .currentLocalization
                   .loadFailedText),
               onPressed: () async {
-                context.read(dealPageProvider(title)).retrieveNextPage();
+                ref.read(dealPageProvider(title)).retrieveNextPage();
                 mode = LoadStatus.loading;
               },
             ),

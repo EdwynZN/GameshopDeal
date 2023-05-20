@@ -5,19 +5,19 @@ import 'package:gameshop_deals/riverpod/filter_provider.dart';
 import 'package:gameshop_deals/model/sort_by_enum.dart';
 import 'package:gameshop_deals/model/filter.dart';
 
-final _sortByProvider = ScopedProvider<SortBy>((watch) {
-  final title = watch(titleProvider);
-  return watch(filterProviderCopy(title)).state.sortBy;
+final _sortByProvider = Provider.autoDispose<SortBy>((ref) {
+  final title = ref.watch(titleProvider);
+  return ref.watch(filterProviderCopy(title).select((f) => f.sortBy));
 }, name: 'Sort By');
 
 class SortByWidget extends ConsumerWidget {
-  const SortByWidget({Key key}) : super(key: key);
+  const SortByWidget({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final S translate = S.of(context);
-    final title = watch(titleProvider);
-    final SortBy sortOrder = watch(_sortByProvider);
+    final title = ref.watch(titleProvider);
+    final SortBy sortOrder = ref.watch(_sortByProvider);
     return Wrap(
       spacing: 8,
       children: <Widget>[
@@ -29,7 +29,7 @@ class SortByWidget extends ConsumerWidget {
             selected: sortOrder == sort,
             onSelected: (val) {
               final StateController<Filter> filter =
-                  context.read(filterProviderCopy(title));
+                  ref.read(filterProviderCopy(title).notifier);
               filter.state = filter.state.copyWith(sortBy: sort);
             },
           )

@@ -4,114 +4,114 @@ import 'package:flutter/services.dart';
 abstract class ThemeRepository {
   late Color _darkAccentColor;
   TextTheme _darkAccentTextTheme = const TextTheme(
-    subtitle1: TextStyle(
+    titleMedium: TextStyle(
         color: Colors.black87,
         fontSize: 16,
         fontWeight: FontWeight.normal,
         letterSpacing: 0.15),
-    subtitle2: TextStyle(
+    titleSmall: TextStyle(
         color: Colors.black87,
         fontSize: 14,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.1),
-    bodyText1: TextStyle(
+    bodyLarge: TextStyle(
         color: Colors.black87,
         fontSize: 16,
         fontWeight: FontWeight.normal,
         letterSpacing: 0.5),
-    bodyText2: TextStyle(
+    bodyMedium: TextStyle(
         color: Colors.black87,
         fontSize: 14,
         fontWeight: FontWeight.normal,
         letterSpacing: 0.25),
-    overline: TextStyle(
+    labelSmall: TextStyle(
         color: Colors.black87,
         fontSize: 11,
         fontWeight: FontWeight.normal,
         letterSpacing: 1.0,
         height: 1.5),
-    button: TextStyle(
+    labelLarge: TextStyle(
         color: Colors.black87,
         fontSize: 14,
         fontWeight: FontWeight.w500,
         letterSpacing: 1.25),
-    headline1: TextStyle(
+    displayLarge: TextStyle(
         color: Colors.black87,
         fontSize: 28,
         fontWeight: FontWeight.w300,
         letterSpacing: -1.5),
-    headline2: TextStyle(
+    displayMedium: TextStyle(
         color: Colors.black87,
         fontSize: 26,
         fontWeight: FontWeight.w300,
         letterSpacing: -0.5),
-    headline3: TextStyle(
+    displaySmall: TextStyle(
         color: Colors.black87, fontSize: 22, fontWeight: FontWeight.normal),
-    headline4: TextStyle(
+    headlineMedium: TextStyle(
         color: Colors.black87,
         fontSize: 21,
         fontWeight: FontWeight.normal,
         letterSpacing: 0.25),
-    headline5: TextStyle(
+    headlineSmall: TextStyle(
         color: Colors.black87, fontSize: 20, fontWeight: FontWeight.normal),
-    headline6: TextStyle(
+    titleLarge: TextStyle(
         color: Colors.black87,
         fontSize: 20,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.15),
   );
   TextTheme _lightAccentTextTheme = const TextTheme(
-    subtitle1: TextStyle(
+    titleMedium: TextStyle(
         color: Colors.white70,
         fontSize: 16,
         fontWeight: FontWeight.normal,
         letterSpacing: 0.15),
-    subtitle2: TextStyle(
+    titleSmall: TextStyle(
         color: Colors.white70,
         fontSize: 14,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.1),
-    bodyText1: TextStyle(
+    bodyLarge: TextStyle(
         color: Colors.white70,
         fontSize: 16,
         fontWeight: FontWeight.normal,
         letterSpacing: 0.5),
-    bodyText2: TextStyle(
+    bodyMedium: TextStyle(
         color: Colors.white70,
         fontSize: 14,
         fontWeight: FontWeight.normal,
         letterSpacing: 0.25),
-    overline: TextStyle(
+    labelSmall: TextStyle(
         color: Colors.white70,
         fontSize: 11,
         fontWeight: FontWeight.normal,
         letterSpacing: 1.0,
         height: 1.5),
-    button: TextStyle(
+    labelLarge: TextStyle(
         color: Colors.white70,
         fontSize: 14,
         fontWeight: FontWeight.w500,
         letterSpacing: 1.25),
-    headline1: TextStyle(
+    displayLarge: TextStyle(
         color: Colors.white70,
         fontSize: 28,
         fontWeight: FontWeight.w300,
         letterSpacing: -1.5),
-    headline2: TextStyle(
+    displayMedium: TextStyle(
         color: Colors.white70,
         fontSize: 26,
         fontWeight: FontWeight.w300,
         letterSpacing: -0.5),
-    headline3: TextStyle(
+    displaySmall: TextStyle(
         color: Colors.white70, fontSize: 22, fontWeight: FontWeight.normal),
-    headline4: TextStyle(
+    headlineMedium: TextStyle(
         color: Colors.white70,
         fontSize: 21,
         fontWeight: FontWeight.normal,
         letterSpacing: 0.25),
-    headline5: TextStyle(
+    headlineSmall: TextStyle(
         color: Colors.white70, fontSize: 20, fontWeight: FontWeight.normal),
-    headline6: TextStyle(
+    titleLarge: TextStyle(
         color: Colors.white70,
         fontSize: 20,
         fontWeight: FontWeight.w500,
@@ -132,7 +132,6 @@ class ThemeImpl extends ThemeRepository {
   }
 
   set _setLight(int light) {
-    light ??= 0;
     MaterialColor color = Colors.primaries[light.clamp(0, 17)];
     MaterialAccentColor accentColor = Colors.accents[light.clamp(0, 15)];
     if (light >= 17)
@@ -182,13 +181,13 @@ class ThemeImpl extends ThemeRepository {
           systemNavigationBarColor: color,
         ),
         titleTextStyle: _brightnessColor == Brightness.light
-            ? __darkAccentTextTheme.headline6!
-            : __lightAccentTextTheme.headline6!.apply(color: Colors.white),
+            ? _darkAccentTextTheme.titleLarge!
+            : _lightAccentTextTheme.titleLarge!.apply(color: Colors.white),
         foregroundColor:
             _brightnessColor == Brightness.light ? Colors.black : Colors.white,
         toolbarTextStyle: _brightnessColor == Brightness.light
-            ? __darkAccentTextTheme.bodyText2
-            : __lightAccentTextTheme.bodyText2,
+            ? _darkAccentTextTheme.bodyMedium
+            : _lightAccentTextTheme.bodyMedium,
         iconTheme: IconThemeData(
           color: _brightnessColor == Brightness.light
               ? Colors.black
@@ -207,13 +206,9 @@ class ThemeImpl extends ThemeRepository {
             : Colors.black,
         backgroundColor: accentColor,
       ),
-      errorColor: Colors.redAccent,
       canvasColor: color[50],
-      primarySwatch: color,
       primaryColor: color,
-      backgroundColor: color[100],
       highlightColor: color[200],
-      selectedRowColor: color[200],
       cardColor: color[100],
       cardTheme: CardTheme(
         color: color.shade100,
@@ -224,28 +219,10 @@ class ThemeImpl extends ThemeRepository {
         elevation: 8.0,
         surfaceTintColor: color.shade100,
       ),
-      colorScheme: ColorScheme.light(
-        background: Colors.white,
-        error: Colors.redAccent,
-        onBackground: Colors.black,
-        onError: Colors.white,
-        primary: color,
-        onPrimary: Colors.white,
-        onSecondary: _brightnessAccentTextTheme == Brightness.dark
-            ? Colors.white70
-            : Colors.black,
-        secondary: accentColor.shade700,
-        surface: Colors.white,
-        onSurface: Colors.black,
-        primaryContainer: color.shade700,
-        secondaryContainer: accentColor.shade700,
-        brightness: _brightnessColor,
-        surfaceTint: color.shade100,
-      ),
-      textTheme: __darkAccentTextTheme,
+      textTheme: _darkAccentTextTheme,
       primaryTextTheme: _brightnessPrimaryColor == Brightness.dark
-          ? __lightAccentTextTheme
-          : __darkAccentTextTheme,
+          ? _lightAccentTextTheme
+          : _darkAccentTextTheme,
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: accentColor,
         linearTrackColor: color.shade100,
@@ -269,8 +246,8 @@ class ThemeImpl extends ThemeRepository {
         showUnselectedLabels: true,
       ),
       dialogTheme: DialogTheme(
-        titleTextStyle: __darkAccentTextTheme.headline6,
-        contentTextStyle: __darkAccentTextTheme.subtitle1,
+        titleTextStyle: _darkAccentTextTheme.titleLarge,
+        contentTextStyle: _darkAccentTextTheme.titleMedium,
         backgroundColor: color[50],
         actionsPadding: const EdgeInsets.symmetric(
           horizontal: 16.0,
@@ -331,9 +308,9 @@ class ThemeImpl extends ThemeRepository {
               }),
               backgroundColor: MaterialStateProperty.all<Color?>(color[100]),
               foregroundColor: MaterialStateProperty.all<Color?>(
-                  __darkAccentTextTheme.headline1!.color),
+                  _darkAccentTextTheme.displayLarge!.color),
               textStyle: MaterialStateProperty.all<TextStyle?>(
-                  __darkAccentTextTheme.bodyText1),
+                  _darkAccentTextTheme.bodyLarge),
               overlayColor: MaterialStateProperty.all<Color>(
                   _darkAccentColor.withOpacity(0.24)),
               visualDensity: VisualDensity(vertical: 2.5))),
@@ -364,8 +341,8 @@ class ThemeImpl extends ThemeRepository {
         secondarySelectedColor: color.shade100,
         labelPadding: const EdgeInsets.symmetric(horizontal: 4.0),
         padding: const EdgeInsets.all(4.0),
-        labelStyle: __darkAccentTextTheme.bodyText2!,
-        secondaryLabelStyle: __darkAccentTextTheme.bodyText2!.apply(
+        labelStyle: _darkAccentTextTheme.bodyMedium!,
+        secondaryLabelStyle: _darkAccentTextTheme.bodyMedium!.apply(
           color:
               _brightnessPrimaryColor == Brightness.light ? null : color[500],
         ),
@@ -379,16 +356,55 @@ class ThemeImpl extends ThemeRepository {
         elevation: 8.0,
         groupAlignment: 1.0,
         selectedIconTheme: IconThemeData(color: accentColor[700]),
-        selectedLabelTextStyle: __lightAccentTextTheme.bodyText2!.apply(
+        selectedLabelTextStyle: _lightAccentTextTheme.bodyMedium!.apply(
             color: _brightnessAccentTextTheme == Brightness.dark
                 ? accentColor[700]
                 : Colors.black),
         unselectedIconTheme: const IconThemeData(color: Colors.black),
-        unselectedLabelTextStyle: __darkAccentTextTheme.bodyText2,
+        unselectedLabelTextStyle: _darkAccentTextTheme.bodyMedium,
       ),
-      toggleableActiveColor: accentColor[700],
       indicatorColor: color[100],
-      useMaterial3: true,
+      useMaterial3: true, checkboxTheme: CheckboxThemeData(
+ fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return accentColor[700]; }
+ return null;
+ }),
+ ), radioTheme: RadioThemeData(
+ fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return accentColor[700]; }
+ return null;
+ }),
+ ), switchTheme: SwitchThemeData(
+ thumbColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return accentColor[700]; }
+ return null;
+ }),
+ trackColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return accentColor[700]; }
+ return null;
+ }),
+ ), colorScheme: ColorScheme.light(
+        background: Colors.white,
+        error: Colors.redAccent,
+        onBackground: Colors.black,
+        onError: Colors.white,
+        primary: color,
+        onPrimary: Colors.white,
+        onSecondary: _brightnessAccentTextTheme == Brightness.dark
+            ? Colors.white70
+            : Colors.black,
+        secondary: accentColor.shade700,
+        surface: Colors.white,
+        onSurface: Colors.black,
+        primaryContainer: color.shade700,
+        secondaryContainer: accentColor.shade700,
+        brightness: _brightnessColor,
+        surfaceTint: color.shade100,
+      ).copyWith(background: color[100]).copyWith(error: Colors.redAccent),
     );
   }
 /* 
@@ -427,8 +443,8 @@ class ThemeImpl extends ThemeRepository {
         foregroundColor:
             _brightnessColor == Brightness.light ? Colors.black : Colors.white,
         toolbarTextStyle: _brightnessColor == Brightness.light
-            ? __darkAccentTextTheme.bodyText2
-            : __lightAccentTextTheme.bodyText2,
+            ? _darkAccentTextTheme.bodyText2
+            : _lightAccentTextTheme.bodyText2,
         iconTheme: IconThemeData(
           color: _brightnessColor == Brightness.light
               ? Colors.black
@@ -639,12 +655,9 @@ class ThemeImpl extends ThemeRepository {
   }
  */
   set _setDark(int dark) {
-    dark ??= 2;
     final Brightness _brightness = Brightness.dark;
     final Color _accentColor =
         _brightness == Brightness.dark ? Colors.white : Colors.black;
-    final Brightness _brightnessAccentColor =
-        ThemeData.estimateBrightnessForColor(_darkAccentColor);
     switch (dark) {
       case 0:
         _darkTheme = ThemeData(
@@ -657,36 +670,30 @@ class ThemeImpl extends ThemeRepository {
           primaryColorLight: Colors.blueGrey[800],
           primaryColorDark: Colors.blueGrey[900],
           appBarTheme: AppBarTheme(
-            brightness: _brightness,
+            systemOverlayStyle: _brightness == Brightness.dark
+              ? SystemUiOverlayStyle.light
+              : SystemUiOverlayStyle.dark,
             elevation: 0.0,
             color: Colors.blueGrey[900],
-            textTheme: _lightAccentTextTheme.apply(),
-            iconTheme: const IconThemeData(color: Colors.white70),
+            iconTheme: const IconThemeData(color: Colors.white70), toolbarTextStyle: _lightAccentTextTheme.apply().bodyMedium, titleTextStyle: _lightAccentTextTheme.apply().titleLarge,
           ),
           brightness: Brightness.dark,
           unselectedWidgetColor: Colors.white70,
           dividerColor: Colors.blueGrey[700],
           scaffoldBackgroundColor: Colors.blueGrey[900],
-          accentColor: _darkAccentColor,
-          accentIconTheme: IconThemeData(color: _accentColor),
-          accentColorBrightness: _brightness,
           primaryIconTheme: const IconThemeData(color: Colors.white70),
           iconTheme: const IconThemeData(color: Colors.white70),
           floatingActionButtonTheme: FloatingActionButtonThemeData(
             foregroundColor: _accentColor,
             backgroundColor: _darkAccentColor,
           ),
-          errorColor: Color.fromRGBO(207, 102, 121, 1),
           canvasColor: Colors.blueGrey[900],
-          primarySwatch: Colors.blueGrey,
           primaryColor: Colors.blueGrey[900],
           textSelectionTheme: TextSelectionThemeData(
             cursorColor: Colors.white10,
             selectionHandleColor: _darkAccentColor,
             selectionColor: _darkAccentColor.withOpacity(0.5),
           ),
-          backgroundColor: Colors.blueGrey[800],
-          selectedRowColor: Colors.blueGrey[700],
           cardColor: Colors.blueGrey[800],
           cardTheme: CardTheme(
             color: Colors.blueGrey[800],
@@ -697,9 +704,6 @@ class ThemeImpl extends ThemeRepository {
           ),
           textTheme: _lightAccentTextTheme,
           primaryTextTheme: _lightAccentTextTheme,
-          accentTextTheme: _brightness == Brightness.dark
-              ? _lightAccentTextTheme
-              : _darkAccentTextTheme,
           bottomAppBarTheme:
               BottomAppBarTheme(color: Colors.transparent, elevation: 0.0),
           dialogTheme: DialogTheme(
@@ -768,13 +772,13 @@ class ThemeImpl extends ThemeRepository {
                     return 8.0;
                   }),
                   backgroundColor:
-                      MaterialStateProperty.resolveWith<Color>((states) {
+                      MaterialStateProperty.resolveWith<Color?>((states) {
                     if (states.contains(MaterialState.disabled)) return null;
-                    return Colors.blueGrey[800];
+                    return Colors.blueGrey.shade800;
                   }),
                   // backgroundColor: MaterialStateProperty.all<Color>(Colors.blueGrey[800]),
-                  foregroundColor: MaterialStateProperty.all<Color>(
-                      _lightAccentTextTheme.headline1.color),
+                  foregroundColor: MaterialStateProperty.all<Color?>(
+                      _lightAccentTextTheme.displayLarge?.color),
                   //textStyle: MaterialStateProperty.all<TextStyle>(_lightAccentTextTheme.bodyText1),
                   overlayColor: MaterialStateProperty.all<Color>(
                       _darkAccentColor.withOpacity(0.24)),
@@ -804,10 +808,10 @@ class ThemeImpl extends ThemeRepository {
               secondarySelectedColor: _darkAccentColor.withAlpha(0xFC),
               labelPadding: const EdgeInsets.symmetric(horizontal: 4.0),
               padding: const EdgeInsets.all(4.0),
-              labelStyle: _lightAccentTextTheme.bodyText2,
+              labelStyle: _lightAccentTextTheme.bodyMedium,
               secondaryLabelStyle: _brightness == Brightness.dark
-                  ? _lightAccentTextTheme.bodyText2
-                  : _darkAccentTextTheme.bodyText2,
+                  ? _lightAccentTextTheme.bodyMedium
+                  : _darkAccentTextTheme.bodyMedium,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8)),
               brightness: _brightness),
@@ -817,21 +821,42 @@ class ThemeImpl extends ThemeRepository {
               elevation: 8.0,
               groupAlignment: 1.0,
               selectedIconTheme: IconThemeData(color: _darkAccentColor),
-              selectedLabelTextStyle: _lightAccentTextTheme.bodyText2
-                  .apply(color: _darkAccentColor),
+              selectedLabelTextStyle: _lightAccentTextTheme.bodyMedium
+                  ?.apply(color: _darkAccentColor),
               unselectedIconTheme: const IconThemeData(color: Colors.white70),
-              unselectedLabelTextStyle: _lightAccentTextTheme.bodyText2),
+              unselectedLabelTextStyle: _lightAccentTextTheme.bodyMedium),
           sliderTheme: SliderThemeData(
             valueIndicatorColor: Color.alphaBlend(
                 _darkAccentColor.withOpacity(0.36),
                 _darkAccentColor.withAlpha(0xFC)),
             valueIndicatorTextStyle: _brightness == Brightness.dark
-                ? _lightAccentTextTheme.bodyText1
-                : _darkAccentTextTheme.bodyText1,
+                ? _lightAccentTextTheme.bodyLarge
+                : _darkAccentTextTheme.bodyLarge,
           ),
-          toggleableActiveColor: _darkAccentColor,
-          indicatorColor: Colors.blueGrey[700],
-          buttonColor: Colors.blueGrey[800],
+          indicatorColor: Colors.blueGrey[700], checkboxTheme: CheckboxThemeData(
+ fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
+ return null;
+ }),
+ ), radioTheme: RadioThemeData(
+ fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
+ return null;
+ }),
+ ), switchTheme: SwitchThemeData(
+ thumbColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
+ return null;
+ }),
+ trackColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
+ return null;
+ }),
+ ), colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey).copyWith(secondary: _darkAccentColor).copyWith(background: Colors.blueGrey[800]).copyWith(error: Color.fromRGBO(207, 102, 121, 1)),
         );
         break;
       case 1:
@@ -845,11 +870,12 @@ class ThemeImpl extends ThemeRepository {
           primaryColorLight: Colors.grey[850],
           primaryColorDark: Colors.grey[900],
           appBarTheme: AppBarTheme(
-            brightness: _brightness,
+            systemOverlayStyle: _brightness == Brightness.dark
+              ? SystemUiOverlayStyle.light
+              : SystemUiOverlayStyle.dark,
             elevation: 0.0,
             color: Colors.grey[900],
-            textTheme: _lightAccentTextTheme,
-            iconTheme: const IconThemeData(color: Colors.white70),
+            iconTheme: const IconThemeData(color: Colors.white70), toolbarTextStyle: _lightAccentTextTheme.bodyMedium, titleTextStyle: _lightAccentTextTheme.titleLarge,
           ),
           brightness: Brightness.dark,
           unselectedWidgetColor: Colors.white70,
@@ -860,8 +886,6 @@ class ThemeImpl extends ThemeRepository {
             thickness: 1.0,
           ),
           scaffoldBackgroundColor: Colors.grey[900],
-          accentColor: _darkAccentColor,
-          accentIconTheme: IconThemeData(color: _accentColor),
           //accentColorBrightness: _brightnessAccentColor,
           primaryIconTheme: const IconThemeData(color: Colors.white70),
           iconTheme: const IconThemeData(color: Colors.white70),
@@ -869,17 +893,13 @@ class ThemeImpl extends ThemeRepository {
             foregroundColor: _accentColor,
             backgroundColor: _darkAccentColor,
           ),
-          errorColor: Color.fromRGBO(207, 102, 121, 1),
           canvasColor: Colors.grey[900],
-          primarySwatch: Colors.grey,
           primaryColor: Colors.grey[900],
           textSelectionTheme: TextSelectionThemeData(
             cursorColor: Colors.white10,
             selectionHandleColor: _darkAccentColor,
             selectionColor: _darkAccentColor.withOpacity(0.5),
           ),
-          backgroundColor: Colors.grey[850],
-          selectedRowColor: Colors.grey[800],
           cardColor: Colors.grey[850],
           cardTheme: CardTheme(
             color: Colors.grey[850],
@@ -890,14 +910,6 @@ class ThemeImpl extends ThemeRepository {
           ),
           textTheme: _lightAccentTextTheme,
           primaryTextTheme: _lightAccentTextTheme,
-          accentTextTheme: _lightAccentTextTheme.apply(
-            displayColor: _brightnessAccentColor == Brightness.dark
-                ? Colors.white
-                : Colors.black,
-            bodyColor: _brightnessAccentColor == Brightness.dark
-                ? Colors.white
-                : Colors.black,
-          ),
           bottomAppBarTheme:
               BottomAppBarTheme(color: Colors.transparent, elevation: 0.0),
           dialogTheme: DialogTheme(
@@ -966,13 +978,13 @@ class ThemeImpl extends ThemeRepository {
                     return 8.0;
                   }),
                   backgroundColor:
-                      MaterialStateProperty.resolveWith<Color>((states) {
+                      MaterialStateProperty.resolveWith<Color?>((states) {
                     if (states.contains(MaterialState.disabled)) return null;
                     return Colors.grey[800];
                   }),
                   // backgroundColor: MaterialStateProperty.all<Color>(Colors.blueGrey[800]),
-                  foregroundColor: MaterialStateProperty.all<Color>(
-                      _lightAccentTextTheme.headline1.color),
+                  foregroundColor: MaterialStateProperty.all<Color?>(
+                      _lightAccentTextTheme.displayLarge?.color),
                   //textStyle: MaterialStateProperty.all<TextStyle>(_lightAccentTextTheme.bodyText1),
                   overlayColor: MaterialStateProperty.all<Color>(
                       _darkAccentColor.withOpacity(0.24)),
@@ -1004,10 +1016,10 @@ class ThemeImpl extends ThemeRepository {
               secondarySelectedColor: _darkAccentColor.withAlpha(0xFC),
               labelPadding: const EdgeInsets.symmetric(horizontal: 4.0),
               padding: const EdgeInsets.all(4.0),
-              labelStyle: _lightAccentTextTheme.bodyText2,
+              labelStyle: _lightAccentTextTheme.bodyMedium,
               secondaryLabelStyle: _brightness == Brightness.dark
-                  ? _lightAccentTextTheme.bodyText2
-                  : _darkAccentTextTheme.bodyText2,
+                  ? _lightAccentTextTheme.bodyMedium
+                  : _darkAccentTextTheme.bodyMedium,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8)),
               brightness: _brightness),
@@ -1018,20 +1030,41 @@ class ThemeImpl extends ThemeRepository {
               groupAlignment: 1.0,
               selectedIconTheme: IconThemeData(color: _darkAccentColor),
               unselectedIconTheme: const IconThemeData(color: Colors.white70),
-              selectedLabelTextStyle: _lightAccentTextTheme.bodyText2
-                  .apply(color: _darkAccentColor),
-              unselectedLabelTextStyle: _lightAccentTextTheme.bodyText2),
+              selectedLabelTextStyle: _lightAccentTextTheme.bodyMedium
+                  ?.apply(color: _darkAccentColor),
+              unselectedLabelTextStyle: _lightAccentTextTheme.bodyMedium),
           sliderTheme: SliderThemeData(
             valueIndicatorColor: Color.alphaBlend(
                 _darkAccentColor.withOpacity(0.36),
                 _darkAccentColor.withAlpha(0xFC)),
             valueIndicatorTextStyle: _brightness == Brightness.dark
-                ? _lightAccentTextTheme.bodyText1
-                : _darkAccentTextTheme.bodyText1,
+                ? _lightAccentTextTheme.bodyLarge
+                : _darkAccentTextTheme.bodyLarge,
           ),
-          toggleableActiveColor: _darkAccentColor,
-          indicatorColor: Colors.grey[700],
-          buttonColor: Colors.grey[850],
+          indicatorColor: Colors.grey[700], checkboxTheme: CheckboxThemeData(
+ fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
+ return null;
+ }),
+ ), radioTheme: RadioThemeData(
+ fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
+ return null;
+ }),
+ ), switchTheme: SwitchThemeData(
+ thumbColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
+ return null;
+ }),
+ trackColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
+ return null;
+ }),
+ ), colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.grey).copyWith(secondary: _darkAccentColor).copyWith(background: Colors.grey[850]).copyWith(error: Color.fromRGBO(207, 102, 121, 1)),
         );
         break;
       case 2:
@@ -1047,50 +1080,41 @@ class ThemeImpl extends ThemeRepository {
               Colors.transparent, //_darkAccentColor.withOpacity(0.55),
           primaryColorDark: _darkAccentColor,
           appBarTheme: AppBarTheme(
-            brightness: _brightness,
+            systemOverlayStyle: _brightness == Brightness.dark
+              ? SystemUiOverlayStyle.light
+              : SystemUiOverlayStyle.dark,
             elevation: 0.0,
             color: Colors.black,
-            textTheme: _lightAccentTextTheme.apply(),
-            iconTheme: const IconThemeData(color: Colors.white70),
+            iconTheme: const IconThemeData(color: Colors.white70), toolbarTextStyle: _lightAccentTextTheme.apply().bodyMedium, titleTextStyle: _lightAccentTextTheme.apply().titleLarge,
           ),
           brightness: Brightness.dark,
           unselectedWidgetColor: Colors.white70,
           dividerColor: Colors.grey[800],
           scaffoldBackgroundColor: Colors.black,
-          accentColor: _darkAccentColor,
-          accentIconTheme: IconThemeData(color: _accentColor),
-          accentColorBrightness: _brightness,
           primaryIconTheme: const IconThemeData(color: Colors.white70),
           iconTheme: const IconThemeData(color: Colors.white70),
           floatingActionButtonTheme: FloatingActionButtonThemeData(
             foregroundColor: _accentColor,
             backgroundColor: _darkAccentColor,
           ),
-          errorColor: Color.fromRGBO(207, 102, 121, 1),
           canvasColor: Colors.black,
-          primarySwatch: Colors.blueGrey,
           primaryColor: Colors.grey[900],
           textSelectionTheme: TextSelectionThemeData(
             cursorColor: Colors.white10,
             selectionHandleColor: _darkAccentColor,
             selectionColor: _darkAccentColor.withOpacity(0.5),
           ),
-          backgroundColor: Colors.black,
-          selectedRowColor: Colors.grey[900],
           cardColor: Colors.black,
           cardTheme: CardTheme(
             color: Colors.transparent,
             margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
-                side: BorderSide(color: Colors.grey[900], width: 2)),
+                side: BorderSide(color: Colors.grey.shade900, width: 2)),
             elevation: 0,
           ),
           textTheme: _lightAccentTextTheme,
           primaryTextTheme: _lightAccentTextTheme,
-          accentTextTheme: _brightness == Brightness.dark
-              ? _lightAccentTextTheme
-              : _darkAccentTextTheme,
           bottomAppBarTheme:
               BottomAppBarTheme(color: Colors.transparent, elevation: 0.0),
           dialogTheme: DialogTheme(
@@ -1139,10 +1163,10 @@ class ThemeImpl extends ThemeRepository {
               secondarySelectedColor: _darkAccentColor.withAlpha(0xFC),
               labelPadding: const EdgeInsets.symmetric(horizontal: 4.0),
               padding: const EdgeInsets.all(4.0),
-              labelStyle: _lightAccentTextTheme.bodyText2,
+              labelStyle: _lightAccentTextTheme.bodyMedium,
               secondaryLabelStyle: _brightness == Brightness.dark
-                  ? _lightAccentTextTheme.bodyText2
-                  : _darkAccentTextTheme.bodyText2,
+                  ? _lightAccentTextTheme.bodyMedium
+                  : _darkAccentTextTheme.bodyMedium,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8)),
               brightness: _brightness),
@@ -1151,20 +1175,41 @@ class ThemeImpl extends ThemeRepository {
               backgroundColor: Colors.transparent,
               groupAlignment: 1.0,
               selectedIconTheme: IconThemeData(color: _darkAccentColor),
-              selectedLabelTextStyle: _lightAccentTextTheme.bodyText2
-                  .apply(color: _darkAccentColor),
+              selectedLabelTextStyle: _lightAccentTextTheme.bodyMedium
+                  ?.apply(color: _darkAccentColor),
               unselectedIconTheme: const IconThemeData(color: Colors.white70),
-              unselectedLabelTextStyle: _lightAccentTextTheme.bodyText2),
+              unselectedLabelTextStyle: _lightAccentTextTheme.bodyMedium),
           sliderTheme: SliderThemeData(
             valueIndicatorColor: Color.alphaBlend(
                 _darkAccentColor.withOpacity(0.36),
                 _darkAccentColor.withAlpha(0xFC)),
             valueIndicatorTextStyle: _brightness == Brightness.dark
-                ? _lightAccentTextTheme.bodyText1
-                : _darkAccentTextTheme.bodyText1,
-          ),
-          toggleableActiveColor: _darkAccentColor,
-          buttonColor: Colors.grey[900],
+                ? _lightAccentTextTheme.bodyLarge
+                : _darkAccentTextTheme.bodyLarge,
+          ), checkboxTheme: CheckboxThemeData(
+ fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
+ return null;
+ }),
+ ), radioTheme: RadioThemeData(
+ fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
+ return null;
+ }),
+ ), switchTheme: SwitchThemeData(
+ thumbColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
+ return null;
+ }),
+ trackColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
+ return null;
+ }),
+ ), colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey).copyWith(secondary: _darkAccentColor).copyWith(background: Colors.black).copyWith(error: Color.fromRGBO(207, 102, 121, 1)),
         );
         break;
     }

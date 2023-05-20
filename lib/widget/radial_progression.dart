@@ -8,7 +8,7 @@ const double _strokePaint = 3.0;
 class AnimatedRadial extends StatefulWidget {
   final String percentage;
 
-  const AnimatedRadial({Key key, @required this.percentage}) : super(key: key);
+  const AnimatedRadial({Key? key, @required this.percentage}) : super(key: key);
 
   @override
   _AnimatedRadialState createState() => _AnimatedRadialState();
@@ -67,7 +67,7 @@ class _AnimatedRadialState extends State<AnimatedRadial>
           padding: const EdgeInsets.all(24.0),
           child: Text(
             _text,
-            style: Theme.of(context).textTheme.button,
+            style: Theme.of(context).textTheme.labelLarge,
           ),
         ),
       ),

@@ -1,4 +1,3 @@
-import 'package:dio_http_cache_lts/dio_http_cache_lts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/service/cheap_shark_retrofit.dart';
 import 'package:gameshop_deals/model/deal.dart';
