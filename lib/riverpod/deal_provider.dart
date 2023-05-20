@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gameshop_deals/service/cheap_shark_retrofit.dart';
 import 'package:gameshop_deals/model/deal.dart';
+/* import 'package:gameshop_deals/service/cheap_shark_retrofit.dart';
 import 'package:gameshop_deals/model/store.dart';
 import 'package:dio/dio.dart';
 import 'package:gameshop_deals/riverpod/filter_provider.dart';
@@ -8,10 +8,10 @@ import 'package:gameshop_deals/riverpod/repository_provider.dart';
 import 'package:gameshop_deals/model/game_lookup.dart';
 import 'package:gameshop_deals/model/filter.dart';
 import 'package:gameshop_deals/model/pagination_model.dart';
-import 'package:collection/collection.dart';
+import 'package:collection/collection.dart'; */
 
 final singleDeal = Provider<Deal>((_) => throw UnimplementedError());
-
+/* 
 final storesProvider = FutureProvider.autoDispose<List<Store>>((ref) async {
   final cancelToken = CancelToken();
   final DioCacheManager dioCacheManager =
@@ -135,3 +135,4 @@ class DealListPagination extends StateNotifier<AsyncValue<List<Deal>>>
     return _lastPage;
   }
 }
+ */

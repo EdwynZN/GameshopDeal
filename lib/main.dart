@@ -9,15 +9,14 @@ import 'package:gameshop_deals/model/game_lookup.dart';
 import 'package:gameshop_deals/model/price_alert.dart';
 import 'package:gameshop_deals/model/sort_by_enum.dart';
 import 'package:gameshop_deals/model/preference.dart';
-import 'package:gameshop_deals/widget/route_transitions.dart';
-import 'package:gameshop_deals/utils/routes_constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/riverpod/theme_provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:gameshop_deals/model/theme_mode_adapter_enum.dart';
 import 'package:gameshop_deals/model/view_enum.dart' as viewEnum;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:gameshop_deals/utils/preferences_constants.dart' show preferenceHiveBox;
+import 'package:gameshop_deals/utils/preferences_constants.dart'
+    show preferenceHiveBox;
 import 'package:flutter_cache_manager/src/storage/cache_object.dart';
 
 class Logger extends ProviderObserver {
@@ -27,7 +26,8 @@ class Logger extends ProviderObserver {
   }
 
   @override
-  void didUpdateProvider(ProviderBase provider, Object? newValue, Object? old, ProviderContainer container) {
+  void didUpdateProvider(ProviderBase provider, Object? newValue, Object? old,
+      ProviderContainer container) {
     print('''
 {
   "provider": "${provider.name ?? provider.runtimeType}",
@@ -36,7 +36,8 @@ class Logger extends ProviderObserver {
   }
 
   @override
-  void didAddProvider(ProviderBase provider, Object? value, ProviderContainer container) {
+  void didAddProvider(
+      ProviderBase provider, Object? value, ProviderContainer container) {
     print('''
     {
       "providerAdded": "${provider.name ?? provider.runtimeType}",
@@ -100,8 +101,14 @@ class GameShop extends ConsumerWidget {
         darkTheme: themeData.darkTheme,
         theme: themeData.lightTheme,
         themeMode: themeMode,
-        onGenerateRoute: Routes.getRoute,
-        initialRoute: homeRoute,
+        builder: (context, child) {
+          return Scaffold(
+            appBar: AppBar(),
+            body: Center(
+              child: Text('Texto'),
+            ),
+          );
+        },
       ),
     );
   }
