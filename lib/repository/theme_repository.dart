@@ -877,7 +877,6 @@ class ThemeImpl extends ThemeRepository {
             color: Colors.grey[900],
             iconTheme: const IconThemeData(color: Colors.white70), toolbarTextStyle: _lightAccentTextTheme.bodyMedium, titleTextStyle: _lightAccentTextTheme.titleLarge,
           ),
-          brightness: Brightness.dark,
           unselectedWidgetColor: Colors.white70,
           dividerColor: _darkAccentColor.withOpacity(0.75),
           dividerTheme: DividerThemeData(
@@ -1087,7 +1086,6 @@ class ThemeImpl extends ThemeRepository {
             color: Colors.black,
             iconTheme: const IconThemeData(color: Colors.white70), toolbarTextStyle: _lightAccentTextTheme.apply().bodyMedium, titleTextStyle: _lightAccentTextTheme.apply().titleLarge,
           ),
-          brightness: Brightness.dark,
           unselectedWidgetColor: Colors.white70,
           dividerColor: Colors.grey[800],
           scaffoldBackgroundColor: Colors.black,
