@@ -15,7 +15,7 @@ description: Browse through different shops and find the best deals of the games
 version: 1.0.0+2
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -28,14 +28,13 @@ dependencies:
   dio: ^4.0.6
   connectivity_plus: ^3.0.2
   cached_network_image: ^3.2.3
-  intl: ^0.17.0
   dio_http_cache_lts: ^0.4.1
   flutter_riverpod: ^1.0.0
   freezed_annotation: ^2.2.0
   json_serializable: ^6.5.4
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  pull_to_refresh: ^1.6.4
+  pull_to_refresh: ^2.0.0
 
 dev_dependencies:
   hive_generator: ^2.0.0
