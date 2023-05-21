@@ -24,10 +24,11 @@ class Filter with _$Filter {
     @HiveField(3)
     @Default(false)
     @JsonKey(
-        name: 'desc',
-        defaultValue: false,
-        toJson: _boolToInt,
-        fromJson: _intToBool)
+      name: 'desc',
+      defaultValue: false,
+      toJson: _boolToInt,
+      fromJson: _intToBool,    
+    )
     bool isAscendant,
     @HiveField(4) @Default(0) @JsonKey(defaultValue: 0) int lowerPrice,
     @HiveField(5) @Default(50) @JsonKey(defaultValue: 0) int upperPrice,
@@ -40,10 +41,11 @@ class Filter with _$Filter {
     @HiveField(9)
     @Default(false)
     @JsonKey(
-        name: 'AAA',
-        defaultValue: false,
-        toJson: _boolToInt,
-        fromJson: _intToBool)
+      name: 'AAA',
+      defaultValue: false,
+      toJson: _boolToInt,
+      fromJson: _intToBool,
+    )
     bool onlyRetail,
     @HiveField(10)
     @Default(false)
@@ -60,7 +62,7 @@ class Filter with _$Filter {
     bool exact,
   }) = _Filter;
 
-  Map<String, dynamic> get parameters => <String, dynamic>{
+  late Map<String, dynamic> parameters = <String, dynamic>{
         if (storeId.isNotEmpty) 'storeID': storeId.join(','),
         if (sortBy != SortBy.Deal_Rating) 'sortBy': describeEnum(sortBy),
         if (pageSize != 60) 'pageSize': pageSize,

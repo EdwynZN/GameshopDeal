@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/model/price_alert.dart';
+import 'package:gameshop_deals/service/cheap_shark_service.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:hive/hive.dart';
 import 'package:dio/dio.dart';
-import 'package:gameshop_deals/service/cheap_shark_retrofit.dart';
 import 'package:gameshop_deals/model/game_lookup.dart';
 import 'package:gameshop_deals/riverpod/repository_provider.dart';
 import 'package:gameshop_deals/model/pagination_model.dart';
@@ -21,7 +21,7 @@ final savedBoxProvider = FutureProvider<LazyBox<PriceAlert>>((ref) async {
   else
     lazyBox = await Hive.openLazyBox<PriceAlert>(alertHiveBox);
 
-  ref.onDispose(() => lazyBox.close());
+  ref.onDispose(lazyBox.close);
 
   return lazyBox;
 }, name: 'Saved Box Provider');
@@ -37,23 +37,23 @@ final savedStreamProvider =
 final savedGamesPageProvider =
     StateNotifierProvider.autoDispose<GamesPagination, AsyncValue<Map<String, GameLookup>>>((ref) {
   final CancelToken cancelToken = CancelToken();
-  final DiscountApi api = ref.watch(cheapSharkProvider);
+  final CheapSharkService api = ref.watch(cheapSharkProvider);
 
   ref.onDispose(cancelToken.cancel);
 
   return ref.watch(savedBoxProvider).whenData((cb) {
-    final list = cb.keys.toList();
-    final joinedGames = <String>[];
+    final list = cb.keys
+      .toList()
+      .cast<int>();
+    final joinedGames = <List<int>>[];
     for (int i = 0; i < list.length; i += _kMaximumGamesId) {
       int end = i + _kMaximumGamesId;
       if (end > list.length) end -= end - list.length;
-      joinedGames.add(
-        list.getRange(i, end).join(','),
-      );
+      joinedGames.add(list.getRange(i, end).toList());
     }
     return joinedGames;
   }).maybeWhen(
-    orElse: () => GamesPagination(List<String>.empty(), api, cancelToken),
+    orElse: () => GamesPagination(List<List<int>>.empty(), api, cancelToken),
     data: (list) => GamesPagination(list, api, cancelToken),
   );
 }, name: 'dealList');
@@ -80,11 +80,11 @@ final gameKeysProvider = Provider.autoDispose<List<String>>((ref) {
 
 class GamesPagination extends StateNotifier<AsyncValue<Map<String, GameLookup>>>
     implements Pagination<Map<String, GameLookup>> {
-  final List<String> _gamesId;
-  final DiscountApi _api;
+  final List<List<int>> _pagesGames;
+  final CheapSharkService _cheapSharkService;
   final CancelToken cancelToken;
-  GamesPagination(this._gamesId, this._api, this.cancelToken)
-      : super(_gamesId.isEmpty
+  GamesPagination(this._pagesGames, this._cheapSharkService, this.cancelToken)
+      : super(_pagesGames.isEmpty
             ? const AsyncData(const <String, GameLookup>{})
             : const AsyncValue.loading()) {
     if (state is AsyncLoading)
@@ -100,7 +100,7 @@ class GamesPagination extends StateNotifier<AsyncValue<Map<String, GameLookup>>>
 
   @override
   Future<Map<String, GameLookup>> fetchPage() =>
-      _api.getGamesByMultipleId(_gamesId[_page], cancelToken);
+      _cheapSharkService.gamesById(_pagesGames[_page], cancelToken: cancelToken);
 
   @override
   Future<void> retrieveNextPage() async {
@@ -120,7 +120,7 @@ class GamesPagination extends StateNotifier<AsyncValue<Map<String, GameLookup>>>
   bool get isLastPage {
     if (_lastPage)
       return _lastPage;
-    else if (state is AsyncData && page >= (_gamesId.length - 1))
+    else if (state is AsyncData && page >= (_pagesGames.length - 1))
       _lastPage = true;
     return _lastPage;
   }

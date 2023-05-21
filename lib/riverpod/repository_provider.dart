@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gameshop_deals/service/cheap_shark_retrofit.dart';
 import 'package:dio/dio.dart';
+import 'package:gameshop_deals/service/cheap_shark_service.dart';
 
 final dioProvider = Provider.autoDispose<Dio>((ref) {
   final Dio dio = Dio(
@@ -14,5 +14,7 @@ final dioProvider = Provider.autoDispose<Dio>((ref) {
   return dio;
 }, name: 'Dio');
 
-final cheapSharkProvider = Provider.autoDispose<DiscountApi>((ref) =>
-  DiscountApi(ref.watch(dioProvider)), name: 'CheapShark API');
+final cheapSharkProvider = Provider.autoDispose<CheapSharkService>(
+  (ref) => CheapSharkService(ref.watch(dioProvider)),
+  name: 'CheapShark API',
+);
