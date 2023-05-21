@@ -9,5 +9,5 @@ final preferenceProvider =
       .watch(hivePreferencesProvider)
       .get(preferenceKey, defaultValue: const Preference());
 
-  return HiveNotifier<Preference>(ref.read, preferenceKey, mode);
+  return HiveNotifier<Preference>(ref, preferenceKey, mode);
 }, name: 'Preference Provider');

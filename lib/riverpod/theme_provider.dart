@@ -9,11 +9,11 @@ final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
     .watch(hivePreferencesProvider)
     .get(themeModeKey, defaultValue: ThemeMode.system);
 
-  return ThemeNotifier(ref.read, themeModeKey, mode);
+  return ThemeNotifier(ref, themeModeKey, mode);
 }, name: 'ThemeMode Provider');
 
 class ThemeNotifier extends HiveNotifier<ThemeMode> {
-  ThemeNotifier(Reader read, String key, ThemeMode mode) : super(read, key, mode);
+  ThemeNotifier(Ref ref, String key, ThemeMode mode) : super(ref, key, mode);
 
   final ThemeRepository _theme = ThemeImpl();
 

@@ -8,5 +8,5 @@ final displayProvider = StateNotifierProvider<HiveNotifier<View>, View>((ref) {
       .watch(hivePreferencesProvider)
       .get(viewKey, defaultValue: View.values.first);
 
-  return HiveNotifier<View>(ref.read, viewKey, mode);
+  return HiveNotifier<View>(ref, viewKey, mode);
 }, name: 'View Provider');

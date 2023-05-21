@@ -20,14 +20,14 @@ final hivePreferencesProvider = Provider<Box<dynamic>>(
 );
 
 class HiveNotifier<T extends Object> extends StateNotifier<T> {
-  HiveNotifier(this._read, this._key, super.mode);
+  HiveNotifier(this._ref, this._key, super.mode);
 
-  final Reader _read;
+  final Ref _ref;
   final String _key;
 
   Future<void> changeState(T mode) async {
     if (mode != state) {
-      await _read(hivePreferencesProvider).put(_key, mode);
+      await _ref.read(hivePreferencesProvider).put(_key, mode);
       state = mode;
     }
   }
