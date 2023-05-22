@@ -9,6 +9,7 @@ class RadioPopupMenuItem<T extends Object> extends PopupMenuItem<T> {
     bool enabled = true,
     required this.provider,
     Widget? child,
+    super.onTap,
   }) : super(
           key: key,
           value: value,
@@ -27,7 +28,6 @@ class RadioPopupMenuItem<T extends Object> extends PopupMenuItem<T> {
 
 class _RadioPopupMenuItemState<T extends Object>
     extends PopupMenuItemState<T, RadioPopupMenuItem<T>> {
-
   @override
   Widget buildChild() {
     return ListTileTheme(
@@ -43,12 +43,7 @@ class _RadioPopupMenuItemState<T extends Object>
               value: widget.value,
               groupValue: groupValue,
               onChanged: widget.enabled
-                  ? (T? newValue) {
-                      if (newValue != null) {
-                        ref.read(widget.provider.notifier).changeState(newValue);
-                      }
-                      super.handleTap();
-                    }
+                  ? (T? newValue) => super.handleTap()
                   : null,
             );
           },

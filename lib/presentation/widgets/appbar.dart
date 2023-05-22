@@ -219,7 +219,6 @@ class __MoreSettingsState extends ConsumerState<_MoreSettings> {
     );
   }
 
-  // ignore: unused_element
   Future<void> _postViewMenu() {
     final double size = Theme.of(context).appBarTheme.iconTheme?.size ?? 24;
     Offset offset =
@@ -238,6 +237,7 @@ class __MoreSettingsState extends ConsumerState<_MoreSettings> {
             child: Text(translate.choose_view(view)),
             value: view,
             provider: displayProvider,
+            onTap: () => ref.read(displayProvider.notifier).changeState(view),
           ),
       ],
     );
@@ -265,6 +265,7 @@ class __MoreSettingsState extends ConsumerState<_MoreSettings> {
             ),
             value: mode,
             provider: themeProvider,
+            onTap: () => ref.read(themeProvider.notifier).changeState(mode)
           ),
       ],
     );
