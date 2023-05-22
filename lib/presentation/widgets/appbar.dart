@@ -41,10 +41,10 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         },
       ),
       actions: const <Widget>[
-        const _SavedGamesButton(),
-        const _SearchButton(),
-        const _FilterButton(),
-        const _MoreSettings(),
+        _SavedGamesButton(),
+        _SearchButton(),
+        _FilterButton(),
+        _MoreSettings(),
       ],
     );
   }
@@ -75,9 +75,9 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
         },
       ),
       actions: const <Widget>[
-        const _SearchButton(),
-        const _FilterButton(),
-        const _MoreSettings(),
+        _SearchButton(),
+        _FilterButton(),
+        _MoreSettings(),
       ],
     );
   }
@@ -344,9 +344,7 @@ class _FilterButton extends StatelessWidget {
     final S translate = S.of(context);
     return IconButton(
       icon: const Icon(Icons.filter_list),
-      onPressed: () => Scaffold.of(context).hasEndDrawer
-          ? Scaffold.of(context).openEndDrawer()
-          : Navigator.pushNamed(context, filterRoute),
+      onPressed: () => Scaffold.of(context).openEndDrawer(),
       tooltip: translate.filter_tooltip,
     );
   }

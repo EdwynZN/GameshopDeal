@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 //import 'package:gameshop_deals/model/view_format_enum.dart';
 //import 'package:gameshop_deals/provider/display_provider.dart';
 import 'package:gameshop_deals/presentation/widgets/appbar.dart';
+import 'package:gameshop_deals/presentation/widgets/filter/filter_drawer.dart';
 import 'package:gameshop_deals/presentation/widgets/principal_mixin_screen.dart';
 import 'package:gameshop_deals/presentation/widgets/view_deals/deal_list_view.dart';
 import 'package:gameshop_deals/provider/deal_provider.dart';
@@ -62,7 +63,7 @@ class _HomeState extends ConsumerState<Home> with PrincipalState {
 
     return Scaffold(
       appBar: widget.appBar,
-      endDrawer: null,
+      endDrawer: const FilterDrawer(),
       body: PrimaryScrollController(
         key: PageStorageKey('ListView${widget.title}'),
         controller: scrollController,
