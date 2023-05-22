@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
-import 'package:gameshop_deals/riverpod/theme_provider.dart';
+import 'package:gameshop_deals/provider/theme_provider.dart';
 import 'package:gameshop_deals/service/hive_init.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 

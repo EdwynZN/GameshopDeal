@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gameshop_deals/riverpod/hive_preferences_provider.dart';
+import 'package:gameshop_deals/provider/hive_preferences_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/repository/theme_repository.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';

@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/model/deal.dart';
 import 'package:gameshop_deals/model/filter.dart';
 import 'package:gameshop_deals/model/pagination_model.dart';
-import 'package:gameshop_deals/riverpod/filter_provider.dart';
-import 'package:gameshop_deals/riverpod/repository_provider.dart';
+import 'package:gameshop_deals/provider/filter_provider.dart';
+import 'package:gameshop_deals/provider/repository_provider.dart';
 import 'package:gameshop_deals/service/cheap_shark_service.dart';
 
 final singleDeal = Provider<Deal>((_) => throw UnimplementedError());

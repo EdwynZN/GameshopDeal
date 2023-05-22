@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:gameshop_deals/model/deal.dart';
 import 'package:gameshop_deals/model/game_lookup.dart';
-import 'package:gameshop_deals/riverpod/repository_provider.dart';
+import 'package:gameshop_deals/provider/repository_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'game_provider.g.dart';

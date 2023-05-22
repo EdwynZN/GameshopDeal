@@ -5,7 +5,7 @@ import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:hive/hive.dart';
 import 'package:dio/dio.dart';
 import 'package:gameshop_deals/model/game_lookup.dart';
-import 'package:gameshop_deals/riverpod/repository_provider.dart';
+import 'package:gameshop_deals/provider/repository_provider.dart';
 import 'package:gameshop_deals/model/pagination_model.dart';
 
 /// Maximum of 25 games id as documented by CheapShark API

@@ -12,7 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:gameshop_deals/main.dart';
 import 'package:gameshop_deals/model/filter.dart';
-import 'package:gameshop_deals/riverpod/repository_provider.dart';
+import 'package:gameshop_deals/provider/repository_provider.dart';
 import 'package:mockito/mockito.dart';
 import 'package:hive/hive.dart';
 

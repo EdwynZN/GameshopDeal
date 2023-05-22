@@ -1,4 +1,4 @@
-import 'package:gameshop_deals/riverpod/hive_preferences_provider.dart';
+import 'package:gameshop_deals/provider/hive_preferences_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/model/preference.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
