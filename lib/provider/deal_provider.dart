@@ -19,27 +19,13 @@ final dealPageProvider = StateNotifierProvider.autoDispose
   return DealListPagination(filter, api, cancelToken);
 }, name: 'dealList');
 
-final dealsProvider =
-    Provider.autoDispose.family<List<Deal>, String>((ref, title) {
-  final notifier = const <Deal>[];
-
-  final dealList = ref.watch(dealPageProvider(title).notifier);
-  final pageListener = dealList.addListener((value) {
-    if (value.asData != null)
-      ref.state = List<Deal>.from(ref.state)..addAll(value.asData!.value);
-  });
-  ref.onDispose(pageListener);
-
-  return notifier;
-});
-
 class DealListPagination extends StateNotifier<AsyncValue<List<Deal>>>
     implements Pagination<List<Deal>> {
   final Filter filter;
   final CheapSharkService _cheapSharkService;
   final CancelToken cancelToken;
   DealListPagination(this.filter, this._cheapSharkService, this.cancelToken)
-      : super(AsyncValue.loading()) {
+      : super(const AsyncValue.loading()) {
     _fetch();
   }
 
@@ -52,25 +38,31 @@ class DealListPagination extends StateNotifier<AsyncValue<List<Deal>>>
     if (state is AsyncLoading || isLastPage)
       return;
     else if (state is AsyncData) ++_page;
-    state = AsyncValue.loading();
+    state = const AsyncValue.loading();
     await _fetch();
   }
 
   @override
   Future<List<Deal>> fetchPage() => _cheapSharkService.deals(
-    page: _page,
-    filter: filter,
-    cancelToken: cancelToken,
-  );
+        page: _page,
+        filter: filter,
+        cancelToken: cancelToken,
+      );
 
   Future<void> _fetch() async {
-    final fetch = await AsyncValue.guard(fetchPage);
-    if (mounted) state = fetch;
+    final fetch = await AsyncValue.guard(() => fetchPage());
+    if (mounted) {
+      final previous = state.valueOrNull;
+      state = fetch
+        .whenData((deals) => previous == null ? deals : [...deals, ...previous])
+        .copyWithPrevious(state);
+    }
   }
 
   @override
   bool get isLastPage {
-    if (_lastPage) return _lastPage;
+    if (_lastPage)
+      return _lastPage;
     else if (state is AsyncData &&
         (state.asData?.value.length ?? filter.pageSize) < filter.pageSize) {
       _lastPage = true;

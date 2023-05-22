@@ -15,7 +15,7 @@ abstract class DiscountApi{
 
   @GET('/deals')
   Future<List<Deal>> getDeals([
-    @Queries() Map<String, dynamic> parameters,
+    @Queries() Map<String, dynamic>? parameters,
     @CancelRequest() CancelToken? cancelToken
   ]);
 
@@ -27,14 +27,14 @@ abstract class DiscountApi{
 
   @GET('/games')
   Future<List<Game>> getGames(
-    @Queries() Map<String, dynamic> parameters,
+    @Queries() Map<String, dynamic>? parameters,
     [@CancelRequest() CancelToken? cancelToken]
   );
 
   @GET('/games')
   Future<GameLookup> getGamesById(
     @Query('id') String id, [
-      @DioOptions() Options options,
+      @DioOptions() Options? options,
       @CancelRequest() CancelToken? cancelToken,
     ]
   );
@@ -47,7 +47,7 @@ abstract class DiscountApi{
 
   @GET('/stores')
   Future<List<Store>> getStores(
-    @DioOptions() Options options,
+    @DioOptions() Options? options,
     [@CancelRequest() CancelToken? cancelToken]
   );
 }

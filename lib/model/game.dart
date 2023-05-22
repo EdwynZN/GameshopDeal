@@ -8,13 +8,40 @@ part 'game.g.dart';
 class Game with _$Game{
   @HiveType(typeId: 0, adapterName: 'GameAdapter')
   const factory Game({
-    @JsonKey(name: 'gameID') @HiveField(0) required String gameId,
-    @JsonKey(name: 'steamAppID') @HiveField(1) required String steamAppId,
-    @HiveField(2) required String cheapest,
-    @JsonKey(name: 'cheapestDealID') @HiveField(3) required String cheapestDealId,
-    @JsonKey(name: 'external') @HiveField(4) required String externalName,
-    @JsonKey(name: 'internalName') @HiveField(5) required String internalName,
-    @JsonKey(name: 'thumb') @HiveField(6) required String thumb,
+    @JsonKey(
+      name: 'gameID',
+      disallowNullValue: true,
+      required: true,
+    ) @HiveField(0) required String gameId,
+    @JsonKey(
+      name: 'steamAppID',
+      disallowNullValue: true,
+      required: true,
+    ) @HiveField(1) required String steamAppId,
+    @JsonKey(
+      disallowNullValue: true,
+      required: true,
+    ) @HiveField(2) required String cheapest,
+    @JsonKey(
+      name: 'cheapestDealID',
+      disallowNullValue: true,
+      required: true,
+    ) @HiveField(3) required String cheapestDealId,
+    @JsonKey(
+      name: 'external',
+      disallowNullValue: true,
+      required: true,
+    ) @HiveField(4) required String externalName,
+    @JsonKey(
+      name: 'internalName',
+      disallowNullValue: true,
+      required: true,
+    ) @HiveField(5) required String internalName,
+    @JsonKey(
+      name: 'thumb',
+      disallowNullValue: true,
+      required: true,
+    ) @HiveField(6) required String thumb,
   }) = _Game;
 
   factory Game.fromJson(Map<String, dynamic> json) => _$GameFromJson(json);

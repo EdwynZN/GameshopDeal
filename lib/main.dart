@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
+import 'package:gameshop_deals/provider/router_provider.dart';
 import 'package:gameshop_deals/provider/theme_provider.dart';
 import 'package:gameshop_deals/service/hive_init.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -52,13 +53,15 @@ class GameShop extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
     final themeData = ref.watch(themeProvider.notifier);
+    final router = ref.watch(routerProvider);
     return RefreshConfiguration(
       enableLoadingWhenFailed: false,
       headerBuilder: () => WaterDropMaterialHeader(
         backgroundColor: themeData.lightTheme.appBarTheme.backgroundColor,
       ),
       //enableScrollWhenRefreshCompleted: true,
-      child: MaterialApp(
+      child: MaterialApp.router(
+        routerConfig: router,
         localizationsDelegates: [
           S.delegate,
           RefreshLocalizations.delegate,
@@ -71,14 +74,6 @@ class GameShop extends ConsumerWidget {
         darkTheme: themeData.darkTheme,
         theme: themeData.lightTheme,
         themeMode: themeMode,
-        builder: (context, child) {
-          return Scaffold(
-            appBar: AppBar(),
-            body: Center(
-              child: Text('Texto'),
-            ),
-          );
-        },
       ),
     );
   }
