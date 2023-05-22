@@ -18,8 +18,7 @@ final cacheManagerFamilyProvider =
   );
 
   ref.onDispose(() async {
-    dioInstance
-      ..close();
+    dioInstance.close();
     await cacheManager.dispose();
   });
 

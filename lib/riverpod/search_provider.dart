@@ -1,18 +1,23 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final searchSyncBox = Provider.autoDispose<Box<String>?>((ref) {
+part 'search_provider.g.dart';
+
+@riverpod
+Box<String>? searchSync(SearchSyncRef ref) {
   Box<String>? box;
 
-  if (Hive.isBoxOpen(searchHistoryHiveBox)) box = Hive.box<String>(searchHistoryHiveBox);
+  if (Hive.isBoxOpen(searchHistoryHiveBox))
+    box = Hive.box<String>(searchHistoryHiveBox);
 
   ref.onDispose(() async => await box?.close());
 
   return box;
-}, name: 'Sync Search Hivebox');
+}
 
-final searchBox = FutureProvider.autoDispose<Box<String>>((ref) async {
+@riverpod
+Future<Box<String>> _searchLocalCache(_SearchLocalCacheRef ref) async {
   final Box<String> box;
 
   if (Hive.isBoxOpen(searchHistoryHiveBox))
@@ -20,14 +25,14 @@ final searchBox = FutureProvider.autoDispose<Box<String>>((ref) async {
   else
     box = await Hive.openBox<String>(searchHistoryHiveBox);
 
-  ref.onDispose(() async => await box.close());
+  ref.onDispose(box.close);
 
   return box;
-}, name: 'Search Hivebox');
+}
 
-final suggestions =
-    Provider.autoDispose.family<List<String>, String>((ref, query) {
-  final asyncBox = ref.watch(searchBox).asData;
+@Riverpod(dependencies: [_searchLocalCache])
+List<String> suggestions(ref, {String query = ''}) {
+  final asyncBox = ref.watch(_searchLocalCache).asData;
   Box<String>? box;
 
   if (asyncBox != null) box = asyncBox.value;
@@ -38,4 +43,4 @@ final suggestions =
 
   final exp = RegExp(query, caseSensitive: false);
   return box.values.where((element) => element.contains(exp)).toList();
-}, name: 'Suggestions');
+}

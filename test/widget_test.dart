@@ -65,7 +65,7 @@ void main() async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            dioProvider.overrideWithValue(dio),
+            dioInstanceProvider.overrideWithValue(dio),
             
           ],
           child: GameShop()

@@ -62,7 +62,7 @@ class Filter with _$Filter {
     bool exact,
   }) = _Filter;
 
-  late Map<String, dynamic> parameters = <String, dynamic>{
+  late final Map<String, dynamic> parameters = <String, dynamic>{
         if (storeId.isNotEmpty) 'storeID': storeId.join(','),
         if (sortBy != SortBy.Deal_Rating) 'sortBy': describeEnum(sortBy),
         if (pageSize != 60) 'pageSize': pageSize,
