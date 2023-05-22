@@ -13,12 +13,12 @@ class CacheObjectAdapter extends TypeAdapter<CacheObject> {
     };
     return CacheObject(
       fields[0] as String,
-      id: fields[1] as int,
-      key: fields[2] as String,
+      id: fields[1] as int?,
+      key: fields[2] as String?,
       relativePath: fields[3] as String,
-      eTag: fields[4] as String,
-      length: fields[5] as int,
-      touched: fields[6] as DateTime,
+      eTag: fields[4] as String?,
+      length: fields[5] as int?,
+      touched: fields[6] as DateTime?,
       validTill: fields[7] as DateTime,
     );
   }

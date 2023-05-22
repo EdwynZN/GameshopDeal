@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 //import 'package:gameshop_deals/provider/display_provider.dart';
 import 'package:gameshop_deals/presentation/widgets/appbar.dart';
 import 'package:gameshop_deals/presentation/widgets/principal_mixin_screen.dart';
+import 'package:gameshop_deals/presentation/widgets/view_deals/deal_list_view.dart';
 import 'package:gameshop_deals/provider/deal_provider.dart';
 import 'package:gameshop_deals/provider/filter_provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart' hide RefreshIndicator;
@@ -77,21 +78,10 @@ class _HomeState extends ConsumerState<Home> with PrincipalState {
             child: CustomScrollView(
               primary: true,
               slivers: <Widget>[
-                SliverSafeArea(
+                const SliverSafeArea(
                   top: false,
-                  sliver: SliverList.builder(
-                    itemCount: 40,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        onTap: () {},
-                        title: Text('Item $index'),
-                      );
-                    },
-                  ),
+                  sliver: DealListView(),
                 ),
-                /* const SliverSafeArea(
-                        sliver: const DealListView(),
-                      ), */
               ],
             ),
             onRefresh: () async {
