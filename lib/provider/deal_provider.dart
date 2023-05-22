@@ -35,10 +35,10 @@ class DealListPagination extends StateNotifier<AsyncValue<List<Deal>>>
 
   @override
   Future<void> retrieveNextPage() async {
-    if (state is AsyncLoading || isLastPage)
+    if (state.isLoading || isLastPage)
       return;
     else if (state is AsyncData) ++_page;
-    state = const AsyncValue.loading();
+    state = const AsyncValue<List<Deal>>.loading().copyWithPrevious(state);
     await _fetch();
   }
 
@@ -52,10 +52,12 @@ class DealListPagination extends StateNotifier<AsyncValue<List<Deal>>>
   Future<void> _fetch() async {
     final fetch = await AsyncValue.guard(() => fetchPage());
     if (mounted) {
-      final previous = state.valueOrNull;
-      state = fetch
-        .whenData((deals) => previous == null ? deals : [...deals, ...previous])
-        .copyWithPrevious(state);
+      state = fetch.whenData(
+        (deals) {
+          final previous = state.valueOrNull;
+          return previous == null ? deals : [...previous, ...deals];
+        },
+      ).copyWithPrevious(state);
     }
   }
 

@@ -73,7 +73,7 @@ class _HomeState extends ConsumerState<Home> with PrincipalState {
             controller: refreshController,
             primary: true,
             enablePullDown: true,
-            enablePullUp: false,
+            enablePullUp: true,
             footer: const ScrollFooter(),
             child: CustomScrollView(
               primary: true,
@@ -135,6 +135,8 @@ class _ScrollFooterState extends LoadIndicatorState<ScrollFooter> {
         final title = ref.watch(titleProvider);
         final deals = ref.watch(dealPageProvider(title));
         return deals.when(
+          skipLoadingOnRefresh: false,
+          skipLoadingOnReload: false,
           data: (_) => const SizedBox(height: 4.0),
           loading: () => const Align(
             alignment: Alignment.topCenter,
