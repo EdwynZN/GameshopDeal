@@ -12,10 +12,11 @@ class DealListView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final title = ref.watch(titleProvider);
-    final dealsPage = ref.watch(dealPageProvider(title));
+    final deals = ref.watch(dealPageProvider(title)
+      .select((asyncDeals) => asyncDeals.valueOrNull),
+    );
     final ViewFormat viewFormat = ref.watch(displayProvider);
-    if (!dealsPage.hasValue) return const SliverToBoxAdapter();
-    final deals = dealsPage.requireValue;
+    if (deals == null || deals.isEmpty) return const SliverToBoxAdapter();
     switch (viewFormat) {
       case ViewFormat.Grid:
         return SliverPadding(
