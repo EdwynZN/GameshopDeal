@@ -56,9 +56,7 @@ class GameShop extends ConsumerWidget {
     final router = ref.watch(routerProvider);
     return RefreshConfiguration(
       enableLoadingWhenFailed: false,
-      headerBuilder: () => WaterDropMaterialHeader(
-        backgroundColor: themeData.lightTheme.appBarTheme.backgroundColor,
-      ),
+      headerBuilder: () => const WaterDropMaterialHeader(),
       //enableScrollWhenRefreshCompleted: true,
       child: MaterialApp.router(
         routerConfig: router,

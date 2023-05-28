@@ -1,8 +1,9 @@
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+//import 'package:flutter/services.dart';
 
 abstract class ThemeRepository {
-  late Color _darkAccentColor;
+  /* late Color _darkAccentColor;
   TextTheme _darkAccentTextTheme = const TextTheme(
     titleMedium: TextStyle(
         color: Colors.black87,
@@ -117,14 +118,15 @@ abstract class ThemeRepository {
         fontWeight: FontWeight.w500,
         letterSpacing: 0.15),
   );
-
+ */
+  
   ThemeData get light;
   ThemeData get dark;
 }
 
 class ThemeImpl extends ThemeRepository {
-  late final ThemeData _lightTheme;
-  late final ThemeData _darkTheme;
+  /// late final ThemeData _lightTheme;
+  /// late final ThemeData _darkTheme;
 
   ThemeImpl() {
     _setLight = 0;
@@ -132,7 +134,7 @@ class ThemeImpl extends ThemeRepository {
   }
 
   set _setLight(int light) {
-    MaterialColor color = Colors.primaries[light.clamp(0, 17)];
+    /* MaterialColor color = Colors.primaries[light.clamp(0, 17)];
     MaterialAccentColor accentColor = Colors.accents[light.clamp(0, 15)];
     if (light >= 17)
       accentColor = const MaterialAccentColor(
@@ -406,256 +408,10 @@ class ThemeImpl extends ThemeRepository {
         surfaceTint: color.shade100,
       ).copyWith(background: color[100]).copyWith(error: Colors.redAccent),
     );
-  }
-/* 
-  set _setLight(int light) {
-    MaterialColor color = lightColor;
-    MaterialAccentColor accentColor = lightAccentColor;
-    _darkAccentColor = accentColor[700];
-    final Brightness _brightnessColor =
-        ThemeData.estimateBrightnessForColor(color);
-    final Brightness _brightnessAccentColor =
-        ThemeData.estimateBrightnessForColor(accentColor);
-    final Brightness _brightnessPrimaryColor =
-        ThemeData.estimateBrightnessForColor(accentColor[100]);
-    final Brightness _brightnessAccentTextTheme =
-        ThemeData.estimateBrightnessForColor(accentColor[700]);
-    _lightTheme = ThemeData(
-      appBarTheme: AppBarTheme(
-        elevation: 0.0,
-        surfaceTintColor: color,
-        backgroundColor: color,
-        systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarBrightness: _brightnessColor,
-          statusBarIconBrightness: _brightnessColor == Brightness.light
-              ? Brightness.dark
-              : Brightness.light,
-          systemNavigationBarIconBrightness:
-              _brightnessColor == Brightness.light
-                  ? Brightness.dark
-                  : Brightness.light,
-          statusBarColor: color,
-          systemNavigationBarColor: color,
-        ),
-        titleTextStyle: _brightnessColor == Brightness.light
-            ? _darkAccentTextTheme.headline6!
-            : _lightAccentTextTheme.headline6!.apply(color: Colors.white),
-        foregroundColor:
-            _brightnessColor == Brightness.light ? Colors.black : Colors.white,
-        toolbarTextStyle: _brightnessColor == Brightness.light
-            ? _darkAccentTextTheme.bodyText2
-            : _lightAccentTextTheme.bodyText2,
-        iconTheme: IconThemeData(
-          color: _brightnessColor == Brightness.light
-              ? Colors.black
-              : Colors.white,
-        ),
-      ),
-      
-      pageTransitionsTheme: PageTransitionsTheme(builders: {
-        // TargetPlatform.android: FadeThroughPageTransitionsBuilder(),
-        TargetPlatform.android: ZoomPageTransitionsBuilder(),
-        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-      }),
-      //splashFactory: InkRipple.splashFactory,
-      primaryColorBrightness: _brightnessPrimaryColor,
-      primaryColorLight: accentColor[100],
-      primaryColorDark: accentColor[600],
-      primaryIconTheme: const IconThemeData(color: Colors.black),
-      brightness: Brightness.light,
-      appBarTheme: AppBarTheme(
-        brightness: _brightnessColor,
-        elevation: 0.0,
-        color: color,
-        textTheme: _brightnessColor == Brightness.light
-            ? _darkAccentTextTheme
-            : _darkAccentTextTheme.apply(
-                bodyColor: Colors.white, displayColor: Colors.white),
-        iconTheme: IconThemeData(
-          color:
-              _brightnessColor == Brightness.dark ? Colors.white : Colors.black,
-        ),
-      ),
-      unselectedWidgetColor: Colors.black87,
-      dividerColor: color,
-      dividerTheme: DividerThemeData(
-        color: color,
-        space: 1.0,
-        thickness: 1.0,
-      ),
-      scaffoldBackgroundColor: Colors.grey[300],
-      accentColor: accentColor[700],
-      accentIconTheme: IconThemeData(
-          color: _brightnessAccentTextTheme == Brightness.dark
-              ? Colors.white
-              : Colors.black),
-      accentColorBrightness: _brightnessAccentColor,
-      iconTheme: const IconThemeData(color: Colors.black),
-      floatingActionButtonTheme: FloatingActionButtonThemeData(
-          foregroundColor: _brightnessAccentColor == Brightness.dark
-              ? Colors.white
-              : Colors.black, //Colors.white,
-          backgroundColor: accentColor),
-      errorColor: Colors.redAccent,
-      canvasColor: Colors.grey[300],
-      primarySwatch: color,
-      primaryColor: color,
-      textSelectionTheme: TextSelectionThemeData(
-        cursorColor: Colors.white10,
-        selectionHandleColor: color[300],
-        selectionColor: accentColor.withOpacity(0.5),
-      ),
-      backgroundColor: color[100],
-      selectedRowColor: color[200],
-      cardColor: Colors.grey[300],
-      cardTheme: CardTheme(
-        color: Colors.grey[300],
-        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        elevation: 8,
-      ),
-      textTheme: _darkAccentTextTheme,
-      primaryTextTheme: _brightnessPrimaryColor == Brightness.dark
-          ? _lightAccentTextTheme
-          : _darkAccentTextTheme,
-      accentTextTheme: _lightAccentTextTheme.apply(
-        displayColor: _brightnessAccentTextTheme == Brightness.dark
-            ? Colors.white
-            : Colors.black,
-        bodyColor: _brightnessAccentTextTheme == Brightness.dark
-            ? Colors.white
-            : Colors.black,
-      ),
-      bottomAppBarTheme:
-          BottomAppBarTheme(color: Colors.transparent, elevation: 0.0),
-      dialogTheme: DialogTheme(
-        backgroundColor: Colors.grey[300],
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-      ),
-      popupMenuTheme: PopupMenuThemeData(
-        color: Colors.grey[300],
-        elevation: 8.0,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(4),
-            side: BorderSide(color: accentColor[700])),
-      ),
-      snackBarTheme: SnackBarThemeData(
-        backgroundColor: color[100],
-        contentTextStyle: TextStyle(color: Colors.black),
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-            side: BorderSide(color: accentColor)),
-        behavior: SnackBarBehavior.floating,
-      ),
-      outlinedButtonTheme: OutlinedButtonThemeData(
-          style: ButtonStyle(
-        mouseCursor: MaterialStateProperty.all<MouseCursor>(
-            MaterialStateMouseCursor.clickable),
-        padding: MaterialStateProperty.all<EdgeInsets>(
-            const EdgeInsets.symmetric(horizontal: 8.0)),
-        //enableFeedback: false,
-        shape:
-            MaterialStateProperty.all<OutlinedBorder>(RoundedRectangleBorder()),
-        side: MaterialStateProperty.all<BorderSide>(BorderSide(
-          color: accentColor[700],
-          width: 1,
-        )),
-        backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-        foregroundColor: MaterialStateProperty.all<Color>(
-            _brightnessAccentColor == Brightness.dark
-                ? accentColor[700]
-                : Colors.black),
-      )),
-      textButtonTheme: TextButtonThemeData(
-          style: ButtonStyle(
-        mouseCursor: MaterialStateProperty.all<MouseCursor>(
-            MaterialStateMouseCursor.clickable),
-        //enableFeedback: false,
-        shape: MaterialStateProperty.all<OutlinedBorder>(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-        backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-        foregroundColor: MaterialStateProperty.all<Color>(
-            _brightnessAccentColor == Brightness.dark
-                ? accentColor[700]
-                : Colors.black),
-      )),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ButtonStyle(
-              mouseCursor: MaterialStateProperty.all<MouseCursor>(
-                  MaterialStateMouseCursor.clickable),
-              //enableFeedback: false,
-              shape: MaterialStateProperty.all<OutlinedBorder>(
-                  RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8))),
-              elevation: MaterialStateProperty.resolveWith<double>((states) {
-                if (states.contains(MaterialState.pressed) ||
-                    states.contains(MaterialState.disabled)) return 2.0;
-                return 8.0;
-              }),
-              backgroundColor:
-                  MaterialStateProperty.resolveWith<Color>((states) {
-                if (states.contains(MaterialState.disabled)) return null;
-                return color[100];
-              }),
-              // backgroundColor: MaterialStateProperty.all<Color>(color[100]),
-              foregroundColor: MaterialStateProperty.all<Color>(
-                  _darkAccentTextTheme.headline1.color),
-              //textStyle: MaterialStateProperty.all<TextStyle>(_darkAccentTextTheme.bodyText1),
-              overlayColor: MaterialStateProperty.all<Color>(
-                  _darkAccentColor.withOpacity(0.24)),
-              visualDensity: VisualDensity(vertical: 1))),
-      buttonTheme: ButtonThemeData(
-        textTheme: ButtonTextTheme.normal,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        layoutBehavior: ButtonBarLayoutBehavior.constrained,
-        buttonColor: color[100],
-        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        height: 48,
-        highlightColor: color[200],
-      ),
-      bottomSheetTheme: BottomSheetThemeData(
-        elevation: 0.0,
-        backgroundColor: Colors.transparent,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-        modalBackgroundColor: Colors.grey[300],
-        modalElevation: 8.0,
-      ),
-      chipTheme: ChipThemeData(
-          checkmarkColor: _brightnessPrimaryColor == Brightness.dark
-              ? Colors.white70
-              : Colors.black87,
-          backgroundColor: Colors.black12,
-          deleteIconColor: Colors.black87,
-          disabledColor: Colors.black.withAlpha(0x0c),
-          selectedColor: color[100],
-          secondarySelectedColor: color[100],
-          labelPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-          padding: const EdgeInsets.all(4.0),
-          labelStyle: _darkAccentTextTheme.bodyText2,
-          secondaryLabelStyle: _darkAccentTextTheme.bodyText2.apply(
-              color: _brightnessColor == Brightness.light ? null : color[500]),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          brightness: _brightnessColor),
-      navigationRailTheme: NavigationRailThemeData(
-          labelType: NavigationRailLabelType.selected,
-          backgroundColor: color[50],
-          elevation: 8.0,
-          groupAlignment: 1.0,
-          selectedIconTheme: IconThemeData(color: accentColor[700]),
-          selectedLabelTextStyle: _lightAccentTextTheme.bodyText2.apply(
-              color: _brightnessAccentTextTheme == Brightness.dark
-                  ? accentColor[700]
-                  : Colors.black),
-          unselectedIconTheme: const IconThemeData(color: Colors.black),
-          unselectedLabelTextStyle: _darkAccentTextTheme.bodyText2),
-      toggleableActiveColor: accentColor[700],
-      indicatorColor: color[100],
-    );
-  }
- */
+   */}
+
   set _setDark(int dark) {
-    final Brightness _brightness = Brightness.dark;
+    /* final Brightness _brightness = Brightness.dark;
     final Color _accentColor =
         _brightness == Brightness.dark ? Colors.white : Colors.black;
     switch (dark) {
@@ -1210,9 +966,56 @@ class ThemeImpl extends ThemeRepository {
  ), colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey).copyWith(secondary: _darkAccentColor).copyWith(background: Colors.black).copyWith(error: Color.fromRGBO(207, 102, 121, 1)),
         );
         break;
-    }
+    } */
   }
 
-  ThemeData get light => _lightTheme;
-  ThemeData get dark => _darkTheme;
+  final ThemeData light = FlexThemeData.light(
+    colors: const FlexSchemeColor(
+      primary: Color(0xffb71c1c),
+      primaryContainer: Color(0xffffdad8),
+      secondary: Color(0xff753b23),
+      secondaryContainer: Color(0xffa65f12),
+      tertiary: Color(0xff756500),
+      tertiaryContainer: Color(0xfffff7cb),
+      appBarColor: Color(0xffb71c1c),
+      error: Color(0xffb00020),
+    ),
+    appBarStyle: FlexAppBarStyle.primary,
+    surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
+    blendLevel: 8,
+    subThemesData: const FlexSubThemesData(
+      blendOnLevel: 10,
+      blendOnColors: false,
+      useM2StyleDividerInM3: true,
+    ),
+    useMaterial3ErrorColors: true,
+    visualDensity: FlexColorScheme.comfortablePlatformDensity,
+    useMaterial3: true,
+    // To use the playground font, add GoogleFonts package and uncomment
+    // fontFamily: GoogleFonts.notoSans().fontFamily,
+  );
+  final ThemeData dark = FlexThemeData.dark(
+    colors: const FlexSchemeColor(
+      primary: Color(0xffffb3ac),
+      primaryContainer: Color(0xffb91d1d),
+      secondary: Color(0xffffd3c6),
+      secondaryContainer: Color(0xff621800),
+      tertiary: Color(0xfffff1b6),
+      tertiaryContainer: Color(0xff887700),
+      appBarColor: Color(0xff621800),
+      error: Color(0xffcf6679),
+    ),
+    appBarStyle: FlexAppBarStyle.material,
+    surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
+    blendLevel: 13,
+    subThemesData: const FlexSubThemesData(
+      blendOnLevel: 20,
+      useM2StyleDividerInM3: true,
+    ),
+    useMaterial3ErrorColors: true,
+    visualDensity: FlexColorScheme.comfortablePlatformDensity,
+    useMaterial3: true,
+    // To use the Playground font, add GoogleFonts package and uncomment
+    // fontFamily: GoogleFonts.notoSans().fontFamily,
+  );
 }
