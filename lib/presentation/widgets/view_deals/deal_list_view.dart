@@ -12,8 +12,8 @@ class DealListView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final title = ref.watch(titleProvider);
-    final deals = ref.watch(dealPageProvider(title)
-      .select((asyncDeals) => asyncDeals.valueOrNull),
+    final deals = ref.watch(
+      dealPageProvider(title).select((asyncDeals) => asyncDeals.valueOrNull),
     );
     final ViewFormat viewFormat = ref.watch(displayProvider);
     if (deals == null || deals.isEmpty) return const SliverToBoxAdapter();

@@ -45,84 +45,86 @@ class AppSearchDelegate extends SearchDelegate<String> {
       ];
 
   @override
-  Widget buildLeading(BuildContext context) => BackButton();
+  Widget buildLeading(BuildContext context) => const BackButton();
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return Consumer(builder: (context, ref, _) {
-      final S translate = S.of(context);
-      final String trimmed = query.trim();
-      final list = ref.watch(suggestionsProvider(query: trimmed));
-      return CustomScrollView(
-        slivers: [
-          if (trimmed.isEmpty)
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(vertical: 12.0),
-              sliver: SliverToBoxAdapter(
+    return Consumer(
+      builder: (context, ref, _) {
+        final S translate = S.of(context);
+        final String trimmed = query.trim();
+        final list = ref.watch(suggestionsProvider(query: trimmed));
+        return CustomScrollView(
+          slivers: [
+            if (trimmed.isEmpty)
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                sliver: SliverToBoxAdapter(
+                  child: ListTile(
+                    title: Text(
+                      translate.recent_searches,
+                      style: Theme.of(context).primaryTextTheme.bodyLarge,
+                    ),
+                    /* trailing: IconButton(
+                      icon: const Icon(Icons.clear_all),
+                      tooltip: translate.clear_tooltip,
+                      onPressed: () async {
+                        final box = await ref.read(searchBox.future);
+                        if (box != null && box.isOpen) {
+                          await box.clear();
+                          ref.invalidate(suggestionsProvider(query: trimmed));
+                        }
+                      },
+                    ), */
+                  ),
+                ),
+              ),
+            if (trimmed.isNotEmpty) ...[
+              SliverToBoxAdapter(
                 child: ListTile(
+                  onTap: () => showResults(context),
+                  leading: const Icon(Icons.search_rounded),
                   title: Text(
-                    translate.recent_searches,
+                    translate.title_search(trimmed),
                     style: Theme.of(context).primaryTextTheme.bodyLarge,
                   ),
-                  /* trailing: IconButton(
-                    icon: const Icon(Icons.clear_all),
-                    tooltip: translate.clear_tooltip,
-                    onPressed: () async {
-                      final box = await ref.read(searchBox.future);
-                      if (box != null && box.isOpen) {
-                        await box.clear();
-                        ref.invalidate(suggestionsProvider(query: trimmed));
-                      }
-                    },
-                  ), */
                 ),
               ),
-            ),
-          if (trimmed.isNotEmpty) ...[
-            SliverToBoxAdapter(
-              child: ListTile(
-                onTap: () => showResults(context),
-                leading: const Icon(Icons.search_rounded),
-                title: Text(
-                  translate.title_search(trimmed),
-                  style: Theme.of(context).primaryTextTheme.bodyLarge,
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0, vertical: 12.0),
+                sliver: SliverToBoxAdapter(
+                  child: Text(
+                    translate.suggested_searches,
+                    style: Theme.of(context).primaryTextTheme.bodyLarge,
+                  ),
                 ),
               ),
-            ),
-            SliverPadding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-              sliver: SliverToBoxAdapter(
-                child: Text(
-                  translate.suggested_searches,
-                  style: Theme.of(context).primaryTextTheme.bodyLarge,
-                ),
+            ],
+            SliverFixedExtentList(
+              itemExtent: 56.0,
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return ListTile(
+                    onTap: () => close(context, list[index]),
+                    leading: const Icon(Icons.history),
+                    title: Text(
+                      list[index],
+                      style: Theme.of(context).primaryTextTheme.bodyLarge,
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.north_west_outlined),
+                      onPressed: () => query = list[index],
+                    ),
+                  );
+                },
+                childCount: list.length,
               ),
             ),
           ],
-          SliverFixedExtentList(
-            itemExtent: 56.0,
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return ListTile(
-                  onTap: () => close(context, list[index]),
-                  leading: const Icon(Icons.history),
-                  title: Text(
-                    list[index],
-                    style: Theme.of(context).primaryTextTheme.bodyLarge,
-                  ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.north_west_outlined),
-                    onPressed: () => query = list[index],
-                  ),
-                );
-              },
-              childCount: list.length,
-            ),
-          ),
-        ],
-      );
-    });
+        );
+      },
+    );
   }
 
   @override

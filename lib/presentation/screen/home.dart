@@ -11,16 +11,7 @@ import 'package:gameshop_deals/provider/filter_provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart' hide RefreshIndicator;
 
 class Home extends ConsumerStatefulWidget {
-  final String title;
-  final PreferredSizeWidget appBar;
-  const Home({Key? key})
-      : title = '',
-        appBar = const HomeAppBar(),
-        super(key: key);
-
-  const Home.Search({Key? key, required this.title})
-      : appBar = const SearchAppBar(),
-        super(key: key);
+  const Home({super.key});
 
   @override
   _HomeState createState() => _HomeState();
@@ -31,8 +22,8 @@ class _HomeState extends ConsumerState<Home> with PrincipalState {
   Widget build(BuildContext context) {
     //final isPageView =
     //    ref.watch(displayProvider.select((view) => view == ViewFormat.Swipe));
-
-    ref.listen(dealPageProvider(widget.title), (prev, asyncDeals) {
+    final title = ref.watch(titleProvider);
+    ref.listen(dealPageProvider(title), (prev, asyncDeals) {
       if (!mounted) return;
       if (asyncDeals is AsyncError) {
         if (refreshController.headerStatus != RefreshStatus.failed &&
@@ -53,7 +44,7 @@ class _HomeState extends ConsumerState<Home> with PrincipalState {
       } else if (asyncDeals is AsyncData) {
         if (refreshController.isRefresh) refreshController.refreshCompleted();
         final noMoreData =
-            ref.read(dealPageProvider(widget.title).notifier).isLastPage;
+            ref.read(dealPageProvider(title).notifier).isLastPage;
         if (noMoreData)
           refreshController.loadNoData();
         else
@@ -62,10 +53,10 @@ class _HomeState extends ConsumerState<Home> with PrincipalState {
     });
 
     return Scaffold(
-      appBar: widget.appBar,
+      appBar: const HomeAppBar(),
       endDrawer: const FilterDrawer(),
       body: PrimaryScrollController(
-        key: PageStorageKey('ListView${widget.title}'),
+        key: PageStorageKey('ListView$title'),
         controller: scrollController,
         child: Scrollbar(
           thickness: 3.0,
@@ -87,11 +78,11 @@ class _HomeState extends ConsumerState<Home> with PrincipalState {
             ),
             onRefresh: () async {
               refreshController.loadComplete();
-              ref.invalidate(dealPageProvider(widget.title));
+              ref.invalidate(dealPageProvider(title));
             },
             onLoading: () async {
               final dealPage =
-                  ref.read(dealPageProvider(widget.title).notifier);
+                  ref.read(dealPageProvider(title).notifier);
               if (!dealPage.isLastPage) await dealPage.retrieveNextPage();
             },
           ),

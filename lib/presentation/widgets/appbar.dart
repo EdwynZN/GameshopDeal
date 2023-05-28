@@ -12,6 +12,7 @@ import 'package:gameshop_deals/provider/filter_provider.dart';
 import 'package:gameshop_deals/provider/saved_deals_provider.dart';
 import 'package:gameshop_deals/provider/theme_provider.dart';
 import 'package:gameshop_deals/utils/routes_constants.dart';
+import 'package:go_router/go_router.dart';
 import 'package:in_app_review/in_app_review.dart';
 
 final InAppReview _inAppReview = InAppReview.instance;
@@ -20,9 +21,10 @@ final _sortByProvider = Provider.autoDispose<SortBy>(
   (ref) => ref
       .watch(filterProvider(ref.watch(titleProvider)).select((f) => f.sortBy)),
   name: 'Sort By',
+  dependencies: [titleProvider, filterProvider],
 );
 
-class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
+class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   final Size preferredSize;
 
@@ -31,50 +33,22 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final title = ref.watch(titleProvider);
+    final bool isSearching = title.isNotEmpty;
+    final String titletext;
+    if (isSearching) {
+      titletext = title;
+    } else {
+      final S translate = S.of(context);
+      final sort = ref.watch(_sortByProvider);
+      titletext = translate.sort(sort);
+    }
     return AppBar(
-      automaticallyImplyLeading: false,
-      title: Consumer(
-        builder: (context, ref, _) {
-          final S translate = S.of(context);
-          return Text(translate.sort(ref.watch(_sortByProvider)));
-        },
-      ),
-      actions: const <Widget>[
-        _SavedGamesButton(),
-        _SearchButton(),
-        _FilterButton(),
-        _MoreSettings(),
-      ],
-    );
-  }
-}
-
-class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
-  @override
-  final Size preferredSize;
-
-  const SearchAppBar({Key? key})
-      : preferredSize = const Size.fromHeight(56.0),
-        super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      primary: true,
-      leading: BackButton(
-        onPressed: () => Navigator.of(context, rootNavigator: true).maybePop(),
-      ),
-      title: Consumer(
-        builder: (context, ref, _) {
-          final title = ref.watch(titleProvider);
-          return Text(
-            title,
-            overflow: TextOverflow.fade,
-          );
-        },
-      ),
-      actions: const <Widget>[
+      automaticallyImplyLeading: true,
+      title: Text(titletext, overflow: TextOverflow.fade),
+      actions: <Widget>[
+        if (!isSearching) _SavedGamesButton(),
         _SearchButton(),
         _FilterButton(),
         _MoreSettings(),
@@ -174,8 +148,9 @@ class _SearchButton extends ConsumerWidget {
           delegate: AppSearchDelegate(),
         );
         if (result != null && result != title) {
-          Navigator.of(context, rootNavigator: true)
-              .pushNamed(searchRoute, arguments: result);
+          final String nameRoute = 'search_response';
+          final queryParameters = <String, dynamic>{'title': result};
+          context.pushNamed(nameRoute, queryParameters: queryParameters);
         }
       },
       tooltip: MaterialLocalizations.of(context).searchFieldLabel,
@@ -259,14 +234,13 @@ class __MoreSettingsState extends ConsumerState<_MoreSettings> {
         ),
         for (ThemeMode mode in ThemeMode.values)
           RadioPopupMenuItem<ThemeMode>(
-            child: Text(
-              translate.themeMode(mode),
-              maxLines: 1,
-            ),
-            value: mode,
-            provider: themeProvider,
-            onTap: () => ref.read(themeProvider.notifier).changeState(mode)
-          ),
+              child: Text(
+                translate.themeMode(mode),
+                maxLines: 1,
+              ),
+              value: mode,
+              provider: themeProvider,
+              onTap: () => ref.read(themeProvider.notifier).changeState(mode)),
       ],
     );
   }

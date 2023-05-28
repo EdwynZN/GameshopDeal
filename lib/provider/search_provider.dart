@@ -31,8 +31,8 @@ Future<Box<String>> _searchLocalCache(_SearchLocalCacheRef ref) async {
 }
 
 @Riverpod(dependencies: [_searchLocalCache])
-List<String> suggestions(ref, {String query = ''}) {
-  final asyncBox = ref.watch(_searchLocalCache).asData;
+List<String> suggestions(SuggestionsRef ref, {String query = ''}) {
+  final asyncBox = ref.watch(_searchLocalCacheProvider).asData;
   Box<String>? box;
 
   if (asyncBox != null) box = asyncBox.value;
