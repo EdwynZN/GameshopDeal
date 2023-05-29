@@ -119,7 +119,7 @@ abstract class ThemeRepository {
         letterSpacing: 0.15),
   );
  */
-  
+
   ThemeData get light;
   ThemeData get dark;
 }
@@ -408,7 +408,8 @@ class ThemeImpl extends ThemeRepository {
         surfaceTint: color.shade100,
       ).copyWith(background: color[100]).copyWith(error: Colors.redAccent),
     );
-   */}
+   */
+  }
 
   set _setDark(int dark) {
     /* final Brightness _brightness = Brightness.dark;

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/provider/hive_preferences_provider.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
-class PreferenceDialog<T extends Object> extends ConsumerStatefulWidget {
+class PreferenceDialog<T extends Object> extends StatefulHookConsumerWidget {
   const PreferenceDialog({
     Key? key,
     required this.title,
@@ -22,13 +23,12 @@ class PreferenceDialog<T extends Object> extends ConsumerStatefulWidget {
   _PreferenceDialogState<T> createState() => _PreferenceDialogState<T>();
 }
 
-class _PreferenceDialogState<T extends Object> extends ConsumerState<PreferenceDialog<T>> {
-  late T? value;
+class _PreferenceDialogState<T extends Object>
+    extends ConsumerState<PreferenceDialog<T>> {
   late S translate;
 
   @override
   void didChangeDependencies() {
-    value = ref.read(widget.provider);
     translate = S.of(context);
     super.didChangeDependencies();
   }
@@ -42,6 +42,9 @@ class _PreferenceDialogState<T extends Object> extends ConsumerState<PreferenceD
 
   @override
   Widget build(BuildContext context) {
+    final value = ref.watch(widget.provider);
+    final localizations = MaterialLocalizations.of(context);
+    final ValueNotifier<T> valueState = useState(value);
     return AlertDialog(
       title: Text(widget.title),
       titlePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -54,9 +57,11 @@ class _PreferenceDialogState<T extends Object> extends ConsumerState<PreferenceD
               for (T obj in widget.values)
                 RadioListTile(
                   value: obj,
-                  groupValue: value,
+                  groupValue: valueState.value,
                   title: Text(_translatedTitle(obj)),
-                  onChanged: (newValue) => setState(() => value = newValue),
+                  onChanged: (newValue) {
+                    if (newValue != null) valueState.value = newValue;
+                  },
                 ),
             ],
           ),
@@ -65,11 +70,11 @@ class _PreferenceDialogState<T extends Object> extends ConsumerState<PreferenceD
       actions: <Widget>[
         TextButton(
           onPressed: () => Navigator.of(context).pop<T>(value),
-          child: Text(MaterialLocalizations.of(context).okButtonLabel),
+          child: Text(localizations.okButtonLabel),
         ),
         TextButton(
           onPressed: () => Navigator.of(context).pop<T>(),
-          child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+          child: Text(localizations.cancelButtonLabel),
         ),
       ],
     );
