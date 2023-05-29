@@ -60,7 +60,7 @@ class CacheHiveProvider extends CacheInfoRepository
   @override
   Future<CacheObject?> get(String key) async {
     if (box.isEmpty) return null;
-    return box.values.firstWhereOrNull((cb) => cb.key == key);
+    return box.values.firstWhereOrNull((cb) => cb.key == key && cb.id != null);
   }
 
   @override
@@ -73,7 +73,7 @@ class CacheHiveProvider extends CacheInfoRepository
 
   @override
   Future<int> deleteAll(Iterable<int> ids) async {
-    var size = ids.where((value) => box.containsKey(value)).length;
+    final size = ids.where((value) => box.containsKey(value)).length;
     await box.deleteAll(ids);
     return size;
   }
@@ -91,7 +91,8 @@ class CacheHiveProvider extends CacheInfoRepository
   }
 
   @override
-  Future<List<CacheObject>> getAllObjects() async => box.values.toList();
+  Future<List<CacheObject>> getAllObjects() async =>
+      box.values.toList()..removeWhere((element) => element.id == null);
 
   @override
   Future<List<CacheObject>> getObjectsOverCapacity(int capacity) async {
