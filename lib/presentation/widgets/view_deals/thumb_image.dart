@@ -32,7 +32,7 @@ class ThumbImage extends ConsumerWidget {
                 alignment: alignment,
                 fit: fit,
               ),
-      cacheManager: ref.watch(cacheManagerFamilyProvider(cacheKeyDeals)),
+      cacheManager: ref.watch(cacheManagerProvider(cacheKey: cacheKeyDeals)),
       errorWidget: (_, __, ___) => const Icon(Icons.error),
       placeholder: (_, __) => Container(
         constraints: BoxConstraints.tight(const Size.square(35)),

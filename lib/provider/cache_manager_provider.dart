@@ -1,26 +1,43 @@
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/service/cached_network.dart';
 import 'package:dio/dio.dart';
 import 'package:gameshop_deals/repository/cache_hive_provider.dart';
+import 'package:gameshop_deals/provider/dispose_extension.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final cacheManagerFamilyProvider =
-    Provider.autoDispose.family<CacheManager, String>((ref, key) {
-  final dioInstance = Dio();
+part 'cache_manager_provider.g.dart';
+
+@riverpod
+Dio _dio(_DioRef ref) {
+  final Dio dio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 10),
+      responseType: ResponseType.json,
+    ),
+  );
+  ref.onDispose(dio.close);
+  return dio;
+}
+
+@Riverpod(dependencies: [_dio])
+CacheManager cacheManager(CacheManagerRef ref, {required String cacheKey}) {
+  final dioInstance = ref.watch(_dioProvider);
   final cacheManager = CacheManager(
     Config(
-      key,
+      cacheKey,
       stalePeriod: const Duration(days: 7),
-      repo: CacheHiveProvider(key),
+      repo: CacheHiveProvider(cacheKey),
       maxNrOfCacheObjects: 300,
       fileService: DioFileService(dioClient: dioInstance),
     ),
   );
 
-  ref.onDispose(() async {
-    dioInstance.close();
-    await cacheManager.dispose();
-  });
+  ref
+    ..disposeDelay(const Duration(seconds: 30))
+    ..onDispose(() async {
+      await cacheManager.dispose();
+    });
 
   return cacheManager;
-}, name: 'Cache Manager');
+}

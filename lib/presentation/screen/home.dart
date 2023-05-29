@@ -81,8 +81,7 @@ class _HomeState extends ConsumerState<Home> with PrincipalState {
               ref.invalidate(dealPageProvider(title));
             },
             onLoading: () async {
-              final dealPage =
-                  ref.read(dealPageProvider(title).notifier);
+              final dealPage = ref.read(dealPageProvider(title).notifier);
               if (!dealPage.isLastPage) await dealPage.retrieveNextPage();
             },
           ),

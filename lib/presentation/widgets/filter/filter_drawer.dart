@@ -502,7 +502,7 @@ class _StoreWidget extends ConsumerWidget {
                 label: Text(store.storeName),
                 avatar: CachedNetworkImage(
                   cacheManager:
-                      ref.watch(cacheManagerFamilyProvider(cacheKeyStores)),
+                    ref.watch(cacheManagerProvider(cacheKey: cacheKeyStores)),
                   imageUrl: cheapsharkUrl + store.images.icon,
                   fit: BoxFit.contain,
                 ),

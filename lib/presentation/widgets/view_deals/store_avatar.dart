@@ -29,7 +29,7 @@ class StoreAvatarIcon extends ConsumerWidget {
         brightness == Brightness.light ? BlendMode.dst : BlendMode.srcATop;
     return CachedNetworkImage(
       color: Colors.black26,
-      cacheManager: ref.watch(cacheManagerFamilyProvider(cacheKeyStores)),
+      cacheManager: ref.watch(cacheManagerProvider(cacheKey: cacheKeyStores)),
       fit: BoxFit.contain,
       height: iconSize,
       memCacheHeight: iconSize?.ceil(),
@@ -68,7 +68,7 @@ class StoreAvatarBanner extends ConsumerWidget {
       color: Colors.black26,
       alignment: alignment,
       colorBlendMode: blend,
-      cacheManager: ref.watch(cacheManagerFamilyProvider(cacheKeyStores)),
+      cacheManager: ref.watch(cacheManagerProvider(cacheKey: cacheKeyStores)),
       imageUrl: cheapsharkUrl + store.images.banner,
       placeholder: (_, __) => Align(
         alignment: alignment,
