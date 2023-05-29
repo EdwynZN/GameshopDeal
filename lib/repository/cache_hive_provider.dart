@@ -6,10 +6,13 @@ import 'package:flutter_cache_manager/src/storage/cache_object.dart';
 import 'package:collection/collection.dart';
 
 extension _setTouchedToNow on CacheObject {
-  CacheObject updateSetTouched({bool setTouchedToNow = true}) {
+  CacheObject updateSetTouched({
+    int? id,
+    bool setTouchedToNow = true,
+  }) {
     return CacheObject(
       this.url,
-      id: this.id,
+      id: id ?? this.id,
       key: this.key,
       relativePath: this.relativePath,
       validTill: this.validTill,
@@ -39,19 +42,19 @@ class CacheHiveProvider extends CacheInfoRepository
 
   @override
   Future<dynamic> updateOrInsert(CacheObject cacheObject) {
-    if (cacheObject.id == null) {
-      return insert(cacheObject);
-    } else {
-      return update(cacheObject);
-    }
+    return cacheObject.id == null ? insert(cacheObject) : update(cacheObject);
   }
 
   @override
-  Future<CacheObject> insert(CacheObject cacheObject,
-      {bool setTouchedToNow = true}) async {
-    var id = await box
-        .add(cacheObject.updateSetTouched(setTouchedToNow: setTouchedToNow));
-    return cacheObject.copyWith(id: id);
+  Future<CacheObject> insert(
+    CacheObject cacheObject, {
+    bool setTouchedToNow = true,
+  }) async {
+    final id = await box.add(cacheObject);
+    CacheObject updatedCache =
+        cacheObject.updateSetTouched(id: id, setTouchedToNow: setTouchedToNow);
+    await box.put(id, updatedCache);
+    return updatedCache;
   }
 
   @override
@@ -76,8 +79,10 @@ class CacheHiveProvider extends CacheInfoRepository
   }
 
   @override
-  Future<int> update(CacheObject cacheObject,
-      {bool setTouchedToNow = true}) async {
+  Future<int> update(
+    CacheObject cacheObject, {
+    bool setTouchedToNow = true,
+  }) async {
     await box.put(
       cacheObject.id,
       cacheObject.updateSetTouched(setTouchedToNow: setTouchedToNow),
@@ -91,22 +96,24 @@ class CacheHiveProvider extends CacheInfoRepository
   @override
   Future<List<CacheObject>> getObjectsOverCapacity(int capacity) async {
     final age = DateTime.now().subtract(const Duration(days: 1));
-    final list = box.values.where((cb) => 
-      cb.touched != null && cb.touched!.isBefore(age)
-    ).toList()
+    final list = box.values
+        .where((cb) => cb.touched != null && cb.touched!.isBefore(age))
+        .toList()
       ..sort((a, b) => b.touched!.compareTo(a.touched!));
     if (list.length > capacity)
       return list.sublist(
-          capacity, (capacity + 100).clamp(capacity, list.length));
+        capacity,
+        (capacity + 100).clamp(capacity, list.length),
+      );
     return const <CacheObject>[];
   }
 
   @override
   Future<List<CacheObject>> getOldObjects(Duration maxAge) async {
     final age = DateTime.now().subtract(maxAge);
-    final list = box.values.where((cb) => 
-      cb.touched != null && cb.touched!.isBefore(age)
-    ).toList();
+    final list = box.values
+        .where((cb) => cb.touched != null && cb.touched!.isBefore(age))
+        .toList();
     if (list.length > 100) return list.sublist(0, 100);
     return list;
   }
