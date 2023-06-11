@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gameshop_deals/presentation/screen/home.dart';
+import 'package:gameshop_deals/presentation/screen/saved_deals.dart';
 import 'package:gameshop_deals/provider/filter_provider.dart';
 import 'package:gameshop_deals/utils/routes_constants.dart';
 import 'package:go_router/go_router.dart';
@@ -24,6 +25,11 @@ GoRouter createRouter({
         path: homeRoute,
         builder: (_, __) => const Home(),
         routes: [
+          GoRoute(
+            name: savedGamesRoute,
+            path: savedGamesRoute,
+            builder: (_, state) => const SavedGamesPage(),
+          ),
           GoRoute(
             name: 'search_response',
             path: 'search',

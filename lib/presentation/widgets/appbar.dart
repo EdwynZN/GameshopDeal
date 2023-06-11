@@ -332,8 +332,7 @@ class _SavedGamesButton extends StatelessWidget {
     final S translate = S.of(context);
     return IconButton(
       icon: const Icon(Icons.visibility_outlined),
-      onPressed: () async =>
-          Navigator.of(context, rootNavigator: true).pushNamed(savedGamesRoute),
+      onPressed: () => context.pushNamed(savedGamesRoute),
       tooltip: translate.save_game_tooltip,
     );
   }

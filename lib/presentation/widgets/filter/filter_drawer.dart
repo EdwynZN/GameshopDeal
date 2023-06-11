@@ -16,31 +16,26 @@ class FilterDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
     final S translate = S.of(context);
     return Drawer(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          SafeArea(
-            child: AppBar(
-              primary: false,
-              titleSpacing: 0.0,
-              shape: Border(
-                bottom:
-                    BorderSide(width: 1, color: Theme.of(context).dividerColor),
-              ),
-              leading: const CloseButton(),
-              title: Text(
-                translate.filter,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              actions: [
-                const _SaveButton(),
-                const _RestartButton(),
-              ],
+          AppBar(
+            primary: true,
+            titleSpacing: 0.0,
+            leading: const CloseButton(),
+            title: Text(
+              translate.filter,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
+            actions: [
+              const _SaveButton(),
+              const _RestartButton(),
+            ],
           ),
           Expanded(
             child: CustomScrollView(
@@ -106,8 +101,7 @@ class FilterDrawer extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               border: Border(
-                top:
-                    BorderSide(width: 1, color: Theme.of(context).dividerColor),
+                top: BorderSide(width: 1, color: theme.dividerColor),
               ),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -368,11 +362,9 @@ class _FlagFilterWidget extends ConsumerWidget {
     final S translate = S.of(context);
     final title = ref.watch(titleProvider);
     final _FilterFlags flags = ref.watch(
-      filterProviderCopy(title).select<_FilterFlags>((f) => (
-          onSale: f.onSale,
-          onlyRetail: f.onlyRetail,
-          steam: f.steamWorks
-        ),
+      filterProviderCopy(title).select<_FilterFlags>(
+        (f) =>
+            (onSale: f.onSale, onlyRetail: f.onlyRetail, steam: f.steamWorks),
       ),
     );
     return Wrap(
@@ -502,7 +494,7 @@ class _StoreWidget extends ConsumerWidget {
                 label: Text(store.storeName),
                 avatar: CachedNetworkImage(
                   cacheManager:
-                    ref.watch(cacheManagerProvider(cacheKey: cacheKeyStores)),
+                      ref.watch(cacheManagerProvider(cacheKey: cacheKeyStores)),
                   imageUrl: cheapsharkUrl + store.images.icon,
                   fit: BoxFit.contain,
                 ),
