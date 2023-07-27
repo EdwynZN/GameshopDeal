@@ -219,12 +219,12 @@
         "type": "texto",
         "description": "Cualquier valoración"
     },
-    "ascending": "Ascendente (A-Z)",
+    "ascending": "Ascendente",
     "@ascending": {
         "type": "texto",
         "description": "Orden ascendente"
     },
-    "descending": "Descendente (Z-A)",
+    "descending": "Descendente",
     "@descending": {
         "type": "texto",
         "description": "Orden descendente"

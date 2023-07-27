@@ -10,36 +10,53 @@ import 'package:gameshop_deals/provider/hive_preferences_provider.dart';
 import 'package:gameshop_deals/provider/store_provider.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:gameshop_deals/model/filter.dart';
+import 'package:flutter_hooks/flutter_hooks.dart' hide Store;
 
-class FilterDrawer extends StatelessWidget {
+class FilterDrawer extends HookWidget {
   const FilterDrawer();
 
   @override
   Widget build(BuildContext context) {
+    final scrollController = useScrollController(keys: const []);
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
     final S translate = S.of(context);
     return Drawer(
+      shape: const BeveledRectangleBorder(),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          AppBar(
-            primary: true,
-            titleSpacing: 0.0,
-            leading: const CloseButton(),
-            title: Text(
-              translate.filter,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            actions: [
-              const _SaveButton(),
-              const _RestartButton(),
-            ],
-          ),
           Expanded(
             child: CustomScrollView(
+              controller: scrollController,
               slivers: <Widget>[
+                SliverAppBar(
+                  pinned: true,
+                  elevation: 0.0,
+                  titleSpacing: 0.0,
+                  scrolledUnderElevation: 0.0,
+                  centerTitle: true,
+                  titleTextStyle: const TextStyle(
+                    fontSize: 16.0,
+                    letterSpacing: -0.15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  leading: const CloseButton(
+                    style: ButtonStyle(
+                      iconSize: MaterialStatePropertyAll(20.0),
+                    ),
+                  ),
+                  title: Text(
+                    translate.filter,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  actionsIconTheme: const IconThemeData(size: 20.0),
+                  actions: [
+                    const _SaveButton(),
+                    const _RestartButton(),
+                  ],
+                ),
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16.0,
@@ -48,11 +65,8 @@ class FilterDrawer extends StatelessWidget {
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
                       const Padding(
-                        padding: const EdgeInsets.only(bottom: 19),
-                        child: const SizedBox(
-                          height: 38,
-                          child: const _OrderByWidget(),
-                        ),
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: const _OrderWidget(),
                       ),
                       const Padding(
                         padding: const EdgeInsets.only(bottom: 19),
@@ -141,9 +155,20 @@ class _RestartButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final title = ref.watch(titleProvider);
     final S translate = S.of(context);
-    return IconButton(
-      icon: const Icon(Icons.refresh),
-      tooltip: translate.restart_tooltip,
+    final theme = Theme.of(context);
+    return TextButton(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.disabled)) return null;
+          return theme.colorScheme.onPrimary;
+        }),
+        textStyle: const MaterialStatePropertyAll(TextStyle(
+          fontSize: 12.0,
+          letterSpacing: 0.15,
+          decoration: TextDecoration.underline,
+        )),
+      ),
+      child: Text(translate.restart_tooltip),
       onPressed: () => ref.refresh(filterProviderCopy(title)),
     );
   }
@@ -226,6 +251,51 @@ class _OrderByWidget extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Order
+class _OrderWidget extends ConsumerWidget {
+  const _OrderWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final S translate = S.of(context);
+    final title = ref.watch(titleProvider);
+    final bool _isAscendant = ref.watch(
+      filterProviderCopy(title).select((f) => f.isAscendant),
+    );
+    return SegmentedButton<bool>(
+      emptySelectionAllowed: false,
+      multiSelectionEnabled: false,
+      showSelectedIcon: false,
+      segments: <ButtonSegment<bool>>[
+        ButtonSegment<bool>(
+          value: true,
+          label: Text(
+            translate.ascending,
+            style: const TextStyle(fontSize: 12.0),
+            maxLines: 1,
+          ),
+          icon: const Icon(Icons.arrow_upward, size: 20.0),
+        ),
+        ButtonSegment<bool>(
+          value: false,
+          label: Text(
+            translate.descending, 
+            style: const TextStyle(fontSize: 12.0),
+            maxLines: 1,
+          ),
+          icon: const Icon(Icons.arrow_downward, size: 20.0),
+        ),
+      ],
+      selected: <bool>{_isAscendant},
+      onSelectionChanged: (newSelection) {
+        final StateController<Filter> filter = ref
+          .read(filterProviderCopy(title).notifier);
+        filter.state = filter.state.copyWith(isAscendant: newSelection.first);
+      },
     );
   }
 }

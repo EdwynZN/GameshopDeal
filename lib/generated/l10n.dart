@@ -485,20 +485,20 @@ class S {
     );
   }
 
-  /// `Ascending (A-Z)`
+  /// `Ascending`
   String get ascending {
     return Intl.message(
-      'Ascending (A-Z)',
+      'Ascending',
       name: 'ascending',
       desc: 'Ascending order',
       args: [],
     );
   }
 
-  /// `Descending (Z-A)`
+  /// `Descending`
   String get descending {
     return Intl.message(
-      'Descending (Z-A)',
+      'Descending',
       name: 'descending',
       desc: 'Descending order',
       args: [],

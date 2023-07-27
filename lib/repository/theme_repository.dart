@@ -1,10 +1,11 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 //import 'package:flutter/services.dart';
 
 abstract class ThemeRepository {
-  /* late Color _darkAccentColor;
-  TextTheme _darkAccentTextTheme = const TextTheme(
+  late Color _darkAccentColor;
+  final TextTheme _darkAccentTextTheme = const TextTheme(
     titleMedium: TextStyle(
         color: Colors.black87,
         fontSize: 16,
@@ -61,7 +62,7 @@ abstract class ThemeRepository {
         fontWeight: FontWeight.w500,
         letterSpacing: 0.15),
   );
-  TextTheme _lightAccentTextTheme = const TextTheme(
+  final TextTheme _lightAccentTextTheme = const TextTheme(
     titleMedium: TextStyle(
         color: Colors.white70,
         fontSize: 16,
@@ -118,15 +119,70 @@ abstract class ThemeRepository {
         fontWeight: FontWeight.w500,
         letterSpacing: 0.15),
   );
- */
 
   ThemeData get light;
   ThemeData get dark;
 }
 
+class ThemeFlex extends ThemeRepository {
+  ThemeFlex();
+  
+  final ThemeData light = FlexThemeData.light(
+    colors: const FlexSchemeColor(
+      primary: Color(0xffb71c1c),
+      primaryContainer: Color(0xffffdad8),
+      secondary: Color(0xff753b23),
+      secondaryContainer: Color(0xffa65f12),
+      tertiary: Color(0xff756500),
+      tertiaryContainer: Color(0xfffff7cb),
+      appBarColor: Color(0xffb71c1c),
+      error: Color(0xffb00020),
+    ),
+    appBarStyle: FlexAppBarStyle.primary,
+    surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
+    blendLevel: 8,
+    subThemesData: const FlexSubThemesData(
+      blendOnLevel: 10,
+      blendOnColors: false,
+      useM2StyleDividerInM3: true,
+    ),
+    tones: FlexTones.material(Brightness.light),
+    useMaterial3ErrorColors: true,
+    visualDensity: FlexColorScheme.comfortablePlatformDensity,
+    useMaterial3: true,
+    // To use the playground font, add GoogleFonts package and uncomment
+    // fontFamily: GoogleFonts.notoSans().fontFamily,
+  );
+  final ThemeData dark = FlexThemeData.dark(
+    colors: const FlexSchemeColor(
+      primary: Color(0xffffb3ac),
+      primaryContainer: Color(0xffb91d1d),
+      secondary: Color(0xffffd3c6),
+      secondaryContainer: Color(0xff621800),
+      tertiary: Color(0xfffff1b6),
+      tertiaryContainer: Color(0xff887700),
+      appBarColor: Color(0xff621800),
+      error: Color(0xffcf6679),
+    ),
+    appBarStyle: FlexAppBarStyle.material,
+    surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
+    blendLevel: 13,
+    subThemesData: const FlexSubThemesData(
+      blendOnLevel: 20,
+      useM2StyleDividerInM3: true,
+    ),
+    useMaterial3ErrorColors: true,
+    visualDensity: FlexColorScheme.comfortablePlatformDensity,
+    useMaterial3: true,
+    // To use the Playground font, add GoogleFonts package and uncomment
+    // fontFamily: GoogleFonts.notoSans().fontFamily,
+  );
+
+}
+
 class ThemeImpl extends ThemeRepository {
-  /// late final ThemeData _lightTheme;
-  /// late final ThemeData _darkTheme;
+  late final ThemeData _lightTheme;
+  late final ThemeData _darkTheme;
 
   ThemeImpl() {
     _setLight = 0;
@@ -134,7 +190,7 @@ class ThemeImpl extends ThemeRepository {
   }
 
   set _setLight(int light) {
-    /* MaterialColor color = Colors.primaries[light.clamp(0, 17)];
+    MaterialColor color = Colors.primaries[light.clamp(0, 17)];
     MaterialAccentColor accentColor = Colors.accents[light.clamp(0, 15)];
     if (light >= 17)
       accentColor = const MaterialAccentColor(
@@ -408,11 +464,11 @@ class ThemeImpl extends ThemeRepository {
         surfaceTint: color.shade100,
       ).copyWith(background: color[100]).copyWith(error: Colors.redAccent),
     );
-   */
+  
   }
 
   set _setDark(int dark) {
-    /* final Brightness _brightness = Brightness.dark;
+    final Brightness _brightness = Brightness.dark;
     final Color _accentColor =
         _brightness == Brightness.dark ? Colors.white : Colors.black;
     switch (dark) {
@@ -967,56 +1023,9 @@ class ThemeImpl extends ThemeRepository {
  ), colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey).copyWith(secondary: _darkAccentColor).copyWith(background: Colors.black).copyWith(error: Color.fromRGBO(207, 102, 121, 1)),
         );
         break;
-    } */
+    }
   }
 
-  final ThemeData light = FlexThemeData.light(
-    colors: const FlexSchemeColor(
-      primary: Color(0xffb71c1c),
-      primaryContainer: Color(0xffffdad8),
-      secondary: Color(0xff753b23),
-      secondaryContainer: Color(0xffa65f12),
-      tertiary: Color(0xff756500),
-      tertiaryContainer: Color(0xfffff7cb),
-      appBarColor: Color(0xffb71c1c),
-      error: Color(0xffb00020),
-    ),
-    appBarStyle: FlexAppBarStyle.primary,
-    surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
-    blendLevel: 8,
-    subThemesData: const FlexSubThemesData(
-      blendOnLevel: 10,
-      blendOnColors: false,
-      useM2StyleDividerInM3: true,
-    ),
-    useMaterial3ErrorColors: true,
-    visualDensity: FlexColorScheme.comfortablePlatformDensity,
-    useMaterial3: true,
-    // To use the playground font, add GoogleFonts package and uncomment
-    // fontFamily: GoogleFonts.notoSans().fontFamily,
-  );
-  final ThemeData dark = FlexThemeData.dark(
-    colors: const FlexSchemeColor(
-      primary: Color(0xffffb3ac),
-      primaryContainer: Color(0xffb91d1d),
-      secondary: Color(0xffffd3c6),
-      secondaryContainer: Color(0xff621800),
-      tertiary: Color(0xfffff1b6),
-      tertiaryContainer: Color(0xff887700),
-      appBarColor: Color(0xff621800),
-      error: Color(0xffcf6679),
-    ),
-    appBarStyle: FlexAppBarStyle.material,
-    surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
-    blendLevel: 13,
-    subThemesData: const FlexSubThemesData(
-      blendOnLevel: 20,
-      useM2StyleDividerInM3: true,
-    ),
-    useMaterial3ErrorColors: true,
-    visualDensity: FlexColorScheme.comfortablePlatformDensity,
-    useMaterial3: true,
-    // To use the Playground font, add GoogleFonts package and uncomment
-    // fontFamily: GoogleFonts.notoSans().fontFamily,
-  );
+  ThemeData get light => _lightTheme;
+  ThemeData get dark => _darkTheme;
 }

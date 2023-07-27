@@ -219,12 +219,12 @@
         "type": "text",
         "description": "Any rating"
     },
-    "ascending": "Ascending (A-Z)",
+    "ascending": "Ascending",
     "@ascending": {
         "type": "text",
         "description": "Ascending order"
     },
-    "descending": "Descending (Z-A)",
+    "descending": "Descending",
     "@descending": {
         "type": "text",
         "description": "Descending order"

@@ -120,7 +120,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "any_metacritic": MessageLookupByLibrary.simpleMessage("Any score"),
         "any_rating": MessageLookupByLibrary.simpleMessage("Any"),
         "apply_filter": MessageLookupByLibrary.simpleMessage("Apply"),
-        "ascending": MessageLookupByLibrary.simpleMessage("Ascending (A-Z)"),
+        "ascending": MessageLookupByLibrary.simpleMessage("Ascending"),
         "cache_dialog_content": MessageLookupByLibrary.simpleMessage(
             "This action can\'t be undone"),
         "cache_dialog_title":
@@ -144,7 +144,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "connection_error":
             MessageLookupByLibrary.simpleMessage("No Internet connection"),
         "dark": MessageLookupByLibrary.simpleMessage("Dark"),
-        "descending": MessageLookupByLibrary.simpleMessage("Descending (Z-A)"),
+        "descending": MessageLookupByLibrary.simpleMessage("Descending"),
         "dio_error": m8,
         "dollar_currency": m9,
         "feedback": MessageLookupByLibrary.simpleMessage("Send feedback"),

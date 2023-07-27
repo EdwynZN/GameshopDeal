@@ -122,7 +122,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "any_rating":
             MessageLookupByLibrary.simpleMessage("Cualquier valoración"),
         "apply_filter": MessageLookupByLibrary.simpleMessage("Aplicar"),
-        "ascending": MessageLookupByLibrary.simpleMessage("Ascendente (A-Z)"),
+        "ascending": MessageLookupByLibrary.simpleMessage("Ascendente"),
         "cache_dialog_content": MessageLookupByLibrary.simpleMessage(
             "Esta acción no se puede deshacer"),
         "cache_dialog_title":
@@ -145,7 +145,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "connection_error":
             MessageLookupByLibrary.simpleMessage("Sin Internet"),
         "dark": MessageLookupByLibrary.simpleMessage("Oscuro"),
-        "descending": MessageLookupByLibrary.simpleMessage("Descendente (Z-A)"),
+        "descending": MessageLookupByLibrary.simpleMessage("Descendente"),
         "dio_error": m8,
         "dollar_currency": m9,
         "feedback": MessageLookupByLibrary.simpleMessage("Retroalimentación"),
