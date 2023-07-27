@@ -51,8 +51,8 @@ class GameShop extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeProvider);
-    final themeData = ref.watch(themeProvider.notifier);
+    final themeMode = ref.watch(themeModeProvider);
+    final themeNotifier = ref.watch(themeNotifierProvider);
     final router = ref.watch(routerProvider);
     return RefreshConfiguration(
       enableLoadingWhenFailed: false,
@@ -69,8 +69,8 @@ class GameShop extends ConsumerWidget {
         ],
         supportedLocales: S.delegate.supportedLocales,
         debugShowCheckedModeBanner: false,
-        darkTheme: themeData.darkTheme,
-        theme: themeData.lightTheme,
+        darkTheme: themeNotifier.dark,
+        theme: themeNotifier.light,
         themeMode: themeMode,
       ),
     );

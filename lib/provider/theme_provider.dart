@@ -3,20 +3,26 @@ import 'package:gameshop_deals/provider/hive_preferences_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/repository/theme_repository.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
+part 'theme_provider.g.dart';
+
+final themeModeProvider =
+    StateNotifierProvider<ThemeStateNotifier, ThemeMode>((ref) {
   final ThemeMode mode = ref
-    .watch(hivePreferencesProvider)
-    .get(themeModeKey, defaultValue: ThemeMode.system);
+      .watch(hivePreferencesProvider)
+      .get(themeModeKey, defaultValue: ThemeMode.system);
 
-  return ThemeNotifier(ref, themeModeKey, mode);
+  return ThemeStateNotifier(ref, themeModeKey, mode);
 }, name: 'ThemeMode Provider');
 
-class ThemeNotifier extends HiveNotifier<ThemeMode> {
-  ThemeNotifier(Ref ref, String key, ThemeMode mode) : super(ref, key, mode);
+class ThemeStateNotifier extends HiveNotifier<ThemeMode> {
+  ThemeStateNotifier(super.ref, super.key, super.mode);
+}
 
-  final ThemeRepository _theme = ThemeImpl();
+@riverpod
+class ThemeNotifier extends _$ThemeNotifier {
 
-  ThemeData get lightTheme => _theme.light;
-  ThemeData get darkTheme => _theme.dark;
+  @override
+  ThemeRepository build() => ThemeImpl();
 }

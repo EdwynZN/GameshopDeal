@@ -17,7 +17,7 @@ class FilterAdapter extends TypeAdapter<_$_Filter> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return _$_Filter(
-      storeId: (fields[0] as List).cast<String>().toSet(),
+      storeId: (fields[0] as List).cast<String>(),
       pageSize: fields[1] as int,
       sortBy: fields[2] as SortBy,
       isAscendant: fields[3] as bool,
@@ -25,7 +25,7 @@ class FilterAdapter extends TypeAdapter<_$_Filter> {
       upperPrice: fields[5] as int,
       metacritic: fields[6] as int,
       steamRating: fields[7] as int,
-      steamAppId: (fields[8] as List).cast<String>().toSet(),
+      steamAppId: (fields[8] as List).cast<String>(),
       onlyRetail: fields[9] as bool,
       steamWorks: fields[10] as bool,
       onSale: fields[11] as bool,

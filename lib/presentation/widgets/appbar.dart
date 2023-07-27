@@ -239,8 +239,9 @@ class __MoreSettingsState extends ConsumerState<_MoreSettings> {
                 maxLines: 1,
               ),
               value: mode,
-              provider: themeProvider,
-              onTap: () => ref.read(themeProvider.notifier).changeState(mode)),
+              provider: themeModeProvider,
+              onTap: () =>
+                  ref.read(themeModeProvider.notifier).changeState(mode)),
       ],
     );
   }
@@ -265,12 +266,12 @@ class __MoreSettingsState extends ConsumerState<_MoreSettings> {
       context: context,
       builder: (_) => PreferenceDialog<ThemeMode>(
         title: translate.choose_theme,
-        provider: themeProvider,
+        provider: themeModeProvider,
         values: ThemeMode.values,
       ),
     );
     if (mode == null) return;
-    ref.read(themeProvider.notifier).changeState(mode);
+    ref.read(themeModeProvider.notifier).changeState(mode);
   }
 
   @override

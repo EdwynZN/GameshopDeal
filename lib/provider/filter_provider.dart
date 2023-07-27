@@ -13,7 +13,7 @@ final filterProviderCopy = StateProvider.autoDispose.family<Filter, String>(
 final filterProvider = StateProvider.autoDispose.family<Filter, String>(
   (ref, title) {
     final preferedBox = ref.watch(hivePreferencesProvider);
-    final Filter filter = preferedBox.get(filterKey, defaultValue: Filter()) as Filter;
+    final Filter filter = preferedBox.get(filterKey, defaultValue: Filter());
     return filter.copyWith(title: title);
   },
   name: 'FilterProvider',
