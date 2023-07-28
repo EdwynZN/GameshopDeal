@@ -24,5 +24,5 @@ class ThemeStateNotifier extends HiveNotifier<ThemeMode> {
 class ThemeNotifier extends _$ThemeNotifier {
 
   @override
-  ThemeRepository build() => ThemeImpl();
+  ThemeRepository build() => ThemeFlex();
 }

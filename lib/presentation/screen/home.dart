@@ -20,8 +20,6 @@ class Home extends ConsumerStatefulWidget {
 class _HomeState extends ConsumerState<Home> with PrincipalState {
   @override
   Widget build(BuildContext context) {
-    var data = ModalRoute.of(context)!.settings.arguments;
-    print('args: $data');
     //final isPageView =
     //    ref.watch(displayProvider.select((view) => view == ViewFormat.Swipe));
     final title = ref.watch(titleProvider);

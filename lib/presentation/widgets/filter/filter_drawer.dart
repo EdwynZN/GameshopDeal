@@ -8,6 +8,7 @@ import 'package:gameshop_deals/provider/cache_manager_provider.dart';
 import 'package:gameshop_deals/provider/filter_provider.dart';
 import 'package:gameshop_deals/provider/hive_preferences_provider.dart';
 import 'package:gameshop_deals/provider/store_provider.dart';
+import 'package:gameshop_deals/utils/constraints.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:gameshop_deals/model/filter.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' hide Store;
@@ -21,108 +22,95 @@ class FilterDrawer extends HookWidget {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
     final S translate = S.of(context);
-    return Drawer(
-      shape: const BeveledRectangleBorder(),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          Expanded(
-            child: CustomScrollView(
-              controller: scrollController,
-              slivers: <Widget>[
-                SliverAppBar(
-                  pinned: true,
-                  elevation: 0.0,
-                  titleSpacing: 0.0,
-                  scrolledUnderElevation: 0.0,
-                  centerTitle: true,
-                  titleTextStyle: const TextStyle(
-                    fontSize: 16.0,
-                    letterSpacing: -0.15,
-                    fontWeight: FontWeight.w600,
+    final titleTheme = textTheme.titleMedium;
+    return PrimaryScrollController.none(
+      child: Drawer(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.horizontal(left: Radius.circular(16.0)),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Expanded(
+              child: CustomScrollView(
+                controller: scrollController,
+                slivers: <Widget>[
+                  SliverAppBar(
+                    pinned: true,
+                    elevation: 0.0,
+                    titleSpacing: 0.0,
+                    scrolledUnderElevation: 0.0,
+                    centerTitle: true,
+                    leading: const CloseButton(
+                      style: ButtonStyle(
+                        iconSize: MaterialStatePropertyAll(24.0),
+                      ),
+                    ),
+                    title: Text(
+                      translate.filter,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    actionsIconTheme: const IconThemeData(size: 20.0),
+                    actions: const [emptyWidget],
                   ),
-                  leading: const CloseButton(
-                    style: ButtonStyle(
-                      iconSize: MaterialStatePropertyAll(20.0),
+                  SliverPadding(
+                    padding: const EdgeInsets.all(16.0),
+                    sliver: SliverList(
+                      delegate: SliverChildListDelegate([
+                        const _OrderWidget(),
+                        gap16,
+                        Text(translate.filter, style: titleTheme),
+                        gap4,
+                        const _FlagFilterWidget(),
+                        gap16,
+                        Text(translate.price_range, style: titleTheme),
+                        gap4,
+                        const _PriceSlider(),
+                        gap16,
+                        Text('Metacritic', style: titleTheme),
+                        gap4,
+                        const _MetacriticFilter(),
+                        gap16,
+                        Text(translate.steam_rating, style: titleTheme),
+                        gap4,
+                        const _SteamRating(),
+                        gap16,
+                        Text(translate.sortBy, style: titleTheme),
+                        gap4,
+                        const _SortByWidget(),
+                        gap16,
+                        Text(translate.stores, style: titleTheme),
+                        gap4,
+                        const _StoreWidget(),
+                      ]),
                     ),
                   ),
-                  title: Text(
-                    translate.filter,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  actionsIconTheme: const IconThemeData(size: 20.0),
-                  actions: [
-                    const _SaveButton(),
-                    const _RestartButton(),
-                  ],
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 6.0,
-                  ),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      const Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: const _OrderWidget(),
-                      ),
-                      const Padding(
-                        padding: const EdgeInsets.only(bottom: 19),
-                        child: const _FlagFilterWidget(),
-                      ),
-                      Text(
-                        translate.price_range,
-                        style: textTheme.headlineSmall,
-                      ),
-                      const Padding(
-                        padding: const EdgeInsets.only(bottom: 19),
-                        child: const _PriceSlider(),
-                      ),
-                      Text(
-                        'Metacritic',
-                        style: textTheme.headlineSmall,
-                      ),
-                      const Padding(
-                        padding: const EdgeInsets.only(bottom: 19),
-                        child: const _MetacriticFilter(),
-                      ),
-                      Text(
-                        translate.steam_rating,
-                        style: textTheme.headlineSmall,
-                      ),
-                      const Padding(
-                        padding: const EdgeInsets.only(bottom: 19),
-                        child: const _SteamRating(),
-                      ),
-                      Text(translate.sortBy, style: textTheme.headlineSmall),
-                      const Padding(
-                        padding: const EdgeInsets.only(bottom: 19),
-                        child: const _SortByWidget(),
-                      ),
-                      Text(
-                        translate.stores,
-                        style: textTheme.headlineSmall,
-                      ),
-                      const _StoreWidget(),
-                    ]),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(width: 1, color: theme.dividerColor),
+                ],
               ),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            width: double.infinity,
-            child: const _ApplyButton(),
-          ),
-        ],
+            Card(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+              ),
+              margin: emptyPadding,
+              elevation: 12.0,
+              shadowColor: Colors.transparent,
+              child: SafeArea(
+                top: false,
+                maintainBottomViewPadding: false,
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
+                  child: const _ApplyButton(),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -162,11 +150,9 @@ class _RestartButton extends ConsumerWidget {
           if (states.contains(MaterialState.disabled)) return null;
           return theme.colorScheme.onPrimary;
         }),
-        textStyle: const MaterialStatePropertyAll(TextStyle(
-          fontSize: 12.0,
-          letterSpacing: 0.15,
-          decoration: TextDecoration.underline,
-        )),
+        overlayColor: MaterialStatePropertyAll(
+          theme.colorScheme.primaryContainer.withOpacity(0.24),
+        ),
       ),
       child: Text(translate.restart_tooltip),
       onPressed: () => ref.refresh(filterProviderCopy(title)),
@@ -181,6 +167,7 @@ class _ApplyButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final title = ref.watch(titleProvider);
     final S translate = S.of(context);
+    final theme = Theme.of(context);
     return ElevatedButton(
       onPressed: () {
         final StateController<Filter> filterCopy =
@@ -191,66 +178,14 @@ class _ApplyButton extends ConsumerWidget {
         filter.state = filterCopy.state.copyWith();
         Navigator.maybePop(context);
       },
+      style: ButtonStyle(
+        overlayColor: MaterialStatePropertyAll(
+          theme.colorScheme.primaryContainer.withOpacity(0.24),
+        ),
+        backgroundColor: MaterialStatePropertyAll(theme.colorScheme.primary),
+        foregroundColor: MaterialStatePropertyAll(theme.colorScheme.onPrimary),
+      ),
       child: Text(translate.apply_filter),
-    );
-  }
-}
-
-/// Order
-class _OrderByWidget extends ConsumerWidget {
-  const _OrderByWidget({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final S translate = S.of(context);
-    final title = ref.watch(titleProvider);
-    final bool _isAscendant = ref.watch(
-      filterProviderCopy(title).select((f) => f.isAscendant),
-    );
-    final ThemeData theme = Theme.of(context);
-    final Color _accentColor = theme.colorScheme.secondary;
-    final Color _accentTextThemeColor = theme.colorScheme.primary;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.max,
-      children: <Widget>[
-        Expanded(
-          child: OutlinedButton.icon(
-            style: _isAscendant
-                ? OutlinedButton.styleFrom(
-                    foregroundColor: _accentTextThemeColor,
-                    backgroundColor: _accentColor)
-                : null,
-            onPressed: () {
-              if (_isAscendant) return;
-              final StateController<Filter> filter =
-                  ref.read(filterProviderCopy(title).notifier);
-              filter.state = filter.state.copyWith(isAscendant: true);
-            },
-            icon: const Icon(Icons.arrow_upward, size: 20),
-            label: FittedBox(child: Text(translate.ascending)),
-          ),
-        ),
-        Expanded(
-          child: OutlinedButton.icon(
-            style: !_isAscendant
-                ? OutlinedButton.styleFrom(
-                    foregroundColor: _accentTextThemeColor,
-                    backgroundColor: _accentColor)
-                : null,
-            onPressed: () {
-              if (!_isAscendant) return;
-              final StateController<Filter> filter =
-                  ref.read(filterProviderCopy(title).notifier);
-              filter.state = filter.state.copyWith(isAscendant: false);
-            },
-            icon: const Icon(Icons.arrow_downward, size: 20),
-            label: FittedBox(
-              child: Text(translate.descending),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -283,7 +218,7 @@ class _OrderWidget extends ConsumerWidget {
         ButtonSegment<bool>(
           value: false,
           label: Text(
-            translate.descending, 
+            translate.descending,
             style: const TextStyle(fontSize: 12.0),
             maxLines: 1,
           ),
@@ -292,8 +227,8 @@ class _OrderWidget extends ConsumerWidget {
       ],
       selected: <bool>{_isAscendant},
       onSelectionChanged: (newSelection) {
-        final StateController<Filter> filter = ref
-          .read(filterProviderCopy(title).notifier);
+        final StateController<Filter> filter =
+            ref.read(filterProviderCopy(title).notifier);
         filter.state = filter.state.copyWith(isAscendant: newSelection.first);
       },
     );
@@ -347,6 +282,7 @@ class _MetacriticFilter extends ConsumerWidget {
     );
     return Slider.adaptive(
       value: metacritic,
+      thumbColor: Theme.of(context).primaryColor,
       onChanged: (newValue) {
         final StateController<Filter> filter =
             ref.read(filterProviderCopy(title).notifier);
@@ -375,6 +311,7 @@ class _SortByWidget extends ConsumerWidget {
         ref.watch(filterProviderCopy(title).select((f) => f.sortBy));
     return Wrap(
       spacing: 8,
+      runSpacing: 2.0,
       children: <Widget>[
         for (SortBy sort in SortBy.values)
           ChoiceChip(
@@ -406,6 +343,7 @@ class _SteamRating extends ConsumerWidget {
           .select((f) => f.steamRating.clamp(40, 95).toDouble()),
     );
     return Slider.adaptive(
+      thumbColor: Theme.of(context).primaryColor,
       value: score,
       onChanged: (newValue) {
         final StateController<Filter> filter =
@@ -437,41 +375,48 @@ class _FlagFilterWidget extends ConsumerWidget {
             (onSale: f.onSale, onlyRetail: f.onlyRetail, steam: f.steamWorks),
       ),
     );
-    return Wrap(
-      spacing: 8,
-      alignment: WrapAlignment.center,
-      children: <Widget>[
-        _FilterChip(
-          label: translate.on_sale,
-          tooltip: translate.on_sale_tooltip,
-          value: flags.onSale,
-          onSelected: (value) {
-            final StateController<Filter> filter =
-                ref.read(filterProviderCopy(title).notifier);
-            filter.state = filter.state.copyWith(onSale: value);
-          },
+    return SizedBox(
+      height: 48.0,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.only(right: 8.0),
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: <Widget>[
+            _FilterChip(
+              label: translate.on_sale,
+              tooltip: translate.on_sale_tooltip,
+              value: flags.onSale,
+              onSelected: (value) {
+                final StateController<Filter> filter =
+                    ref.read(filterProviderCopy(title).notifier);
+                filter.state = filter.state.copyWith(onSale: value);
+              },
+            ),
+            gap8,
+            _FilterChip(
+              label: translate.retail_discount,
+              tooltip: translate.retail_discount_tooltip,
+              value: flags.onlyRetail,
+              onSelected: (value) {
+                final StateController<Filter> filter =
+                    ref.read(filterProviderCopy(title).notifier);
+                filter.state = filter.state.copyWith(onlyRetail: value);
+              },
+            ),
+            gap8,
+            _FilterChip(
+              label: translate.steamworks,
+              tooltip: translate.steamworks_tooltip,
+              value: flags.steam,
+              onSelected: (value) {
+                final StateController<Filter> filter =
+                    ref.read(filterProviderCopy(title).notifier);
+                filter.state = filter.state.copyWith(steamWorks: value);
+              },
+            ),
+          ],
         ),
-        _FilterChip(
-          label: translate.retail_discount,
-          tooltip: translate.retail_discount_tooltip,
-          value: flags.onlyRetail,
-          onSelected: (value) {
-            final StateController<Filter> filter =
-                ref.read(filterProviderCopy(title).notifier);
-            filter.state = filter.state.copyWith(onlyRetail: value);
-          },
-        ),
-        _FilterChip(
-          label: translate.steamworks,
-          tooltip: translate.steamworks_tooltip,
-          value: flags.steam,
-          onSelected: (value) {
-            final StateController<Filter> filter =
-                ref.read(filterProviderCopy(title).notifier);
-            filter.state = filter.state.copyWith(steamWorks: value);
-          },
-        ),
-      ],
+      ),
     );
   }
 }

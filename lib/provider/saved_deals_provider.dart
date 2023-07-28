@@ -11,8 +11,6 @@ import 'package:gameshop_deals/model/pagination_model.dart';
 /// Maximum of 25 games id as documented by CheapShark API
 const int _kMaximumGamesId = 25;
 
-final singleGameLookup = Provider.autoDispose<GameLookup>((_) => throw UnimplementedError());
-
 final savedBoxProvider = FutureProvider<LazyBox<PriceAlert>>((ref) async {
   final LazyBox<PriceAlert> lazyBox;
 

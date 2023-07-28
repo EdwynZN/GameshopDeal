@@ -31,8 +31,13 @@ GoRouter createRouter({
             builder: (_, state) => const SavedGamesPage(),
           ),
           GoRoute(
+            name: detailRoute,
+            path: detailRoute,
+            builder: (_, state) => const SavedGamesPage(),
+          ),
+          GoRoute(
             name: 'search_response',
-            path: 'search',
+            path: searchRoute,
             redirect: (context, state) {
               final search = state.queryParameters['title'];
               return search == null || search.isEmpty ? '/' : null;
