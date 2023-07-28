@@ -85,10 +85,15 @@
             }
         }
     },
-    "settings": "Opciones",
+    "settings": "Ajustes",
     "@settings": {
         "type": "texto",
-        "description": "Opciones"
+        "description": "Ajustes"
+    },
+    "about": "Acerca de",
+    "@about": {
+        "type": "text",
+        "description": "Tarjeta de \"Acerca de\""
     },
     "internal_browser_checkbox": "Navegador Interno",
     "@internal_browser_checkbox": {

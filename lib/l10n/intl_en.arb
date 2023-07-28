@@ -90,6 +90,11 @@
         "type": "text",
         "description": "settings option"
     },
+    "about": "About",
+    "@about": {
+        "type": "text",
+        "description": "About card"
+    },
     "internal_browser_checkbox": "Internal Browser",
     "@internal_browser_checkbox": {
         "type": "text",

@@ -240,6 +240,16 @@ class S {
     );
   }
 
+  /// `About`
+  String get about {
+    return Intl.message(
+      'About',
+      name: 'about',
+      desc: 'About card',
+      args: [],
+    );
+  }
+
   /// `Internal Browser`
   String get internal_browser_checkbox {
     return Intl.message(

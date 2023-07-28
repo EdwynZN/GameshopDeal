@@ -40,9 +40,7 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
     if (isSearching) {
       titletext = title;
     } else {
-      final S translate = S.of(context);
-      final sort = ref.watch(_sortByProvider);
-      titletext = translate.sort(sort);
+      titletext = 'Gameshop Deals';
     }
     return AppBar(
       automaticallyImplyLeading: true,
@@ -303,7 +301,7 @@ class __MoreSettingsState extends ConsumerState<_MoreSettings> {
               ref.invalidate(dealPageProvider(title));
             break;
           case 4:
-            Navigator.of(context, rootNavigator: true).pushNamed(settingsRoute);
+            context.pushNamed(settingsRoute);
             break;
         }
       },

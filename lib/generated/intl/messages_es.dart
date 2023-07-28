@@ -113,6 +113,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "about": MessageLookupByLibrary.simpleMessage("Acerca de"),
         "alert_price": m0,
         "all_choice": MessageLookupByLibrary.simpleMessage("Todas"),
         "all_stores_tooltip":
@@ -189,7 +190,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "save_game_title": MessageLookupByLibrary.simpleMessage("Mis Juegos"),
         "save_game_tooltip":
             MessageLookupByLibrary.simpleMessage("Abrir juegos guardadas"),
-        "settings": MessageLookupByLibrary.simpleMessage("Opciones"),
+        "settings": MessageLookupByLibrary.simpleMessage("Ajustes"),
         "soon": MessageLookupByLibrary.simpleMessage("Próximamente"),
         "sort": m13,
         "sortBy": MessageLookupByLibrary.simpleMessage("Ordenar por"),

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gameshop_deals/presentation/screen/home.dart';
 import 'package:gameshop_deals/presentation/screen/saved_deals.dart';
+import 'package:gameshop_deals/presentation/screen/settings.dart';
 import 'package:gameshop_deals/provider/filter_provider.dart';
 import 'package:gameshop_deals/utils/routes_constants.dart';
 import 'package:go_router/go_router.dart';
@@ -31,9 +32,9 @@ GoRouter createRouter({
             builder: (_, state) => const SavedGamesPage(),
           ),
           GoRoute(
-            name: detailRoute,
-            path: detailRoute,
-            builder: (_, state) => const SavedGamesPage(),
+            name: settingsName,
+            path: settingsName,
+            builder: (_, __) => const SettingsScreen(),
           ),
           GoRoute(
             name: 'search_response',

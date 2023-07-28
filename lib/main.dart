@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
+import 'package:gameshop_deals/provider/info_provider.dart';
 import 'package:gameshop_deals/provider/router_provider.dart';
 import 'package:gameshop_deals/provider/theme_provider.dart';
 import 'package:gameshop_deals/service/hive_init.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class Logger extends ProviderObserver {
@@ -38,9 +40,13 @@ class Logger extends ProviderObserver {
 void main() async {
   //WidgetsFlutterBinding.ensureInitialized();
   await initHive();
+  final packageInfo = await PackageInfo.fromPlatform();
   runApp(
     ProviderScope(
       //observers: [Logger()],
+      overrides: [
+        infoProvider.overrideWithValue(packageInfo),
+      ],
       child: const GameShop(),
     ),
   );

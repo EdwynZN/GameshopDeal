@@ -59,8 +59,8 @@ class _HomeState extends ConsumerState<Home> with PrincipalState {
         key: PageStorageKey('ListView$title'),
         controller: scrollController,
         child: Scrollbar(
-          thickness: 3.0,
-          radius: Radius.circular(3.0),
+          thickness: 4.0,
+          radius: const Radius.circular(2.0),
           child: SmartRefresher(
             controller: refreshController,
             primary: true,
@@ -125,6 +125,9 @@ class _ScrollFooterState extends LoadIndicatorState<ScrollFooter> {
       builder: (context, ref, _) {
         final title = ref.watch(titleProvider);
         final deals = ref.watch(dealPageProvider(title));
+        if (deals.isLoading && !deals.hasValue) {
+          return const SizedBox(height: 4.0);
+        }
         return deals.when(
           skipLoadingOnRefresh: false,
           skipLoadingOnReload: false,

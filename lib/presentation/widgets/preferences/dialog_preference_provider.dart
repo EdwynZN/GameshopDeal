@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/provider/hive_preferences_provider.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 
-class PreferenceDialog<T extends Object> extends StatefulHookConsumerWidget {
+class PreferenceDialog<T extends Object> extends ConsumerStatefulWidget {
   const PreferenceDialog({
     Key? key,
     required this.title,
     required this.provider,
     required this.values,
     Widget? child,
-  }) : super(key: key);
+  })  : super(key: key);
 
   final String title;
 
@@ -23,28 +22,26 @@ class PreferenceDialog<T extends Object> extends StatefulHookConsumerWidget {
   _PreferenceDialogState<T> createState() => _PreferenceDialogState<T>();
 }
 
-class _PreferenceDialogState<T extends Object>
-    extends ConsumerState<PreferenceDialog<T>> {
+class _PreferenceDialogState<T extends Object> extends ConsumerState<PreferenceDialog<T>> {
+  late T value;
   late S translate;
 
   @override
   void didChangeDependencies() {
+    value = ref.read(widget.provider);
     translate = S.of(context);
     super.didChangeDependencies();
   }
 
-  String _translatedTitle(T title) => title is ThemeMode
-    ? translate.themeMode(title)
-    : translate.choose_view(title);
+  String _translatedTitle(T title) {
+    if (title is ThemeMode) return translate.themeMode(title);
+    else return translate.choose_view(title);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final value = ref.watch(widget.provider);
-    final localizations = MaterialLocalizations.of(context);
-    final ValueNotifier<T> valueState = useState(value);
     return AlertDialog(
       title: Text(widget.title),
-      titlePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       content: Scrollbar(
         child: SingleChildScrollView(
           child: Column(
@@ -52,11 +49,11 @@ class _PreferenceDialogState<T extends Object>
               for (T obj in widget.values)
                 RadioListTile(
                   value: obj,
-                  groupValue: valueState.value,
+                  groupValue: value,
                   title: Text(_translatedTitle(obj)),
-                  onChanged: (newValue) {
-                    if (newValue != null) valueState.value = newValue;
-                  },
+                  onChanged: (newValue) => newValue == null
+                    ? null
+                    : setState(() => value = newValue),
                 ),
             ],
           ),
@@ -65,11 +62,11 @@ class _PreferenceDialogState<T extends Object>
       actions: <Widget>[
         TextButton(
           onPressed: () => Navigator.of(context).pop<T>(),
-          child: Text(localizations.cancelButtonLabel),
+          child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
         ),
         FilledButton(
-          onPressed: () => Navigator.of(context).pop<T>(valueState.value),
-          child: Text(localizations.okButtonLabel),
+          onPressed: () => Navigator.of(context).pop<T>(value),
+          child: Text(MaterialLocalizations.of(context).okButtonLabel),
         ),
       ],
     );

@@ -6,14 +6,6 @@ const emptyWidgetWide = SizedBox(width: double.infinity);
 
 // Margins
 
-const gap4 = Gap(4.0);
-const gap8 = Gap(8.0);
-const gap12 = Gap(12.0);
-const gap16 = Gap(16.0);
-const gap24 = Gap(24.0);
-const gap32 = Gap(32.0);
-const gap48 = Gap(48.0);
-
 const horizontalMargin4 = SizedBox(width: 4.0);
 const horizontalMargin8 = SizedBox(width: 8.0);
 const horizontalMargin12 = SizedBox(width: 12.0);
@@ -48,3 +40,21 @@ const verticalPadding16 = EdgeInsets.symmetric(vertical: 16.0);
 
 const allPadding4 = EdgeInsets.all(4.0);
 const allPadding8 = EdgeInsets.all(8.0);
+
+// Gap
+
+const gap4 = Gap(4.0);
+const gap8 = Gap(8.0);
+const gap12 = Gap(12.0);
+const gap16 = Gap(16.0);
+const gap24 = Gap(24.0);
+const gap32 = Gap(32.0);
+const gap48 = Gap(48.0);
+
+const sliverGap4 = SliverGap(4.0);
+const sliverGap8 = SliverGap(8.0);
+const sliverGap12 = SliverGap(12.0);
+const sliverGap16 = SliverGap(16.0);
+const sliverGap24 = SliverGap(24.0);
+const sliverGap32 = SliverGap(32.0);
+const sliverGap48 = SliverGap(48.0);

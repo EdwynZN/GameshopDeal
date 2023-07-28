@@ -105,7 +105,7 @@ class FilterDrawer extends HookWidget {
                     horizontal: 16.0,
                     vertical: 8.0,
                   ),
-                  child: const _ApplyButton(),
+                  child: const Center(child: _ApplyButton()),
                 ),
               ),
             ),
@@ -167,8 +167,7 @@ class _ApplyButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final title = ref.watch(titleProvider);
     final S translate = S.of(context);
-    final theme = Theme.of(context);
-    return ElevatedButton(
+    return FilledButton(
       onPressed: () {
         final StateController<Filter> filterCopy =
             ref.read(filterProviderCopy(title).notifier);
@@ -178,12 +177,8 @@ class _ApplyButton extends ConsumerWidget {
         filter.state = filterCopy.state.copyWith();
         Navigator.maybePop(context);
       },
-      style: ButtonStyle(
-        overlayColor: MaterialStatePropertyAll(
-          theme.colorScheme.primaryContainer.withOpacity(0.24),
-        ),
-        backgroundColor: MaterialStatePropertyAll(theme.colorScheme.primary),
-        foregroundColor: MaterialStatePropertyAll(theme.colorScheme.onPrimary),
+      style: const ButtonStyle(
+        minimumSize: MaterialStatePropertyAll(Size(280.0, 44.0))
       ),
       child: Text(translate.apply_filter),
     );

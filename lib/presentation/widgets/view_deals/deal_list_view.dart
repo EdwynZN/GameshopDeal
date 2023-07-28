@@ -20,7 +20,7 @@ class DealListView extends ConsumerWidget {
     switch (viewFormat) {
       case ViewFormat.Grid:
         return SliverPadding(
-          padding: const EdgeInsets.all(4.0),
+          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
           sliver: SliverGrid(
             delegate: SliverChildBuilderDelegate(
               (BuildContext _, int index) {
