@@ -488,5 +488,10 @@
     "@no_game_saved": {
         "type": "text",
         "description": "Center text showed when there are no games saved in the list"
+    },
+    "free": "Free",
+    "@free": {
+        "type": "texto",
+        "description": "free product"
     }
   }

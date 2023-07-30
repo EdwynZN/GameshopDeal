@@ -58,7 +58,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m10(date) => "Próximamente: ${date}";
 
-  static String m11(date) => "Lanzado e1: ${date}";
+  static String m11(date) => "Lanzado el: ${date}";
 
   static String m12(review) => "${Intl.select(review, {
             'Overwhelmingly_Negative': 'Extremadamente Negativo',
@@ -154,6 +154,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "filter_tooltip":
             MessageLookupByLibrary.simpleMessage("Abrir menu de filtros"),
         "first_tooltip": MessageLookupByLibrary.simpleMessage("Primero"),
+        "free": MessageLookupByLibrary.simpleMessage("Gratis"),
         "future_release": m10,
         "go_to_deal": MessageLookupByLibrary.simpleMessage("Ir a oferta"),
         "help": MessageLookupByLibrary.simpleMessage("Ayuda"),

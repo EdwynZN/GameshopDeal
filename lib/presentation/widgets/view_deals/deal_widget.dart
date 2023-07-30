@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/model/sort_by_enum.dart';
 import 'package:gameshop_deals/presentation/widgets/view_deals/metacritic.dart';
@@ -10,8 +9,12 @@ import 'package:gameshop_deals/presentation/widgets/view_deals/thumb_image.dart'
 import 'package:gameshop_deals/provider/deal_provider.dart';
 import 'package:gameshop_deals/provider/filter_provider.dart';
 import 'package:gameshop_deals/provider/preference_provider.dart';
+import 'package:gameshop_deals/utils/constraints.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:gameshop_deals/utils/routes_constants.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final indexDeal = Provider.autoDispose<int>((_) => throw UnimplementedError());
@@ -41,8 +44,8 @@ class DetailedDeal extends ConsumerWidget {
         children: <Widget>[
           Expanded(
             child: Padding(
-              padding: EdgeInsetsDirectional.only(
-                  start: 8.0, bottom: 4, end: 4),
+              padding:
+                  EdgeInsetsDirectional.only(start: 8.0, bottom: 4, end: 4),
               child: _TitleDeal(),
             ),
           ),
@@ -200,62 +203,153 @@ class ListDeal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Widget child = Container(
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: Divider.createBorderSide(context),
-        ),
-      ),
-      padding: const EdgeInsets.only(left: 4, right: 4, top: 8, bottom: 8),
+      constraints: const BoxConstraints(maxWidth: 800.0),
+      padding: allPadding12,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Flexible(
-            flex: 1,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: 70, maxWidth: 120),
-                child: ProviderScope(
-                  overrides: [
-                    thumbProvider
-                        .overrideWith((ProviderRef ref) => ref.watch(singleDeal).thumb)
-                  ],
-                  child: const ThumbImage(),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 120.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.all(Radius.circular(4)),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 70.0),
+                    child: ProviderScope(
+                      overrides: [
+                        thumbProvider.overrideWith(
+                          (ProviderRef ref) => ref.watch(singleDeal).thumb,
+                        ),
+                      ],
+                      child: const ThumbImage(),
+                    ),
+                  ),
                 ),
-              ),
+                gap8,
+                const RowPriceWidget(),
+              ],
             ),
           ),
+          gap4,
           Expanded(
             child: Padding(
-              padding: const EdgeInsetsDirectional.only(start: 8.0, end: 4),
-              child: _TitleDeal(),
+              padding: const EdgeInsetsDirectional.only(start: 8.0, end: 4.0),
+              child: _ListTitle(),
             ),
           ),
-          Flexible(flex: 1, child: PriceWidget()),
         ],
       ),
     );
-    return Consumer(
+    return HookConsumer(
       child: child,
       builder: (context, ref, child) {
+        final options = useState(false);
         final deal = ref.watch(singleDeal);
         final int index = ref.watch(indexDeal);
-        return InkWell(
-          onTap: () =>
-              Navigator.of(context).pushNamed(detailRoute, arguments: index),
-          onLongPress: () async {
-            showModalBottomSheet(
-              context: context,
-              useRootNavigator: true,
-              builder: (context) => ProviderScope(
-                overrides: [singleDeal.overrideWithValue(deal)],
-                child: const _BottomSheetButtonsDeal(),
+        return Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: Card(
+            margin: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
+            elevation: 1.0,
+            shadowColor: const Color(0x10666666),
+            child: InkWell(
+              onTap: () => context.pushNamed(
+                detailRoute,
+                extra: index,
               ),
-            );
-          },
-          child: child,
+              onLongPress: () {
+                options.value = !options.value;
+              },
+              child: Column(
+                children: [
+                  child!,
+                  AnimatedSize(
+                    alignment: Alignment.bottomCenter,
+                    duration: const Duration(milliseconds: 350),
+                    curve: Curves.easeInOutCubicEmphasized,
+                    child: options.value
+                        ? Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                              12.0,
+                              0.0,
+                              12.0,
+                              12.0,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                const SavedTextDealButton(),
+                                gap4,
+                                IconButton.filledTonal(
+                                  onPressed: () async {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      useRootNavigator: true,
+                                      builder: (context) => ProviderScope(
+                                        overrides: [
+                                          singleDeal.overrideWithValue(deal)
+                                        ],
+                                        child: const _BottomSheetButtonsDeal(),
+                                      ),
+                                    );
+                                  },
+                                  tooltip: 'More',
+                                  icon: const Icon(Icons.more_vert_outlined),
+                                ),
+                              ],
+                            ),
+                          )
+                        : emptyWidget,
+                  ),
+                ],
+              ),
+            ),
+          ),
         );
       },
+    );
+  }
+}
+
+class _ListTitle extends ConsumerWidget {
+  const _ListTitle({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final deal = ref.watch(singleDeal);
+
+    const subtitle = Padding(
+      padding: EdgeInsetsDirectional.only(end: 4),
+      child: _Subtitle(showStore: false, showMetacritic: false),
+    );
+
+    if (deal.title.isEmpty) {
+      return subtitle;
+    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsetsDirectional.only(end: 4.0),
+          child: Text(
+            deal.title,
+            maxLines: 2,
+            style: const TextStyle(
+              height: 1.15,
+              fontSize: 16.0,
+              fontWeight: FontWeight.w600,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const Divider(height: 12.0),
+        subtitle,
+      ],
     );
   }
 }
@@ -267,23 +361,32 @@ class _TitleDeal extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final deal = ref.watch(singleDeal);
 
+    const subtitle = Padding(
+      padding: EdgeInsetsDirectional.only(end: 4),
+      child: _Subtitle(),
+    );
+
+    if (deal.title.isEmpty) {
+      return subtitle;
+    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        if (deal.title.isNotEmpty)
-          Padding(
-            padding: const EdgeInsetsDirectional.only(bottom: 4, end: 4),
-            child: Text(
-              deal.title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
         Padding(
-          padding: const EdgeInsetsDirectional.only(end: 4),
-          child: const _Subtitle(),
+          padding: const EdgeInsetsDirectional.only(bottom: 4.0, end: 4.0),
+          child: Text(
+            deal.title,
+            maxLines: 2,
+            style: const TextStyle(
+              height: 1.25,
+              fontSize: 16.0,
+              fontWeight: FontWeight.w600,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
+        subtitle,
       ],
     );
   }
@@ -330,6 +433,7 @@ class _Subtitle extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final S translate = S.of(context);
+    final theme = Theme.of(context);
     final deal = ref.watch(singleDeal);
     List<InlineSpan> span = <InlineSpan>[
       if (showStore)
@@ -338,37 +442,18 @@ class _Subtitle extends ConsumerWidget {
           child: ProviderScope(
             overrides: [storeIdProvider.overrideWithValue(deal.storeId)],
             child: StoreAvatarIcon(
-              size: Theme.of(context).textTheme.bodyMedium?.fontSize,
+              size: theme.textTheme.bodyMedium?.fontSize,
             ),
           ),
         ),
     ];
-    final int releaseDate = deal.releaseDate;
-    if (showReleaseDate && releaseDate != 0) {
-      final dateTime = DateTime.fromMillisecondsSinceEpoch(releaseDate * 1000);
-      final formatShortDate =
-          MaterialLocalizations.of(context).formatShortDate(dateTime);
-      final bool alreadyRealeased = DateTime.now().isAfter(dateTime);
-      final String time = alreadyRealeased
-          ? translate.release(formatShortDate)
-          : ' ${translate.future_release(formatShortDate)} ';
+    if (showMetacritic && deal.metacriticScore != '0') {
       span.add(
-        TextSpan(
-          text: time,
-          style: alreadyRealeased
-              ? null
-              : Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: Colors.black,
-                    backgroundColor: Colors.orangeAccent,
-                  ),
+        const WidgetSpan(
+          alignment: PlaceholderAlignment.middle,
+          child: Metacritic(),
         ),
       );
-    }
-    if (showMetacritic && deal.metacriticScore != '0') {
-      span.add(const WidgetSpan(
-        alignment: PlaceholderAlignment.middle,
-        child: const Metacritic(),
-      ));
     }
     if (showRating && deal.steamRatingText != null) {
       Color color, textColor = Colors.white;
@@ -388,21 +473,25 @@ class _Subtitle extends ConsumerWidget {
       }
       span.add(
         TextSpan(
-          text: '${translate.review(ratingText)}',
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                backgroundColor: color,
-                color: textColor,
-              ),
+          text: ' ${translate.review(ratingText)} ',
+          style: theme.textTheme.labelSmall?.copyWith(
+            backgroundColor: color,
+            color: textColor,
+          ),
         ),
       );
     }
-    span.add(TextSpan(
-      text: deal.publisher,
-      style: Theme.of(context).primaryTextTheme.labelSmall?.copyWith(
+    if (deal.publisher != null) {
+      span.add(
+        TextSpan(
+          text: deal.publisher,
+          style: theme.primaryTextTheme.labelSmall?.copyWith(
             height: 1.5,
-            backgroundColor: Theme.of(context).colorScheme.secondary,
+            backgroundColor: theme.colorScheme.secondary,
           ),
-    ));
+        ),
+      );
+    }
     if (showLastChange) {
       String time = _difference(translate, deal.lastChange);
       span.add(
@@ -414,11 +503,35 @@ class _Subtitle extends ConsumerWidget {
       span.insert(i, const TextSpan(text: ' · '));
     }
 
+    final int releaseDate = deal.releaseDate;
+    if (showReleaseDate && releaseDate != 0) {
+      final dateTime = DateTime.fromMillisecondsSinceEpoch(releaseDate * 1000);
+      final formatShortDate =
+          MaterialLocalizations.of(context).formatShortDate(dateTime);
+      final bool alreadyRealeased = DateTime.now().isAfter(dateTime);
+      final String time = alreadyRealeased
+          ? translate.release(formatShortDate)
+          : ' ${translate.future_release(formatShortDate)} ';
+      span.insert(
+        0,
+        TextSpan(
+          text: '$time\n',
+          style: alreadyRealeased
+              ? theme.textTheme.labelSmall?.copyWith(height: 1.75)
+              : theme.textTheme.labelSmall?.copyWith(
+                  color: Colors.black,
+                  height: 1.75,
+                  backgroundColor: Colors.orangeAccent,
+                ),
+        ),
+      );
+    }
+
     return RichText(
       textAlign: TextAlign.left,
       overflow: TextOverflow.fade,
       text: TextSpan(
-        style: Theme.of(context).textTheme.labelSmall,
+        style: theme.textTheme.labelSmall,
         children: span,
       ),
     );
@@ -435,42 +548,64 @@ class _BottomSheetButtonsDeal extends ConsumerWidget {
     final title = deal.title;
     final metacriticLink = deal.metacriticLink;
     final steamAppId = deal.steamAppId;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (title.isEmpty)
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-                border: Border(bottom: Divider.createBorderSide(context))),
-            child: Text(
-              title,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          ),
-        Wrap(
-          spacing: 8.0,
-          alignment: WrapAlignment.spaceEvenly,
-          children: [
-            const SavedTextDealButton(),
-            TextButton.icon(
-              icon: ProviderScope(
-                overrides: [storeIdProvider.overrideWithValue(deal.storeId)],
-                child: StoreAvatarIcon(
-                  size: Theme.of(context).textTheme.bodyMedium?.fontSize,
-                ),
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.only(top: 16.0),
+      constraints: BoxConstraints(minWidth: 320.0, maxWidth: 380.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (title.isEmpty)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                border: Border(bottom: Divider.createBorderSide(context)),
               ),
-              label: Text(translate.go_to_deal),
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.titleLarge,
+              ),
+            ),
+          TextButton.icon(
+            style: ButtonStyle(
+              iconSize: const MaterialStatePropertyAll(36.0),
+              textStyle: MaterialStatePropertyAll(theme.textTheme.headlineSmall)
+            ),
+            icon: ProviderScope(
+              overrides: [storeIdProvider.overrideWithValue(deal.storeId)],
+              child: StoreAvatarLogo(),
+            ),
+            label: Text(translate.go_to_deal),
+            onPressed: () async {
+              final _dealLink =
+                  Uri.parse('${cheapsharkUrl}/redirect?dealID=${deal.dealId}');
+              if (await canLaunchUrl(_dealLink)) {
+                final bool webView = ref.read(preferenceProvider).webView;
+                await launchUrl(
+                  _dealLink,
+                  mode: webView
+                      ? LaunchMode.externalApplication
+                      : LaunchMode.inAppWebView,
+                );
+              }
+            },
+          ),
+          if (steamAppId != null) ...[
+            TextButton.icon(
+              icon: const Icon(Icons.rate_review),
+              label: Text(translate.review_tooltip),
               onPressed: () async {
-                final _dealLink =
-                    Uri.parse('${cheapsharkUrl}/redirect?dealID=${deal.dealId}');
-                if (await canLaunchUrl(_dealLink)) {
-                  final bool webView =
-                      ref.read(preferenceProvider).webView;
+                final Uri _steamLink = Uri.https(
+                  steamUrl,
+                  '/app/${deal.steamAppId}',
+                );
+                if (await canLaunchUrl(_steamLink)) {
+                  final bool webView = ref.read(preferenceProvider).webView;
                   await launchUrl(
-                    _dealLink,
+                    _steamLink,
                     mode: webView
                         ? LaunchMode.externalApplication
                         : LaunchMode.inAppWebView,
@@ -478,74 +613,50 @@ class _BottomSheetButtonsDeal extends ConsumerWidget {
                 }
               },
             ),
-            if (steamAppId != null) ...[
-              TextButton.icon(
-                icon: const Icon(Icons.rate_review),
-                label: Text(translate.review_tooltip),
-                onPressed: () async {
-                  final Uri _steamLink = Uri.https(
-                    steamUrl,
-                    '/app/${deal.steamAppId}',
+            TextButton.icon(
+              icon: const Icon(Icons.computer),
+              label: const Text('PC Wiki'),
+              onPressed: () async {
+                final Uri _pcGamingWikiUri = Uri.https(
+                    pcWikiUrl, '/api/appid.php', {'appid': steamAppId});
+                if (await canLaunchUrl(_pcGamingWikiUri)) {
+                  final bool webView = ref.read(preferenceProvider).webView;
+                  await launchUrl(
+                    _pcGamingWikiUri,
+                    mode: webView
+                        ? LaunchMode.externalApplication
+                        : LaunchMode.inAppWebView,
                   );
-                  if (await canLaunchUrl(_steamLink)) {
-                    final bool webView =
-                        ref.read(preferenceProvider).webView;
-                    await launchUrl(
-                      _steamLink,
-                      mode: webView
-                        ? LaunchMode.externalApplication
-                        : LaunchMode.inAppWebView,
-                      );
-                  }
-                },
-              ),
-              TextButton.icon(
-                icon: const Icon(Icons.computer),
-                label: const Text('PC Wiki'),
-                onPressed: () async {
-                  final Uri _pcGamingWikiUri = Uri.https(
-                      pcWikiUrl, '/api/appid.php', {'appid': steamAppId});
-                  if (await canLaunchUrl(_pcGamingWikiUri)) {
-                    final bool webView =
-                        ref.read(preferenceProvider).webView;
-                    await launchUrl(
-                      _pcGamingWikiUri,
-                      mode: webView
-                        ? LaunchMode.externalApplication
-                        : LaunchMode.inAppWebView,
-                      );
-                  }
-                },
-              ),
-            ],
-            if (metacriticLink != null)
-              TextButton.icon(
-                icon: CircleAvatar(
-                  radius: (IconTheme.of(context).size ?? 24.0) / 2.4,
-                  backgroundImage:
-                      const AssetImage('assets/thumbnails/metacritic.png'),
-                ),
-                label: const Text('Metacritic'),
-                onPressed: () async {
-                  final Uri _metacriticLink = Uri.https(
-                    metacriticUrl,
-                    metacriticLink,
-                  );
-                  if (await canLaunchUrl(_metacriticLink)) {
-                    final bool webView =
-                        ref.read(preferenceProvider).webView;
-                    await launchUrl(
-                      _metacriticLink,
-                      mode: webView
-                        ? LaunchMode.externalApplication
-                        : LaunchMode.inAppWebView,
-                    );
-                  }
-                },
-              ),
+                }
+              },
+            ),
           ],
-        ),
-      ],
+          if (metacriticLink != null)
+            TextButton.icon(
+              icon: CircleAvatar(
+                radius: (IconTheme.of(context).size ?? 24.0) / 2.4,
+                backgroundImage:
+                    const AssetImage('assets/thumbnails/metacritic.png'),
+              ),
+              label: const Text('Metacritic'),
+              onPressed: () async {
+                final Uri _metacriticLink = Uri.https(
+                  metacriticUrl,
+                  metacriticLink,
+                );
+                if (await canLaunchUrl(_metacriticLink)) {
+                  final bool webView = ref.read(preferenceProvider).webView;
+                  await launchUrl(
+                    _metacriticLink,
+                    mode: webView
+                        ? LaunchMode.externalApplication
+                        : LaunchMode.inAppWebView,
+                  );
+                }
+              },
+            ),
+        ],
+      ),
     );
   }
 }

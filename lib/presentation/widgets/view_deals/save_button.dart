@@ -92,40 +92,15 @@ class SavedTextDealButton extends ConsumerWidget {
         ),
       ),
       data: (isSaved) {
-        if (!isSaved) {
-          return TextButton.icon(
-            icon: const Icon(Icons.visibility_outlined),
-            label: Flexible(
-              child: Text(
-                translate.save_game,
-                overflow: TextOverflow.fade,
-                softWrap: false,
-              ),
-            ),
-            onPressed: () async {
-              final box = await ref.read(savedBoxProvider.future);
-              await box.put(deal.gameId, PriceAlert());
-              /* final priceAlert = await showDialog<PriceAlert>(
-                context: context,
-                builder: (context) {
-                  return ProviderScope(overrides: [
-                    _titleDialog.overrideWithValue(
-                        deal.title ?? deal.internalName ?? '')
-                  ], child: const _PriceAlertDialog());
-                },
-              );
-              if (priceAlert != null) await box.put(deal.gameId, priceAlert); */
-            },
-          );
-        }
-        return TextButton.icon(
-          icon: const Icon(Icons.visibility_off_outlined),
-          label: Flexible(
-            child: Text(
-              translate.remove_game,
-              overflow: TextOverflow.fade,
-              softWrap: false,
-            ),
+        return OutlinedButton.icon(
+          icon: !isSaved
+            ? const Icon(Icons.star_border_outlined)
+            : const Icon(Icons.star),
+          label: Text(!isSaved
+            ? translate.save_game
+            : translate.remove_game,
+            overflow: TextOverflow.fade,
+            softWrap: false,
           ),
           onPressed: () async {
             final box = await ref.read(savedBoxProvider.future);

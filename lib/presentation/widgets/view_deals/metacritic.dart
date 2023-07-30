@@ -18,7 +18,7 @@ class Metacritic extends ConsumerWidget {
         ),
         Text(
           ' ${metaScore}%',
-          style: Theme.of(context).textTheme.labelSmall,
+          style: Theme.of(context).textTheme.labelMedium,
         ),
       ],
     );

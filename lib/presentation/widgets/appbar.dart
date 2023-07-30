@@ -48,7 +48,6 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
       actions: <Widget>[
         if (!isSearching) _SavedGamesButton(),
         _SearchButton(),
-        _FilterButton(),
         _MoreSettings(),
       ],
     );

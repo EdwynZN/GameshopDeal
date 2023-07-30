@@ -263,7 +263,7 @@
     "future_release": "Próximamente: {date}",
     "@future_release": {
         "type": "texto",
-        "description": "fecha prxima a ser lanzado el juego",
+        "description": "fecha próxima a ser lanzado el juego",
         "placeholder": {
             "date": {
                 "example": "Feb 21, 2024",
@@ -271,7 +271,7 @@
             }
         }
     },
-    "release": "Lanzado e1: {date}",
+    "release": "Lanzado el: {date}",
     "@release": {
         "type": "texto",
         "description": "Fecha de lanzamiento",
@@ -488,5 +488,10 @@
     "@no_game_saved": {
         "type": "texto",
         "description": "Text centrado mencionando que la lista de juegos guardados esta vacía"
+    },
+    "free": "Gratis",
+    "@free": {
+        "type": "texto",
+        "description": "precio gratuito"
     }
   }

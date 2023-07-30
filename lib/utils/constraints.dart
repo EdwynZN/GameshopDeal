@@ -40,6 +40,8 @@ const verticalPadding16 = EdgeInsets.symmetric(vertical: 16.0);
 
 const allPadding4 = EdgeInsets.all(4.0);
 const allPadding8 = EdgeInsets.all(8.0);
+const allPadding12 = EdgeInsets.all(12.0);
+const allPadding16 = EdgeInsets.all(16.0);
 
 // Gap
 

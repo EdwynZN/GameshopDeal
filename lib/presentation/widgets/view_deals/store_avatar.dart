@@ -16,12 +16,13 @@ class StoreAvatarIcon extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final double? iconSize = size ?? IconTheme.of(context).size;
     final id = ref.watch(storeIdProvider);
-    final asyncStore = ref.watch(singleStoreProvider(id: int.parse(id)));
+    final asyncStore = ref.watch(singleStoreProvider(id: id));
     if (!asyncStore.hasValue)
       return Icon(
         Icons.local_grocery_store_outlined,
         size: iconSize,
       );
+    final squareSize = iconSize?.ceil();
     final store = asyncStore.requireValue;
     final brightness = ThemeData.estimateBrightnessForColor(
         Theme.of(context).scaffoldBackgroundColor);
@@ -32,9 +33,9 @@ class StoreAvatarIcon extends ConsumerWidget {
       cacheManager: ref.watch(cacheManagerProvider(cacheKey: cacheKeyStores)),
       fit: BoxFit.contain,
       height: iconSize,
-      memCacheHeight: iconSize?.ceil(),
+      memCacheHeight: squareSize,
       width: iconSize,
-      memCacheWidth: iconSize?.ceil(),
+      memCacheWidth: squareSize,
       colorBlendMode: blend,
       errorWidget: (_, __, ___) => Icon(
         Icons.error_outline,
@@ -49,6 +50,54 @@ class StoreAvatarIcon extends ConsumerWidget {
   }
 }
 
+class StoreAvatarLogo extends ConsumerWidget {
+  final double? size;
+
+  const StoreAvatarLogo({
+    Key? key,
+    this.size,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final double? iconSize = size ?? IconTheme.of(context).size;
+    final id = ref.watch(storeIdProvider);
+    final asyncStore = ref.watch(singleStoreProvider(id: id));
+    if (!asyncStore.hasValue)
+      return Icon(
+        Icons.square,
+        size: iconSize,
+      );
+    final squareSize = iconSize?.ceil();
+    final store = asyncStore.requireValue;
+    final brightness = ThemeData.estimateBrightnessForColor(
+        Theme.of(context).scaffoldBackgroundColor);
+    BlendMode blend =
+        brightness == Brightness.light ? BlendMode.dst : BlendMode.srcATop;
+    final url = cheapsharkUrl + store.images.logo;
+    return CachedNetworkImage(
+      color: Colors.black26,
+      cacheManager: ref.watch(cacheManagerProvider(cacheKey: cacheKeyStores)),
+      fit: BoxFit.contain,
+      height: iconSize,
+      memCacheHeight: squareSize,
+      width: iconSize,
+      memCacheWidth: squareSize,
+      cacheKey: url,
+      colorBlendMode: blend,
+      errorWidget: (_, __, ___) => Icon(
+        Icons.error_outline,
+        size: iconSize,
+      ),
+      placeholder: (_, __) => Icon(
+        Icons.square,
+        size: iconSize,
+      ),
+      imageUrl: url,
+    );
+  }
+}
+
 class StoreAvatarBanner extends ConsumerWidget {
   final Alignment alignment;
   const StoreAvatarBanner({Key? key, this.alignment = Alignment.center})
@@ -57,7 +106,7 @@ class StoreAvatarBanner extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final id = ref.watch(storeIdProvider);
-    final asyncStore = ref.watch(singleStoreProvider(id: int.parse(id)));
+    final asyncStore = ref.watch(singleStoreProvider(id: id));
     if (!asyncStore.hasValue) return const SizedBox.shrink();
     final store = asyncStore.requireValue;
     final brightness = ThemeData.estimateBrightnessForColor(

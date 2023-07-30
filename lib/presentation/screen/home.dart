@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gameshop_deals/generated/l10n.dart';
 //import 'package:gameshop_deals/model/view_format_enum.dart';
 //import 'package:gameshop_deals/provider/display_provider.dart';
 import 'package:gameshop_deals/presentation/widgets/appbar.dart';
@@ -70,6 +71,26 @@ class _HomeState extends ConsumerState<Home> with PrincipalState {
             child: CustomScrollView(
               primary: true,
               slivers: <Widget>[
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 4.0,
+                      horizontal: 16.0,
+                    ),
+                    child: Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: Builder(
+                        builder: (context) {
+                          return OutlinedButton.icon(
+                            icon: const Icon(Icons.filter_list),
+                            label: Text(S.of(context).filter),
+                            onPressed: () => Scaffold.of(context).openEndDrawer(),
+                          );
+                        }
+                      ),
+                    ),
+                  ),
+                ),
                 const SliverSafeArea(
                   top: false,
                   sliver: DealListView(),

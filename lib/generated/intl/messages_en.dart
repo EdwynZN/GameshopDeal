@@ -153,6 +153,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "filter_tooltip":
             MessageLookupByLibrary.simpleMessage("Open filter menu"),
         "first_tooltip": MessageLookupByLibrary.simpleMessage("First"),
+        "free": MessageLookupByLibrary.simpleMessage("Free"),
         "future_release": m10,
         "go_to_deal": MessageLookupByLibrary.simpleMessage("Go to Deal"),
         "help": MessageLookupByLibrary.simpleMessage("Help"),
