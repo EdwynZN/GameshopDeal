@@ -60,25 +60,28 @@ class GameShop extends ConsumerWidget {
     final themeMode = ref.watch(themeModeProvider);
     final themeNotifier = ref.watch(themeNotifierProvider);
     final router = ref.watch(routerProvider);
-    return RefreshConfiguration(
-      enableLoadingWhenFailed: false,
-      headerBuilder: () => const WaterDropMaterialHeader(),
-      //enableScrollWhenRefreshCompleted: true,
-      child: MaterialApp.router(
-        routerConfig: router,
-        localizationsDelegates: [
-          S.delegate,
-          RefreshLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: S.delegate.supportedLocales,
-        debugShowCheckedModeBanner: false,
-        darkTheme: themeNotifier.dark,
-        theme: themeNotifier.light,
-        themeMode: themeMode,
-      ),
+    return MaterialApp.router(
+      routerConfig: router,
+      localizationsDelegates: [
+        S.delegate,
+        RefreshLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: S.delegate.supportedLocales,
+      debugShowCheckedModeBanner: false,
+      darkTheme: themeNotifier.dark,
+      theme: themeNotifier.light,
+      themeMode: themeMode,
+      builder: (context, child) {
+        final color = AppBarTheme.of(context).backgroundColor;
+        return RefreshConfiguration(
+          enableLoadingWhenFailed: false,
+          headerBuilder: () => WaterDropMaterialHeader(backgroundColor: color),
+          child: child!,
+        );
+      },
     );
   }
 }
