@@ -434,6 +434,7 @@ class _FilterChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FilterChip(
+      showCheckmark: false,
       label: Text(label),
       tooltip: tooltip,
       selected: value,
@@ -466,7 +467,8 @@ class _StoreWidget extends ConsumerWidget {
         return Wrap(
           spacing: 8,
           children: <Widget>[
-            ChoiceChip(
+            FilterChip(
+              showCheckmark: false,
               selected: storesSelected.isEmpty,
               onSelected: (val) {
                 final StateController<Filter> filter =
@@ -474,22 +476,11 @@ class _StoreWidget extends ConsumerWidget {
                 filter.state = filter.state.copyWith(storeId: const <String>{});
               },
               label: Text(translate.all_choice),
-              avatar: const Icon(
-                Icons.all_inclusive,
-                size: 20,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(4),
-                  bottomRight: Radius.circular(4),
-                  topRight: Radius.circular(4),
-                  topLeft: Radius.circular(4),
-                ),
-              ),
+              avatar: const Icon(Icons.all_inclusive, size: 20),
               tooltip: translate.all_stores_tooltip,
             ),
             for (Store store in stores)
-              ChoiceChip(
+              FilterChip(
                 selected: storesSelected.contains(store.storeId),
                 onSelected: (val) {
                   final StateController<Filter> filter =
@@ -507,14 +498,6 @@ class _StoreWidget extends ConsumerWidget {
                       ref.watch(cacheManagerProvider(cacheKey: cacheKeyStores)),
                   imageUrl: cheapsharkUrl + store.images.icon,
                   fit: BoxFit.contain,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(4),
-                    bottomRight: Radius.circular(4),
-                    topRight: Radius.circular(4),
-                    topLeft: Radius.circular(4),
-                  ),
                 ),
                 tooltip: store.storeName,
               ),

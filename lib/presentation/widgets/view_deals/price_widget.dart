@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
-import 'package:gameshop_deals/presentation/widgets/view_deals/store_avatar.dart';
 import 'package:gameshop_deals/provider/deal_provider.dart' show singleDeal;
 import 'package:gameshop_deals/utils/constraints.dart';
 
@@ -124,11 +123,6 @@ class RowPriceWidget extends ConsumerWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        ProviderScope(
-          overrides: [storeIdProvider.overrideWithValue(deal.storeId)],
-          child: StoreAvatarLogo(size: 32.0),
-        ),
-        gap12,
         if (discount) ...[
             const Spacer(),
             Text(

@@ -56,52 +56,52 @@ class ListDeal extends HookConsumerWidget {
 
     final Widget child = Container(
       constraints: const BoxConstraints(maxWidth: 800.0),
-      padding: allPadding12,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (deal.title.isNotEmpty) ...[
-            _ListTitle(title: deal.title),
-            const Divider(height: 12.0),
-          ],
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 120.0),
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.all(Radius.circular(4)),
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxHeight: 70.0),
-                    child: ProviderScope(
-                      overrides: [
-                        thumbProvider.overrideWith(
-                          (ProviderRef ref) => ref.watch(singleDeal).thumb,
-                        ),
-                      ],
-                      child: const ThumbImage(),
+          _ListTitle(title: deal.title, lastChange: deal.lastChange),
+          gap4,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12.0, 4.0, 12.0, 0.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 120.0),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(4)),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 70.0),
+                      child: ProviderScope(
+                        overrides: [
+                          thumbProvider.overrideWith(
+                            (ProviderRef ref) => ref.watch(singleDeal).thumb,
+                          ),
+                        ],
+                        child: const ThumbImage(),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              gap12,
-              Expanded(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(minHeight: 70.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _Subtitle(showStore: false),
-                      gap8,
-                      RowPriceWidget(),
-                    ],
+                gap12,
+                Expanded(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: 70.0),
+                    child: _Subtitle(showStore: false, showLastChange: false),
                   ),
                 ),
-              ),
-            ],
+                gap16,
+                ProviderScope(
+                  overrides: [storeIdProvider.overrideWithValue(deal.storeId)],
+                  child: StoreAvatarLogo(size: 32.0),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 12.0),
+            child: RowPriceWidget(),
           ),
         ],
       ),
@@ -110,9 +110,9 @@ class ListDeal extends HookConsumerWidget {
     return Align(
       alignment: AlignmentDirectional.centerStart,
       child: Card(
-        margin: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
-        elevation: 2.0,
-        shadowColor: const Color(0x10666666),
+        margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+        elevation: 4.0,
+        shadowColor: Colors.transparent,
         child: InkWell(
           onTap: () => context.pushNamed(detailRoute, extra: index),
           onLongPress: () =>
@@ -149,6 +149,11 @@ class _ActionRow extends StatelessWidget {
           const SavedTextDealButton(),
           gap4,
           IconButton.filledTonal(
+            onPressed: () {},
+            tooltip: 'Share',
+            icon: const Icon(Icons.share),
+          ),
+          IconButton.filledTonal(
             onPressed: () async {
               showModalBottomSheet(
                 context: context,
@@ -170,25 +175,84 @@ class _ActionRow extends StatelessWidget {
 
 class _ListTitle extends ConsumerWidget {
   final String title;
+  final int lastChange;
 
   // ignore: unused_element
-  const _ListTitle({super.key, required this.title});
+  const _ListTitle({super.key, required this.title, required this.lastChange});
+
+  String _difference(S translate, int mEpoch) {
+    final DateTime change = DateTime.fromMillisecondsSinceEpoch(mEpoch * 1000);
+    final difference = DateTime.now().difference(change);
+    if (difference.inDays >= 365)
+      return translate.change_in_years(difference.inDays ~/ 365);
+    else if (difference.inDays >= 30)
+      return translate.change_in_months(difference.inDays ~/ 30);
+    else if (difference.inHours >= 24)
+      return translate.change_in_days(difference.inHours ~/ 24);
+    else if (difference.inMinutes >= 60)
+      return translate.change_in_hours(difference.inMinutes ~/ 60);
+    else if (difference.inMinutes >= 1)
+      return translate.change_in_minutes(difference.inMinutes);
+    else
+      return translate.now;
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Padding(
-      padding: const EdgeInsetsDirectional.only(end: 4.0),
-      child: Text(
-        title,
-        maxLines: 2,
-        textAlign: TextAlign.start,
-        style: const TextStyle(
-          height: 1.25,
-          fontSize: 18.0,
-          fontWeight: FontWeight.w600,
+    final theme = Theme.of(context);
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (title.isNotEmpty) ...[
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                12.0,
+                12.0,
+                0.0,
+                0.0,
+              ),
+              child: Text(
+                title,
+                maxLines: 2,
+                textAlign: TextAlign.start,
+                style: const TextStyle(
+                  height: 1.25,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -0.25,
+                  wordSpacing: -0.25,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+          gap4,
+        ],
+        Container(
+          padding: allPadding8,
+          decoration: ShapeDecoration(
+            color: theme.colorScheme.primary,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(12.0),
+                topRight: Radius.circular(12.0),
+              ),
+            ),
+          ),
+          child: Text(
+            _difference(S.of(context), lastChange),
+            style: TextStyle(
+              letterSpacing: -0.10,
+              fontSize: 12.0,
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.onPrimary,
+            ),
+          ),
         ),
-        overflow: TextOverflow.ellipsis,
-      ),
+      ],
     );
   }
 }
@@ -276,16 +340,15 @@ class _Subtitle extends ConsumerWidget {
         WidgetSpan(
           alignment: PlaceholderAlignment.middle,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
             decoration: ShapeDecoration(
               color: color,
               shape: const StadiumBorder(),
             ),
             child: Text(
-              ' ${translate.review(ratingText)} ',
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: textColor,
-              ),
+              translate.review(ratingText),
+              style: theme.textTheme.labelSmall?.copyWith(color: textColor),
             ),
           ),
         ),
@@ -312,35 +375,35 @@ class _Subtitle extends ConsumerWidget {
     }
 
     final int releaseDate = deal.releaseDate;
+    Widget? releaseDateWidget;
     if (showReleaseDate && releaseDate != 0) {
       final dateTime = DateTime.fromMillisecondsSinceEpoch(releaseDate * 1000);
       final formatShortDate =
           MaterialLocalizations.of(context).formatShortDate(dateTime);
-      span.insert(
-        0,
-        TextSpan(
-          text: formatShortDate,
+      releaseDateWidget = Padding(
+        padding: const EdgeInsets.only(bottom: 4.0),
+        child: Text(
+          formatShortDate,
           style: theme.textTheme.labelLarge?.copyWith(height: 1.75),
-          children: [
-            TextSpan(
-              text: '\n\n',
-                style: const TextStyle(
-                fontSize: 4.0,
-                height: 1.5,
-              ),
-            ),
-          ],
         ),
       );
     }
 
-    return RichText(
-      textAlign: TextAlign.left,
-      overflow: TextOverflow.fade,
-      text: TextSpan(
-        style: theme.textTheme.labelMedium,
-        children: span,
-      ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (releaseDateWidget != null) releaseDateWidget,
+        RichText(
+          textAlign: TextAlign.left,
+          overflow: TextOverflow.fade,
+          text: TextSpan(
+            style: theme.textTheme.labelMedium,
+            children: span,
+          ),
+        ),
+      ],
     );
   }
 }
