@@ -39,6 +39,7 @@ dependencies:
   flex_color_scheme: ^7.2.0
   gap: ^3.0.1
   package_info_plus: ^4.0.2
+  sliver_tools: ^0.2.12
 
 dev_dependencies:
   hive_generator: ^2.0.0

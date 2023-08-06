@@ -128,7 +128,18 @@ class ThemeFlex extends ThemeRepository {
   ThemeFlex();
   
   final light = FlexThemeData.light(
-    scheme: FlexScheme.redWine,
+    colors: const FlexSchemeColor(
+      primary: Color(0xFFA33B40),
+      primaryContainer: Color(0xFFFFDAD9),
+      secondary: Color(0xFF0161A3),
+      secondaryContainer: Color(0xFFD1E4FF),
+      tertiary: Color(0xFF893DA3),
+      tertiaryContainer: Color(0xFFFAD7FF),
+      error: Color(0xFFBA1A1A),
+      errorContainer: Color(0xFFFFDAD6),
+    ),
+    background: const Color(0xFFFFFBFF),
+    scaffoldBackground: const Color(0xFFFFFBFF),
     subThemesData: const FlexSubThemesData(
       interactionEffects: false,
       tintedDisabledControls: false,
@@ -176,7 +187,18 @@ class ThemeFlex extends ThemeRepository {
   );
 
   final dark = FlexThemeData.dark(
-    scheme: FlexScheme.redWine,
+    colors: const FlexSchemeColor(
+      primary: Color(0xFFFFB3B2),
+      primaryContainer: Color(0xFF83232B),
+      secondary: Color(0xFF9ECAFF),
+      secondaryContainer: Color(0xFF00497D),
+      tertiary: Color(0xFFEFB0FF),
+      tertiaryContainer: Color(0xFF6E2289),
+      error: Color(0xFFFFB4AB),
+      errorContainer: Color(0xFF93000A),
+    ),
+    background: const Color(0xFF201A1A),
+    scaffoldBackground: const Color(0xFF201A1A),
     subThemesData: const FlexSubThemesData(
       interactionEffects: false,
       tintedDisabledControls: false,
