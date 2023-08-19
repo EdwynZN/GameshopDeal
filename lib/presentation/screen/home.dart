@@ -91,10 +91,7 @@ class _HomeState extends ConsumerState<Home> with PrincipalState {
                     ),
                   ),
                 ),
-                const SliverSafeArea(
-                  top: false,
-                  sliver: DealListView(),
-                ),
+                const SliverSafeArea(top: false, sliver: DealListView()),
               ],
             ),
             onRefresh: () async {

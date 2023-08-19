@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/model/sort_by_enum.dart';
@@ -12,6 +13,7 @@ import 'package:gameshop_deals/utils/constraints.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:gameshop_deals/model/filter.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' hide Store;
+import 'package:sliver_tools/sliver_tools.dart';
 
 class FilterDrawer extends HookWidget {
   const FilterDrawer();
@@ -35,25 +37,7 @@ class FilterDrawer extends HookWidget {
               child: CustomScrollView(
                 controller: scrollController,
                 slivers: <Widget>[
-                  SliverAppBar(
-                    pinned: true,
-                    elevation: 0.0,
-                    titleSpacing: 0.0,
-                    scrolledUnderElevation: 0.0,
-                    centerTitle: true,
-                    leading: const CloseButton(
-                      style: ButtonStyle(
-                        iconSize: MaterialStatePropertyAll(24.0),
-                      ),
-                    ),
-                    title: Text(
-                      translate.filter,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    actionsIconTheme: const IconThemeData(size: 20.0),
-                    actions: const [emptyWidget],
-                  ),
+                  const SliverPinnedHeader(child: _TitleBar()),
                   SliverPadding(
                     padding: const EdgeInsets.all(16.0),
                     sliver: SliverList(
@@ -112,6 +96,76 @@ class FilterDrawer extends HookWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+SystemUiOverlayStyle _systemOverlayStyleForBrightness(Brightness brightness,
+    [Color? backgroundColor]) {
+  final SystemUiOverlayStyle style = brightness == Brightness.dark
+      ? SystemUiOverlayStyle.light
+      : SystemUiOverlayStyle.dark;
+  // For backward compatibility, create an overlay style without system navigation bar settings.
+  return SystemUiOverlayStyle(
+    statusBarColor: backgroundColor,
+    statusBarBrightness: style.statusBarBrightness,
+    statusBarIconBrightness: style.statusBarIconBrightness,
+    systemStatusBarContrastEnforced: style.systemStatusBarContrastEnforced,
+  );
+}
+
+class _TitleBar extends StatelessWidget {
+  // ignore: unused_element
+  const _TitleBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final backgroundColor =
+        theme.appBarTheme.backgroundColor ?? theme.primaryColor;
+    final Widget appbar = SafeArea(
+      bottom: false,
+      child: Container(
+        height: 56.0,
+        color: backgroundColor,
+        child: IconTheme.merge(
+          data: theme.appBarTheme.iconTheme ?? const IconThemeData.fallback(),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: NavigationToolbar(
+              leading: const CloseButton(
+                style: ButtonStyle(
+                  iconSize: MaterialStatePropertyAll(24.0),
+                ),
+              ),
+              centerMiddle: true,
+              middleSpacing: 56.0,
+              middle: Text(
+                S.of(context).filter,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.appBarTheme.titleTextStyle ??
+                    theme.textTheme.titleLarge
+                        ?.copyWith(color: theme.appBarTheme.foregroundColor),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final SystemUiOverlayStyle overlayStyle =
+        theme.appBarTheme.systemOverlayStyle ??
+            _systemOverlayStyleForBrightness(
+              ThemeData.estimateBrightnessForColor(backgroundColor),
+              // Make the status bar transparent for M3 so the elevation overlay
+              // color is picked up by the statusbar.
+              theme.useMaterial3 ? const Color(0x00000000) : null,
+            );
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: overlayStyle,
+      child: Material(color: backgroundColor, child: appbar),
     );
   }
 }
@@ -178,8 +232,7 @@ class _ApplyButton extends ConsumerWidget {
         Navigator.maybePop(context);
       },
       style: const ButtonStyle(
-        minimumSize: MaterialStatePropertyAll(Size(280.0, 44.0))
-      ),
+          minimumSize: MaterialStatePropertyAll(Size(280.0, 44.0))),
       child: Text(translate.apply_filter),
     );
   }
