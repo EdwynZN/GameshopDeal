@@ -72,8 +72,10 @@ class PriceWidget extends ConsumerWidget {
   }
 }
 
-class RowPriceWidget extends ConsumerWidget {
-  const RowPriceWidget({Key? key}) : super(key: key);
+class FlexPriceWidget extends ConsumerWidget {
+  final Axis direction;
+
+  const FlexPriceWidget({Key? key, this.direction = Axis.horizontal}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -118,32 +120,35 @@ class RowPriceWidget extends ConsumerWidget {
         maxLines: 1,
       );
     }
-    return Row(
+    return Flex(
+      direction: direction,
       mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisAlignment: direction == Axis.horizontal
+        ? MainAxisAlignment.spaceBetween
+        : MainAxisAlignment.end,
+      crossAxisAlignment: direction == Axis.horizontal
+        ? CrossAxisAlignment.end
+        : CrossAxisAlignment.start,
       children: [
         if (discount) ...[
-            const Spacer(),
-            Text(
-              '\$${deal.normalPrice}',
-              style: textTheme.bodyMedium?.copyWith(
-                decoration: TextDecoration.lineThrough,
-                decorationStyle: TextDecorationStyle.solid,
-                decorationColor: normalPriceColor,
-                decorationThickness: 2.0,
-                color: normalPriceColor,
-                height: 1.25,
-              ),
-              maxLines: 1,
+          const Spacer(),
+          Text(
+            '\$${deal.normalPrice}',
+            style: textTheme.bodyMedium?.copyWith(
+              decoration: TextDecoration.lineThrough,
+              decorationStyle: TextDecorationStyle.solid,
+              decorationColor: normalPriceColor,
+              decorationThickness: 2.0,
+              color: normalPriceColor,
+              height: 1.25,
             ),
-            gap4,
-            price,
-          ]
-        else
+            maxLines: 1,
+          ),
+          gap4,
+          price,
+        ] else
           price,
       ],
     );
-  
   }
 }

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/model/deal.dart';
-import 'package:gameshop_deals/presentation/widgets/view_deals/metacritic.dart';
-import 'package:gameshop_deals/presentation/widgets/view_deals/price_widget.dart';
+import 'package:gameshop_deals/presentation/widgets/material_card.dart';
 import 'package:gameshop_deals/presentation/widgets/view_deals/save_button.dart';
 import 'package:gameshop_deals/presentation/widgets/view_deals/store_avatar.dart';
 import 'package:gameshop_deals/presentation/widgets/view_deals/thumb_image.dart';
@@ -10,8 +9,6 @@ import 'package:gameshop_deals/provider/deal_provider.dart';
 import 'package:gameshop_deals/provider/preference_provider.dart';
 import 'package:gameshop_deals/utils/constraints.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
-import 'package:gameshop_deals/utils/routes_constants.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -54,80 +51,260 @@ class ListDeal extends HookConsumerWidget {
     final isActive = useListenableSelector(action, () => index == action.value);
     final deal = ref.watch(singleDeal);
 
-    final Widget child = Container(
-      constraints: const BoxConstraints(maxWidth: 800.0),
+    final left = _LateralPriceDetail(
+      lastChange: deal.lastChange,
+      normalPrice: deal.normalPrice,
+      salePrice: deal.salePrice,
+      savings: deal.savings,
+    );
+    final right = Padding(
+      padding: const EdgeInsets.all(8.0),
       child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: _InfoDeal(
+                  title: deal.title,
+                  releaseDate: deal.releaseDate,
+                  metacriticScore: deal.metacriticScore,
+                  publisher: deal.publisher,
+                  steamRating: deal.steamRatingText == null
+                      ? null
+                      : (
+                          ratingText: deal.steamRatingText!,
+                          percent: deal.steamRatingPercent,
+                        ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: ProviderScope(
+                  overrides: [storeIdProvider.overrideWithValue(deal.storeId)],
+                  child: const StoreAvatarLogo(size: 32.0),
+                ),
+              ),
+            ],
+          ),
+          gap8,
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: AnimatedSize(
+              alignment: Alignment.bottomCenter,
+              duration: const Duration(milliseconds: 350),
+              reverseDuration: const Duration(milliseconds: 500),
+              curve: Curves.easeInOutCubicEmphasized,
+              child: isActive ? _ActionRow(deal: deal) : emptyWidget,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    final Widget child = ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 800.0),
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _ListTitle(title: deal.title, lastChange: deal.lastChange),
-          gap4,
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12.0, 4.0, 12.0, 0.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 120.0),
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(4)),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxHeight: 70.0),
-                      child: ProviderScope(
-                        overrides: [
-                          thumbProvider.overrideWith(
-                            (ProviderRef ref) => ref.watch(singleDeal).thumb,
-                          ),
-                        ],
-                        child: const ThumbImage(),
-                      ),
-                    ),
-                  ),
-                ),
-                gap12,
-                Expanded(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(minHeight: 70.0),
-                    child: _Subtitle(showStore: false, showLastChange: false),
-                  ),
-                ),
-                gap16,
-                ProviderScope(
-                  overrides: [storeIdProvider.overrideWithValue(deal.storeId)],
-                  child: StoreAvatarLogo(size: 32.0),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 12.0),
-            child: RowPriceWidget(),
-          ),
+          left,
+          Expanded(child: right),
         ],
       ),
     );
 
     return Align(
       alignment: AlignmentDirectional.centerStart,
-      child: Card(
+      child: TonalCard(
         margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
         elevation: 4.0,
-        shadowColor: Colors.transparent,
         child: InkWell(
-          onTap: () => context.pushNamed(detailRoute, extra: index),
-          onLongPress: () =>
-              action.value = action.value == index ? null : index,
-          child: Column(
-            children: [
-              child,
-              AnimatedSize(
-                alignment: Alignment.bottomCenter,
-                duration: const Duration(milliseconds: 350),
-                curve: Curves.easeInOutCubicEmphasized,
-                child: isActive ? _ActionRow(deal: deal) : emptyWidget,
-              ),
-            ],
+          onTap: () => action.value = action.value == index ? null : index,
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
+class _LateralPriceDetail extends HookWidget {
+  final int? savings;
+  final int lastChange;
+  final String normalPrice;
+  final String salePrice;
+  const _LateralPriceDetail({
+    // ignore: unused_element
+    super.key,
+    required this.lastChange,
+    required this.salePrice,
+    required this.normalPrice,
+    this.savings,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final S translate = S.of(context);
+    final theme = Theme.of(context);
+    final bool discount = savings != 0;
+    final textTheme = theme.textTheme;
+    final brightness = ThemeData.estimateBrightnessForColor(
+      theme.scaffoldBackgroundColor,
+    );
+    final Color discountColor = brightness == Brightness.light
+        ? Colors.green.shade700
+        : Colors.greenAccent;
+    final Color normalPriceColor =
+        brightness == Brightness.light ? Colors.grey.shade700 : Colors.orange;
+    final Widget price;
+    if (savings == 100 || double.tryParse(salePrice) == 0) {
+      price = Container(
+        margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
+        decoration: ShapeDecoration(
+          color: discountColor,
+          shape: const StadiumBorder(),
+        ),
+        child: Center(
+          child: Text(
+            S.of(context).free,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16.0,
+              letterSpacing: 0.15,
+              fontWeight: FontWeight.bold,
+            ),
+            maxLines: 1,
           ),
+        ),
+      );
+    } else {
+      price = Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+        child: Center(
+          child: Text(
+            '\$$salePrice',
+            style: textTheme.titleLarge?.copyWith(
+              color: discount ? discountColor : null,
+              fontWeight: FontWeight.bold,
+            ),
+            maxLines: 1,
+          ),
+        ),
+      );
+    }
+
+    final time = useMemoized(() {
+      final DateTime change =
+          DateTime.fromMillisecondsSinceEpoch(lastChange * 1000);
+      final difference = DateTime.now().difference(change);
+      if (difference.inDays >= 365)
+        return translate.change_in_years(difference.inDays ~/ 365);
+      else if (difference.inDays >= 30)
+        return translate.change_in_months(difference.inDays ~/ 30);
+      else if (difference.inHours >= 24)
+        return translate.change_in_days(difference.inHours ~/ 24);
+      else if (difference.inMinutes >= 60)
+        return translate.change_in_hours(difference.inMinutes ~/ 60);
+      else if (difference.inMinutes >= 1)
+        return translate.change_in_minutes(difference.inMinutes);
+      else
+        return translate.now;
+    }, [translate, lastChange]);
+    final Widget timeLabel = Container(
+      padding: allPadding8,
+      decoration: ShapeDecoration(
+        color: theme.colorScheme.primary,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomRight: Radius.circular(12.0),
+            topLeft: Radius.circular(12.0),
+          ),
+        ),
+      ),
+      child: Text.rich(
+        TextSpan(
+          children: [
+            WidgetSpan(
+              child: Icon(
+                Icons.timelapse,
+                size: 14.0,
+                color: theme.colorScheme.onPrimary,
+              ),
+            ),
+            TextSpan(text: ' $time'),
+          ],
+        ),
+        style: TextStyle(
+          letterSpacing: 0.10,
+          fontSize: 12.0,
+          fontWeight: FontWeight.normal,
+          color: theme.colorScheme.onPrimary,
+          overflow: TextOverflow.clip,
+        ),
+      ),
+    );
+
+    return ColoredBox(
+      color: theme.colorScheme.surfaceVariant,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints.tightForFinite(width: 120.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            timeLabel,
+            gap8,
+            Align(
+              alignment: Alignment.topCenter,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints.tightFor(
+                  height: 70.0,
+                  width: 96.0,
+                ),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.all(Radius.circular(4)),
+                  child: ProviderScope(
+                    overrides: [
+                      thumbProvider.overrideWith(
+                        (ProviderRef ref) => ref.watch(singleDeal).thumb,
+                      ),
+                    ],
+                    child: const ThumbImage(
+                      alignment: Alignment.topCenter,
+                      fit: BoxFit.scaleDown,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            gap12,
+            const Spacer(),
+            if (discount)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Center(
+                  child: Text(
+                    '\$$normalPrice',
+                    style: textTheme.bodyMedium?.copyWith(
+                      decoration: TextDecoration.lineThrough,
+                      decorationStyle: TextDecorationStyle.solid,
+                      decorationColor: normalPriceColor,
+                      decorationThickness: 1.0,
+                      color: normalPriceColor,
+                      height: 0.75,
+                    ),
+                    maxLines: 1,
+                  ),
+                ),
+              ),
+            price,
+            gap8,
+          ],
         ),
       ),
     );
@@ -141,189 +318,94 @@ class _ActionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 12.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          const SavedTextDealButton(),
-          gap4,
-          IconButton.filledTonal(
-            onPressed: () {},
-            tooltip: 'Share',
-            icon: const Icon(Icons.share),
-          ),
-          IconButton.filledTonal(
-            onPressed: () async {
-              showModalBottomSheet(
-                context: context,
-                useRootNavigator: true,
-                builder: (context) => ProviderScope(
-                  overrides: [singleDeal.overrideWithValue(deal)],
-                  child: const _BottomSheetButtonsDeal(),
-                ),
-              );
-            },
-            tooltip: 'More',
-            icon: const Icon(Icons.more_vert_outlined),
-          ),
-        ],
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: Wrap(
+          alignment: WrapAlignment.end,
+          direction: Axis.horizontal,
+          spacing: 4.0,
+          runSpacing: 4.0,
+          children: [
+            const SavedTextDealButton(),
+            IconButton.filledTonal(
+              onPressed: () {},
+              tooltip: 'Share',
+              icon: const Icon(Icons.share),
+            ),
+            IconButton.filledTonal(
+              onPressed: () async {
+                showModalBottomSheet(
+                  context: context,
+                  useRootNavigator: true,
+                  builder: (context) => ProviderScope(
+                    overrides: [singleDeal.overrideWithValue(deal)],
+                    child: const _BottomSheetButtonsDeal(),
+                  ),
+                );
+              },
+              tooltip: 'More',
+              icon: const Icon(Icons.read_more_outlined),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-class _ListTitle extends ConsumerWidget {
+class _InfoDeal extends StatelessWidget {
   final String title;
-  final int lastChange;
+  final int releaseDate;
+  final String metacriticScore;
+  final ({String ratingText, String percent})? steamRating;
+  final String? publisher;
 
-  // ignore: unused_element
-  const _ListTitle({super.key, required this.title, required this.lastChange});
-
-  String _difference(S translate, int mEpoch) {
-    final DateTime change = DateTime.fromMillisecondsSinceEpoch(mEpoch * 1000);
-    final difference = DateTime.now().difference(change);
-    if (difference.inDays >= 365)
-      return translate.change_in_years(difference.inDays ~/ 365);
-    else if (difference.inDays >= 30)
-      return translate.change_in_months(difference.inDays ~/ 30);
-    else if (difference.inHours >= 24)
-      return translate.change_in_days(difference.inHours ~/ 24);
-    else if (difference.inMinutes >= 60)
-      return translate.change_in_hours(difference.inMinutes ~/ 60);
-    else if (difference.inMinutes >= 1)
-      return translate.change_in_minutes(difference.inMinutes);
-    else
-      return translate.now;
-  }
+  const _InfoDeal({
+    // ignore: unused_element
+    super.key,
+    required this.releaseDate,
+    required this.title,
+    required this.metacriticScore,
+    required this.steamRating,
+    this.publisher,
+  });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (title.isNotEmpty) ...[
-          Flexible(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                12.0,
-                12.0,
-                0.0,
-                0.0,
-              ),
-              child: Text(
-                title,
-                maxLines: 2,
-                textAlign: TextAlign.start,
-                style: const TextStyle(
-                  height: 1.25,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: -0.25,
-                  wordSpacing: -0.25,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ),
-          gap4,
-        ],
-        Container(
-          padding: allPadding8,
-          decoration: ShapeDecoration(
-            color: theme.colorScheme.primary,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(12.0),
-                topRight: Radius.circular(12.0),
-              ),
-            ),
-          ),
-          child: Text(
-            _difference(S.of(context), lastChange),
-            style: TextStyle(
-              letterSpacing: -0.10,
-              fontSize: 12.0,
-              fontWeight: FontWeight.bold,
-              color: theme.colorScheme.onPrimary,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _Subtitle extends ConsumerWidget {
-  final bool showStore;
-  final bool showMetacritic;
-  final bool showReleaseDate;
-  final bool showRating;
-  final bool showLastChange;
-
-  const _Subtitle({
-    Key? key,
-    bool? showStore,
-    bool? showMetacritic,
-    bool? showReleaseDate,
-    bool? showRating,
-    bool? showLastChange,
-  })  : this.showStore = showStore ?? true,
-        this.showMetacritic = showMetacritic ?? true,
-        this.showReleaseDate = showReleaseDate ?? true,
-        this.showRating = showRating ?? true,
-        this.showLastChange = showLastChange ?? true,
-        super(key: key);
-
-  String _difference(S translate, int mEpoch) {
-    final DateTime change = DateTime.fromMillisecondsSinceEpoch(mEpoch * 1000);
-    final difference = DateTime.now().difference(change);
-    if (difference.inDays >= 365)
-      return translate.change_in_years(difference.inDays ~/ 365);
-    else if (difference.inDays >= 30)
-      return translate.change_in_months(difference.inDays ~/ 30);
-    else if (difference.inHours >= 24)
-      return translate.change_in_days(difference.inHours ~/ 24);
-    else if (difference.inMinutes >= 60)
-      return translate.change_in_hours(difference.inMinutes ~/ 60);
-    else if (difference.inMinutes >= 1)
-      return translate.change_in_minutes(difference.inMinutes);
-    else
-      return translate.now;
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final S translate = S.of(context);
     final theme = Theme.of(context);
-    final deal = ref.watch(singleDeal);
-    List<InlineSpan> span = <InlineSpan>[
-      if (showStore)
-        WidgetSpan(
-          alignment: PlaceholderAlignment.middle,
-          child: ProviderScope(
-            overrides: [storeIdProvider.overrideWithValue(deal.storeId)],
-            child: StoreAvatarIcon(
-              size: theme.textTheme.bodyMedium?.fontSize,
+    List<InlineSpan> span = <InlineSpan>[];
+    if (metacriticScore != '0') {
+      final int? metaScore = int.tryParse(metacriticScore);
+      if (metaScore != null) {
+        span.add(
+          WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const CircleAvatar(
+                  radius: 6,
+                  backgroundImage:
+                      AssetImage('assets/thumbnails/metacritic.png'),
+                ),
+                Text(
+                  ' ${metaScore}%',
+                  style: theme.textTheme.labelMedium,
+                ),
+              ],
             ),
           ),
-        ),
-    ];
-    if (showMetacritic && deal.metacriticScore != '0') {
-      span.add(
-        const WidgetSpan(
-          alignment: PlaceholderAlignment.middle,
-          child: Metacritic(),
-        ),
-      );
+        );
+      }
     }
-    if (showRating && deal.steamRatingText != null) {
+    final ({String percent, String ratingText})? _rating = steamRating;
+    if (_rating != null) {
       Color color, textColor = Colors.white;
-      final int rating = int.parse(deal.steamRatingPercent);
-      final String ratingText = deal.steamRatingText!.replaceAll(' ', '_');
+      final int rating = int.parse(_rating.percent);
+      final String ratingText = _rating.ratingText.replaceAll(' ', '_');
       if (rating >= 95) {
         color = Colors.green.shade300;
         textColor = Colors.black;
@@ -354,10 +436,10 @@ class _Subtitle extends ConsumerWidget {
         ),
       );
     }
-    if (deal.publisher != null) {
+    if (publisher != null) {
       span.add(
         TextSpan(
-          text: deal.publisher,
+          text: publisher,
           style: theme.primaryTextTheme.labelSmall?.copyWith(
             height: 1.5,
             backgroundColor: theme.colorScheme.secondary,
@@ -365,44 +447,54 @@ class _Subtitle extends ConsumerWidget {
         ),
       );
     }
-    if (showLastChange) {
-      String time = _difference(translate, deal.lastChange);
-      span.add(TextSpan(text: time));
-    }
 
     for (int i = 1; i < span.length; i = i + 2) {
       span.insert(i, const TextSpan(text: ' · '));
     }
 
-    final int releaseDate = deal.releaseDate;
+    final subtitle = RichText(
+      textAlign: TextAlign.left,
+      overflow: TextOverflow.fade,
+      text: TextSpan(
+        style: theme.textTheme.labelMedium,
+        children: span,
+      ),
+    );
+
     Widget? releaseDateWidget;
-    if (showReleaseDate && releaseDate != 0) {
+    if (releaseDate != 0) {
       final dateTime = DateTime.fromMillisecondsSinceEpoch(releaseDate * 1000);
       final formatShortDate =
           MaterialLocalizations.of(context).formatShortDate(dateTime);
       releaseDateWidget = Padding(
-        padding: const EdgeInsets.only(bottom: 4.0),
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
         child: Text(
           formatShortDate,
-          style: theme.textTheme.labelLarge?.copyWith(height: 1.75),
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(height: 1.75),
         ),
       );
     }
 
     return Column(
       mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        if (releaseDateWidget != null) releaseDateWidget,
-        RichText(
-          textAlign: TextAlign.left,
-          overflow: TextOverflow.fade,
-          text: TextSpan(
-            style: theme.textTheme.labelMedium,
-            children: span,
+        Text(
+          title,
+          maxLines: 2,
+          textAlign: TextAlign.start,
+          style: const TextStyle(
+            height: 1.35,
+            fontSize: 18.0,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.25,
+            wordSpacing: -0.25,
           ),
+          overflow: TextOverflow.ellipsis,
         ),
+        if (releaseDateWidget != null) releaseDateWidget,
+        subtitle,
       ],
     );
   }

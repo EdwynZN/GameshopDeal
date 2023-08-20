@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gameshop_deals/model/sort_by_enum.dart';
-import 'package:gameshop_deals/presentation/widgets/view_deals/price_widget.dart';
 import 'package:gameshop_deals/presentation/widgets/view_deals/store_avatar.dart';
 import 'package:gameshop_deals/provider/deal_provider.dart';
 import 'package:gameshop_deals/provider/filter_provider.dart';
@@ -20,8 +19,6 @@ class CompactViewDeal extends ConsumerWidget {
     final deal = ref.watch(singleDeal);
     final String title = deal.title;
     final view = ref.watch(_sortByProvider);
-    final bool showMetacritic = view == SortBy.Metacritic;
-    final bool showRating = view == SortBy.Reviews;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: DecoratedBox(

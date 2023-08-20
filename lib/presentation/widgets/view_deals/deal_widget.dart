@@ -230,7 +230,7 @@ class ListDeal extends StatelessWidget {
                   ),
                 ),
                 gap8,
-                const RowPriceWidget(),
+                const FlexPriceWidget(),
               ],
             ),
           ),
@@ -571,9 +571,9 @@ class _BottomSheetButtonsDeal extends ConsumerWidget {
             ),
           TextButton.icon(
             style: ButtonStyle(
-              iconSize: const MaterialStatePropertyAll(36.0),
-              textStyle: MaterialStatePropertyAll(theme.textTheme.headlineSmall)
-            ),
+                iconSize: const MaterialStatePropertyAll(36.0),
+                textStyle:
+                    MaterialStatePropertyAll(theme.textTheme.headlineSmall)),
             icon: ProviderScope(
               overrides: [storeIdProvider.overrideWithValue(deal.storeId)],
               child: StoreAvatarLogo(),
