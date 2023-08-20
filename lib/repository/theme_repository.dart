@@ -127,7 +127,7 @@ abstract class ThemeRepository {
 
 class ThemeFlex extends ThemeRepository {
   ThemeFlex();
-  
+
   final light = FlexThemeData.light(
     colors: const FlexSchemeColor(
       primary: Color(0xFFA33B40),
@@ -186,7 +186,8 @@ class ThemeFlex extends ThemeRepository {
     extensions: [
       PriceTheme(
         discountColor: Colors.green.shade700,
-        regularPriceColor: Colors.grey.shade700,
+        onDiscountColor: Colors.white,
+        regularColor: Colors.grey.shade700,
       ),
     ],
     // To use the Playground font, add GoogleFonts package and uncomment
@@ -249,13 +250,13 @@ class ThemeFlex extends ThemeRepository {
     extensions: const [
       PriceTheme(
         discountColor: Colors.greenAccent,
-        regularPriceColor: Colors.orange,
+        onDiscountColor: Colors.black,
+        regularColor: Colors.orange,
       ),
     ],
     // To use the Playground font, add GoogleFonts package and uncomment
     // fontFamily: GoogleFonts.notoSans().fontFamily,
   );
-
 }
 
 class ThemeImpl extends ThemeRepository {
@@ -500,30 +501,54 @@ class ThemeImpl extends ThemeRepository {
         unselectedLabelTextStyle: _darkAccentTextTheme.bodyMedium,
       ),
       indicatorColor: color[100],
-      useMaterial3: true, checkboxTheme: CheckboxThemeData(
- fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
- if (states.contains(MaterialState.disabled)) { return null; }
- if (states.contains(MaterialState.selected)) { return accentColor[700]; }
- return null;
- }),
- ), radioTheme: RadioThemeData(
- fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
- if (states.contains(MaterialState.disabled)) { return null; }
- if (states.contains(MaterialState.selected)) { return accentColor[700]; }
- return null;
- }),
- ), switchTheme: SwitchThemeData(
- thumbColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
- if (states.contains(MaterialState.disabled)) { return null; }
- if (states.contains(MaterialState.selected)) { return accentColor[700]; }
- return null;
- }),
- trackColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
- if (states.contains(MaterialState.disabled)) { return null; }
- if (states.contains(MaterialState.selected)) { return accentColor[700]; }
- return null;
- }),
- ), colorScheme: ColorScheme.light(
+      useMaterial3: true,
+      checkboxTheme: CheckboxThemeData(
+        fillColor: MaterialStateProperty.resolveWith<Color?>(
+            (Set<MaterialState> states) {
+          if (states.contains(MaterialState.disabled)) {
+            return null;
+          }
+          if (states.contains(MaterialState.selected)) {
+            return accentColor[700];
+          }
+          return null;
+        }),
+      ),
+      radioTheme: RadioThemeData(
+        fillColor: MaterialStateProperty.resolveWith<Color?>(
+            (Set<MaterialState> states) {
+          if (states.contains(MaterialState.disabled)) {
+            return null;
+          }
+          if (states.contains(MaterialState.selected)) {
+            return accentColor[700];
+          }
+          return null;
+        }),
+      ),
+      switchTheme: SwitchThemeData(
+        thumbColor: MaterialStateProperty.resolveWith<Color?>(
+            (Set<MaterialState> states) {
+          if (states.contains(MaterialState.disabled)) {
+            return null;
+          }
+          if (states.contains(MaterialState.selected)) {
+            return accentColor[700];
+          }
+          return null;
+        }),
+        trackColor: MaterialStateProperty.resolveWith<Color?>(
+            (Set<MaterialState> states) {
+          if (states.contains(MaterialState.disabled)) {
+            return null;
+          }
+          if (states.contains(MaterialState.selected)) {
+            return accentColor[700];
+          }
+          return null;
+        }),
+      ),
+      colorScheme: ColorScheme.light(
         background: Colors.white,
         error: Colors.redAccent,
         onBackground: Colors.black,
@@ -542,7 +567,6 @@ class ThemeImpl extends ThemeRepository {
         surfaceTint: color.shade100,
       ).copyWith(background: color[100]).copyWith(error: Colors.redAccent),
     );
-  
   }
 
   set _setDark(int dark) {
@@ -562,11 +586,13 @@ class ThemeImpl extends ThemeRepository {
           primaryColorDark: Colors.blueGrey[900],
           appBarTheme: AppBarTheme(
             systemOverlayStyle: _brightness == Brightness.dark
-              ? SystemUiOverlayStyle.light
-              : SystemUiOverlayStyle.dark,
+                ? SystemUiOverlayStyle.light
+                : SystemUiOverlayStyle.dark,
             elevation: 0.0,
             color: Colors.blueGrey[900],
-            iconTheme: const IconThemeData(color: Colors.white70), toolbarTextStyle: _lightAccentTextTheme.apply().bodyMedium, titleTextStyle: _lightAccentTextTheme.apply().titleLarge,
+            iconTheme: const IconThemeData(color: Colors.white70),
+            toolbarTextStyle: _lightAccentTextTheme.apply().bodyMedium,
+            titleTextStyle: _lightAccentTextTheme.apply().titleLarge,
           ),
           brightness: Brightness.dark,
           unselectedWidgetColor: Colors.white70,
@@ -724,30 +750,57 @@ class ThemeImpl extends ThemeRepository {
                 ? _lightAccentTextTheme.bodyLarge
                 : _darkAccentTextTheme.bodyLarge,
           ),
-          indicatorColor: Colors.blueGrey[700], checkboxTheme: CheckboxThemeData(
- fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
- if (states.contains(MaterialState.disabled)) { return null; }
- if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
- return null;
- }),
- ), radioTheme: RadioThemeData(
- fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
- if (states.contains(MaterialState.disabled)) { return null; }
- if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
- return null;
- }),
- ), switchTheme: SwitchThemeData(
- thumbColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
- if (states.contains(MaterialState.disabled)) { return null; }
- if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
- return null;
- }),
- trackColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
- if (states.contains(MaterialState.disabled)) { return null; }
- if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
- return null;
- }),
- ), colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey).copyWith(secondary: _darkAccentColor).copyWith(background: Colors.blueGrey[800]).copyWith(error: Color.fromRGBO(207, 102, 121, 1)),
+          indicatorColor: Colors.blueGrey[700],
+          checkboxTheme: CheckboxThemeData(
+            fillColor: MaterialStateProperty.resolveWith<Color?>(
+                (Set<MaterialState> states) {
+              if (states.contains(MaterialState.disabled)) {
+                return null;
+              }
+              if (states.contains(MaterialState.selected)) {
+                return _darkAccentColor;
+              }
+              return null;
+            }),
+          ),
+          radioTheme: RadioThemeData(
+            fillColor: MaterialStateProperty.resolveWith<Color?>(
+                (Set<MaterialState> states) {
+              if (states.contains(MaterialState.disabled)) {
+                return null;
+              }
+              if (states.contains(MaterialState.selected)) {
+                return _darkAccentColor;
+              }
+              return null;
+            }),
+          ),
+          switchTheme: SwitchThemeData(
+            thumbColor: MaterialStateProperty.resolveWith<Color?>(
+                (Set<MaterialState> states) {
+              if (states.contains(MaterialState.disabled)) {
+                return null;
+              }
+              if (states.contains(MaterialState.selected)) {
+                return _darkAccentColor;
+              }
+              return null;
+            }),
+            trackColor: MaterialStateProperty.resolveWith<Color?>(
+                (Set<MaterialState> states) {
+              if (states.contains(MaterialState.disabled)) {
+                return null;
+              }
+              if (states.contains(MaterialState.selected)) {
+                return _darkAccentColor;
+              }
+              return null;
+            }),
+          ),
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey)
+              .copyWith(secondary: _darkAccentColor)
+              .copyWith(background: Colors.blueGrey[800])
+              .copyWith(error: Color.fromRGBO(207, 102, 121, 1)),
         );
         break;
       case 1:
@@ -762,11 +815,13 @@ class ThemeImpl extends ThemeRepository {
           primaryColorDark: Colors.grey[900],
           appBarTheme: AppBarTheme(
             systemOverlayStyle: _brightness == Brightness.dark
-              ? SystemUiOverlayStyle.light
-              : SystemUiOverlayStyle.dark,
+                ? SystemUiOverlayStyle.light
+                : SystemUiOverlayStyle.dark,
             elevation: 0.0,
             color: Colors.grey[900],
-            iconTheme: const IconThemeData(color: Colors.white70), toolbarTextStyle: _lightAccentTextTheme.bodyMedium, titleTextStyle: _lightAccentTextTheme.titleLarge,
+            iconTheme: const IconThemeData(color: Colors.white70),
+            toolbarTextStyle: _lightAccentTextTheme.bodyMedium,
+            titleTextStyle: _lightAccentTextTheme.titleLarge,
           ),
           unselectedWidgetColor: Colors.white70,
           dividerColor: _darkAccentColor.withOpacity(0.75),
@@ -931,30 +986,57 @@ class ThemeImpl extends ThemeRepository {
                 ? _lightAccentTextTheme.bodyLarge
                 : _darkAccentTextTheme.bodyLarge,
           ),
-          indicatorColor: Colors.grey[700], checkboxTheme: CheckboxThemeData(
- fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
- if (states.contains(MaterialState.disabled)) { return null; }
- if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
- return null;
- }),
- ), radioTheme: RadioThemeData(
- fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
- if (states.contains(MaterialState.disabled)) { return null; }
- if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
- return null;
- }),
- ), switchTheme: SwitchThemeData(
- thumbColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
- if (states.contains(MaterialState.disabled)) { return null; }
- if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
- return null;
- }),
- trackColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
- if (states.contains(MaterialState.disabled)) { return null; }
- if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
- return null;
- }),
- ), colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.grey).copyWith(secondary: _darkAccentColor).copyWith(background: Colors.grey[850]).copyWith(error: Color.fromRGBO(207, 102, 121, 1)),
+          indicatorColor: Colors.grey[700],
+          checkboxTheme: CheckboxThemeData(
+            fillColor: MaterialStateProperty.resolveWith<Color?>(
+                (Set<MaterialState> states) {
+              if (states.contains(MaterialState.disabled)) {
+                return null;
+              }
+              if (states.contains(MaterialState.selected)) {
+                return _darkAccentColor;
+              }
+              return null;
+            }),
+          ),
+          radioTheme: RadioThemeData(
+            fillColor: MaterialStateProperty.resolveWith<Color?>(
+                (Set<MaterialState> states) {
+              if (states.contains(MaterialState.disabled)) {
+                return null;
+              }
+              if (states.contains(MaterialState.selected)) {
+                return _darkAccentColor;
+              }
+              return null;
+            }),
+          ),
+          switchTheme: SwitchThemeData(
+            thumbColor: MaterialStateProperty.resolveWith<Color?>(
+                (Set<MaterialState> states) {
+              if (states.contains(MaterialState.disabled)) {
+                return null;
+              }
+              if (states.contains(MaterialState.selected)) {
+                return _darkAccentColor;
+              }
+              return null;
+            }),
+            trackColor: MaterialStateProperty.resolveWith<Color?>(
+                (Set<MaterialState> states) {
+              if (states.contains(MaterialState.disabled)) {
+                return null;
+              }
+              if (states.contains(MaterialState.selected)) {
+                return _darkAccentColor;
+              }
+              return null;
+            }),
+          ),
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.grey)
+              .copyWith(secondary: _darkAccentColor)
+              .copyWith(background: Colors.grey[850])
+              .copyWith(error: Color.fromRGBO(207, 102, 121, 1)),
         );
         break;
       case 2:
@@ -971,11 +1053,13 @@ class ThemeImpl extends ThemeRepository {
           primaryColorDark: _darkAccentColor,
           appBarTheme: AppBarTheme(
             systemOverlayStyle: _brightness == Brightness.dark
-              ? SystemUiOverlayStyle.light
-              : SystemUiOverlayStyle.dark,
+                ? SystemUiOverlayStyle.light
+                : SystemUiOverlayStyle.dark,
             elevation: 0.0,
             color: Colors.black,
-            iconTheme: const IconThemeData(color: Colors.white70), toolbarTextStyle: _lightAccentTextTheme.apply().bodyMedium, titleTextStyle: _lightAccentTextTheme.apply().titleLarge,
+            iconTheme: const IconThemeData(color: Colors.white70),
+            toolbarTextStyle: _lightAccentTextTheme.apply().bodyMedium,
+            titleTextStyle: _lightAccentTextTheme.apply().titleLarge,
           ),
           unselectedWidgetColor: Colors.white70,
           dividerColor: Colors.grey[800],
@@ -1075,30 +1159,57 @@ class ThemeImpl extends ThemeRepository {
             valueIndicatorTextStyle: _brightness == Brightness.dark
                 ? _lightAccentTextTheme.bodyLarge
                 : _darkAccentTextTheme.bodyLarge,
-          ), checkboxTheme: CheckboxThemeData(
- fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
- if (states.contains(MaterialState.disabled)) { return null; }
- if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
- return null;
- }),
- ), radioTheme: RadioThemeData(
- fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
- if (states.contains(MaterialState.disabled)) { return null; }
- if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
- return null;
- }),
- ), switchTheme: SwitchThemeData(
- thumbColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
- if (states.contains(MaterialState.disabled)) { return null; }
- if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
- return null;
- }),
- trackColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
- if (states.contains(MaterialState.disabled)) { return null; }
- if (states.contains(MaterialState.selected)) { return _darkAccentColor; }
- return null;
- }),
- ), colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey).copyWith(secondary: _darkAccentColor).copyWith(background: Colors.black).copyWith(error: Color.fromRGBO(207, 102, 121, 1)),
+          ),
+          checkboxTheme: CheckboxThemeData(
+            fillColor: MaterialStateProperty.resolveWith<Color?>(
+                (Set<MaterialState> states) {
+              if (states.contains(MaterialState.disabled)) {
+                return null;
+              }
+              if (states.contains(MaterialState.selected)) {
+                return _darkAccentColor;
+              }
+              return null;
+            }),
+          ),
+          radioTheme: RadioThemeData(
+            fillColor: MaterialStateProperty.resolveWith<Color?>(
+                (Set<MaterialState> states) {
+              if (states.contains(MaterialState.disabled)) {
+                return null;
+              }
+              if (states.contains(MaterialState.selected)) {
+                return _darkAccentColor;
+              }
+              return null;
+            }),
+          ),
+          switchTheme: SwitchThemeData(
+            thumbColor: MaterialStateProperty.resolveWith<Color?>(
+                (Set<MaterialState> states) {
+              if (states.contains(MaterialState.disabled)) {
+                return null;
+              }
+              if (states.contains(MaterialState.selected)) {
+                return _darkAccentColor;
+              }
+              return null;
+            }),
+            trackColor: MaterialStateProperty.resolveWith<Color?>(
+                (Set<MaterialState> states) {
+              if (states.contains(MaterialState.disabled)) {
+                return null;
+              }
+              if (states.contains(MaterialState.selected)) {
+                return _darkAccentColor;
+              }
+              return null;
+            }),
+          ),
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blueGrey)
+              .copyWith(secondary: _darkAccentColor)
+              .copyWith(background: Colors.black)
+              .copyWith(error: Color.fromRGBO(207, 102, 121, 1)),
         );
         break;
     }

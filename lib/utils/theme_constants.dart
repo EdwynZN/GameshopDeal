@@ -27,21 +27,25 @@ const lightAccentColor = const MaterialAccentColor(
 
 class PriceTheme extends ThemeExtension<PriceTheme> {
   final Color discountColor;
-  final Color regularPriceColor;
+  final Color onDiscountColor;
+  final Color regularColor;
 
   const PriceTheme({
     required this.discountColor,
-    required this.regularPriceColor,
+    required this.onDiscountColor,
+    required this.regularColor,
   });
 
   @override
   PriceTheme copyWith({
     Color? discountColor,
     Color? normalPriceColor,
+    Color? onDiscountColor,
   }) {
     return PriceTheme(
       discountColor: discountColor ?? this.discountColor,
-      regularPriceColor: normalPriceColor ?? this.regularPriceColor,
+      regularColor: normalPriceColor ?? this.regularColor,
+      onDiscountColor: onDiscountColor ?? this.onDiscountColor,
     );
   }
 
@@ -55,7 +59,8 @@ class PriceTheme extends ThemeExtension<PriceTheme> {
     }
     return PriceTheme(
       discountColor: Color.lerp(discountColor, other.discountColor, t)!,
-      regularPriceColor: Color.lerp(regularPriceColor, other.regularPriceColor, t)!,
+      onDiscountColor: Color.lerp(onDiscountColor, other.onDiscountColor, t)!,
+      regularColor: Color.lerp(regularColor, other.regularColor, t)!,
     );
   }
 }

@@ -155,7 +155,7 @@ class _LateralPriceDetail extends HookWidget {
     final bool discount = savings != 0;
     final textTheme = theme.textTheme;
     final Color discountColor = priceTheme.discountColor;
-    final Color normalPriceColor = priceTheme.regularPriceColor;
+    final Color normalPriceColor = priceTheme.regularColor;
     final Widget price;
     if (savings == 100 || double.tryParse(salePrice) == 0) {
       price = Container(
@@ -168,8 +168,8 @@ class _LateralPriceDetail extends HookWidget {
         child: Center(
           child: Text(
             S.of(context).free,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: priceTheme.onDiscountColor,
               fontSize: 16.0,
               letterSpacing: 0.15,
               fontWeight: FontWeight.bold,

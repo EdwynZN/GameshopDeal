@@ -18,7 +18,6 @@ class CompactViewDeal extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final deal = ref.watch(singleDeal);
     final String title = deal.title;
-    final view = ref.watch(_sortByProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: DecoratedBox(

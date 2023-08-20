@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/model/view_format_enum.dart';
 import 'package:gameshop_deals/presentation/widgets/view_deals/compact_view_widget.dart';
 import 'package:gameshop_deals/presentation/widgets/view_deals/deal_widget.dart';
+import 'package:gameshop_deals/presentation/widgets/view_deals/grid_view.dart';
 import 'package:gameshop_deals/presentation/widgets/view_deals/single_list_deal.dart';
 import 'package:gameshop_deals/provider/deal_provider.dart';
 import 'package:gameshop_deals/provider/display_provider.dart';
@@ -30,7 +31,7 @@ class DealListView extends ConsumerWidget {
                       indexDeal.overrideWithValue(index),
                       singleDeal.overrideWithValue(deals[index])
                     ],
-                    child: const GridDeal(),
+                    child: const VerticalGridDeal(),
                   );
                 },
                 childCount: deals.length,
