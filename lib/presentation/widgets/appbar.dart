@@ -46,8 +46,9 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: true,
       title: Text(titletext, overflow: TextOverflow.fade),
       actions: <Widget>[
-        if (!isSearching) _SavedGamesButton(),
         _SearchButton(),
+        if (!isSearching) _SavedGamesButton(),
+        _FilterButton(),
         _MoreSettings(),
       ],
     );
