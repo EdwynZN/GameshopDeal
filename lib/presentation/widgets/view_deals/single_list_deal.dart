@@ -9,6 +9,7 @@ import 'package:gameshop_deals/provider/deal_provider.dart';
 import 'package:gameshop_deals/provider/preference_provider.dart';
 import 'package:gameshop_deals/utils/constraints.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
+import 'package:gameshop_deals/utils/theme_constants.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -107,7 +108,7 @@ class ListDeal extends HookConsumerWidget {
     );
 
     final Widget child = ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 800.0),
+      constraints: const BoxConstraints(maxWidth: 500.0),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,16 +151,11 @@ class _LateralPriceDetail extends HookWidget {
   Widget build(BuildContext context) {
     final S translate = S.of(context);
     final theme = Theme.of(context);
+    final PriceTheme priceTheme = theme.extension<PriceTheme>()!;
     final bool discount = savings != 0;
     final textTheme = theme.textTheme;
-    final brightness = ThemeData.estimateBrightnessForColor(
-      theme.scaffoldBackgroundColor,
-    );
-    final Color discountColor = brightness == Brightness.light
-        ? Colors.green.shade700
-        : Colors.greenAccent;
-    final Color normalPriceColor =
-        brightness == Brightness.light ? Colors.grey.shade700 : Colors.orange;
+    final Color discountColor = priceTheme.discountColor;
+    final Color normalPriceColor = priceTheme.regularPriceColor;
     final Widget price;
     if (savings == 100 || double.tryParse(salePrice) == 0) {
       price = Container(
@@ -283,7 +279,7 @@ class _LateralPriceDetail extends HookWidget {
               ),
             ),
             gap12,
-            const Spacer(),
+            //const Spacer(),
             if (discount)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),

@@ -24,3 +24,38 @@ const lightAccentColor = const MaterialAccentColor(
     700: Color(0xFFFF5561),
   },
 );
+
+class PriceTheme extends ThemeExtension<PriceTheme> {
+  final Color discountColor;
+  final Color regularPriceColor;
+
+  const PriceTheme({
+    required this.discountColor,
+    required this.regularPriceColor,
+  });
+
+  @override
+  PriceTheme copyWith({
+    Color? discountColor,
+    Color? normalPriceColor,
+  }) {
+    return PriceTheme(
+      discountColor: discountColor ?? this.discountColor,
+      regularPriceColor: normalPriceColor ?? this.regularPriceColor,
+    );
+  }
+
+  @override
+  PriceTheme lerp(
+    covariant PriceTheme? other,
+    double t,
+  ) {
+    if (other is! PriceTheme) {
+      return this;
+    }
+    return PriceTheme(
+      discountColor: Color.lerp(discountColor, other.discountColor, t)!,
+      regularPriceColor: Color.lerp(regularPriceColor, other.regularPriceColor, t)!,
+    );
+  }
+}

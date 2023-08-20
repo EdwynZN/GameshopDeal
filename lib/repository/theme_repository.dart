@@ -1,6 +1,7 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gameshop_deals/utils/theme_constants.dart';
 //import 'package:flutter/services.dart';
 
 abstract class ThemeRepository {
@@ -182,6 +183,12 @@ class ThemeFlex extends ThemeRepository {
     useMaterial3: true,
     swapLegacyOnMaterial3: true,
     appBarStyle: FlexAppBarStyle.primary,
+    extensions: [
+      PriceTheme(
+        discountColor: Colors.green.shade700,
+        regularPriceColor: Colors.grey.shade700,
+      ),
+    ],
     // To use the Playground font, add GoogleFonts package and uncomment
     // fontFamily: GoogleFonts.notoSans().fontFamily,
   );
@@ -239,6 +246,12 @@ class ThemeFlex extends ThemeRepository {
     visualDensity: FlexColorScheme.comfortablePlatformDensity,
     useMaterial3: true,
     swapLegacyOnMaterial3: true,
+    extensions: const [
+      PriceTheme(
+        discountColor: Colors.greenAccent,
+        regularPriceColor: Colors.orange,
+      ),
+    ],
     // To use the Playground font, add GoogleFonts package and uncomment
     // fontFamily: GoogleFonts.notoSans().fontFamily,
   );
