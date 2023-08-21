@@ -18,8 +18,6 @@ class Home extends ConsumerStatefulWidget {
 class _HomeState extends ConsumerState<Home> with PrincipalState {
   @override
   Widget build(BuildContext context) {
-    //final isPageView =
-    //    ref.watch(displayProvider.select((view) => view == ViewFormat.Swipe));
     final title = ref.watch(titleProvider);
     ref.listen(dealPageProvider(title), (prev, asyncDeals) {
       if (!mounted) return;
@@ -40,13 +38,18 @@ class _HomeState extends ConsumerState<Home> with PrincipalState {
             );
         }
       } else if (asyncDeals is AsyncData) {
-        if (refreshController.isRefresh) refreshController.refreshCompleted();
-        final noMoreData =
-            ref.read(dealPageProvider(title).notifier).isLastPage;
-        if (noMoreData)
+        final dealProviderInstance = ref.read(dealPageProvider(title).notifier);
+        if (asyncDeals.isRefreshing) {
+          return;
+        } else if (refreshController.isRefresh) {
+          refreshController.refreshCompleted();
+        }
+        final noMoreData = dealProviderInstance.isLastPage;
+        if (noMoreData) {
           refreshController.loadNoData();
-        else
+        } else {
           refreshController.loadComplete();
+        }
       }
     });
 
@@ -66,15 +69,15 @@ class _HomeState extends ConsumerState<Home> with PrincipalState {
             enablePullDown: true,
             enablePullUp: true,
             footer: const ScrollFooter(),
-            child: CustomScrollView(
+            child: const CustomScrollView(
               primary: true,
-              slivers: const <Widget>[
+              slivers: <Widget>[
                 SliverSafeArea(top: false, sliver: DealListView()),
               ],
             ),
-            onRefresh: () async {
+            onRefresh: () {
               refreshController.loadComplete();
-              ref.invalidate(dealPageProvider(title));
+              ref.read(dealPageProvider(title).notifier).refresh();
             },
             onLoading: () async {
               final dealPage = ref.read(dealPageProvider(title).notifier);
@@ -125,12 +128,15 @@ class _ScrollFooterState extends LoadIndicatorState<ScrollFooter> {
           return const SizedBox(height: 4.0);
         }
         return deals.when(
-          skipLoadingOnRefresh: false,
+          skipLoadingOnRefresh: true,
           skipLoadingOnReload: false,
           data: (_) => const SizedBox(height: 4.0),
-          loading: () => const Align(
-            alignment: Alignment.topCenter,
-            child: const LinearProgressIndicator(),
+          loading: () => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+            child: const Align(
+              alignment: Alignment.topCenter,
+              child: LinearProgressIndicator(),
+            ),
           ),
           error: (e, stack) => Center(
             child: OutlinedButton(
