@@ -1,124 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
-import 'package:gameshop_deals/model/sort_by_enum.dart';
 import 'package:gameshop_deals/presentation/widgets/view_deals/metacritic.dart';
 import 'package:gameshop_deals/presentation/widgets/view_deals/price_widget.dart';
 import 'package:gameshop_deals/presentation/widgets/view_deals/save_button.dart';
 import 'package:gameshop_deals/presentation/widgets/view_deals/store_avatar.dart';
 import 'package:gameshop_deals/presentation/widgets/view_deals/thumb_image.dart';
 import 'package:gameshop_deals/provider/deal_provider.dart';
-import 'package:gameshop_deals/provider/filter_provider.dart';
 import 'package:gameshop_deals/provider/preference_provider.dart';
 import 'package:gameshop_deals/utils/constraints.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:gameshop_deals/utils/routes_constants.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final indexDeal = Provider.autoDispose<int>((_) => throw UnimplementedError());
-
-final _sortByProvider = Provider.autoDispose<SortBy>((ref) {
-  final title = ref.watch(titleProvider);
-  return ref.watch(filterProviderCopy(title).select((f) => f.sortBy));
-}, name: 'Sort By');
-
-class DetailedDeal extends ConsumerWidget {
-  const DetailedDeal({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final deal = ref.watch(singleDeal);
-    final int index = ref.watch(indexDeal);
-
-    final Widget child = Container(
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: Divider.createBorderSide(context),
-        ),
-      ),
-      padding: const EdgeInsets.only(left: 4, right: 4, top: 8, bottom: 8),
-      child: const Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            child: Padding(
-              padding:
-                  EdgeInsetsDirectional.only(start: 8.0, bottom: 4, end: 4),
-              child: _TitleDeal(),
-            ),
-          ),
-          const Flexible(child: Center(child: PriceWidget())),
-        ],
-      ),
-    );
-    return InkWell(
-      onTap: () =>
-          Navigator.of(context).pushNamed(detailRoute, arguments: index),
-      onLongPress: () async {
-        showModalBottomSheet(
-          context: context,
-          useRootNavigator: true,
-          builder: (context) => ProviderScope(
-            overrides: [singleDeal.overrideWithValue(deal)],
-            child: const _BottomSheetButtonsDeal(),
-          ),
-        );
-      },
-      child: child,
-    );
-  }
-}
-
-class CompactDeal extends ConsumerWidget {
-  const CompactDeal({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final deal = ref.watch(singleDeal);
-    final String title = deal.title;
-    final int index = ref.watch(indexDeal);
-    final view = ref.watch(_sortByProvider);
-    final bool showMetacritic = view == SortBy.Metacritic;
-    final bool showRating = view == SortBy.Reviews;
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        border: Border(bottom: Divider.createBorderSide(context)),
-      ),
-      child: ListTile(
-        leading: ProviderScope(
-          overrides: [storeIdProvider.overrideWithValue(deal.storeId)],
-          child: const StoreAvatarIcon(),
-        ),
-        dense: true,
-        title: Text(
-          title,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: _Subtitle(
-          showRating: showRating,
-          showMetacritic: showMetacritic,
-          showStore: false,
-        ),
-        trailing: const PriceWidget(),
-        onTap: () =>
-            Navigator.of(context).pushNamed(detailRoute, arguments: index),
-        onLongPress: () async {
-          showModalBottomSheet(
-            context: context,
-            useRootNavigator: true,
-            builder: (context) => ProviderScope(
-              overrides: [singleDeal.overrideWithValue(deal)],
-              child: const _BottomSheetButtonsDeal(),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
 
 class GridDeal extends ConsumerWidget {
   const GridDeal({Key? key}) : super(key: key);
@@ -348,44 +245,6 @@ class _ListTitle extends ConsumerWidget {
           ),
         ),
         const Divider(height: 12.0),
-        subtitle,
-      ],
-    );
-  }
-}
-
-class _TitleDeal extends ConsumerWidget {
-  const _TitleDeal({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final deal = ref.watch(singleDeal);
-
-    const subtitle = Padding(
-      padding: EdgeInsetsDirectional.only(end: 4),
-      child: _Subtitle(),
-    );
-
-    if (deal.title.isEmpty) {
-      return subtitle;
-    }
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsetsDirectional.only(bottom: 4.0, end: 4.0),
-          child: Text(
-            deal.title,
-            maxLines: 2,
-            style: const TextStyle(
-              height: 1.25,
-              fontSize: 16.0,
-              fontWeight: FontWeight.w600,
-            ),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
         subtitle,
       ],
     );

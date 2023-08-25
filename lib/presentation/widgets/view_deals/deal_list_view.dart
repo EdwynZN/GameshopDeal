@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/model/view_format_enum.dart';
-import 'package:gameshop_deals/presentation/widgets/view_deals/compact_view_widget.dart';
+import 'package:gameshop_deals/presentation/widgets/view_deals/compact.dart';
 import 'package:gameshop_deals/presentation/widgets/view_deals/deal_widget.dart';
+import 'package:gameshop_deals/presentation/widgets/view_deals/detail_view.dart';
 import 'package:gameshop_deals/presentation/widgets/view_deals/grid_view.dart';
 import 'package:gameshop_deals/presentation/widgets/view_deals/single_list_deal.dart';
 import 'package:gameshop_deals/provider/deal_provider.dart';
 import 'package:gameshop_deals/provider/display_provider.dart';
 import 'package:gameshop_deals/provider/filter_provider.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 
 class DealListView extends ConsumerWidget {
   const DealListView({Key? key}) : super(key: key);
@@ -44,22 +46,31 @@ class DealListView extends ConsumerWidget {
               ),
             ),
           ),
-        ViewFormat.Detail => SliverList(
-            //itemExtent: 86.0,
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext _, int index) {
-                return ProviderScope(
-                  overrides: [
-                    indexDeal.overrideWithValue(index),
-                    singleDeal.overrideWithValue(deals[index])
-                  ],
-                  child: const DetailedDeal(),
-                );
-              },
-              childCount: deals.length,
+        ViewFormat.Detail => SliverPadding(
+          padding: const EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 0.0),
+          sliver: SliverCrossAxisConstrained(
+            maxCrossAxisExtent: 500.0,
+            alignment: 0.0,
+            child: SliverList(
+              //itemExtent: 86.0,
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext _, int index) {
+                  return ProviderScope(
+                    overrides: [
+                      indexDeal.overrideWithValue(index),
+                      singleDeal.overrideWithValue(deals[index])
+                    ],
+                    child: const DetailedDeal(),
+                  );
+                },
+                childCount: deals.length,
+              ),
             ),
           ),
-        ViewFormat.Compact => SliverList(
+        ),
+        ViewFormat.Compact => SliverPadding(
+          padding: const EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 0.0),
+          sliver: SliverList(
             //itemExtent: 64.0,
             delegate: SliverChildBuilderDelegate(
               (BuildContext _, int index) {
@@ -68,12 +79,13 @@ class DealListView extends ConsumerWidget {
                     indexDeal.overrideWithValue(index),
                     singleDeal.overrideWithValue(deals[index])
                   ],
-                  child: const CompactViewDeal(),
+                  child: const CompactDeal(),
                 );
               },
               childCount: deals.length,
             ),
           ),
+        ),
         ViewFormat.List || ViewFormat.Swipe => SliverListDeal(deals: deals),
       };
   }
