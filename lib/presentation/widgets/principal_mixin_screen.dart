@@ -10,7 +10,7 @@ mixin PrincipalState<T extends StatefulWidget> on State<T> {
   final ScrollController scrollController = ScrollController();
   final PageController pageController = PageController(keepPage: false);
   late bool _isTablet;
-  RefreshController refreshController = RefreshController();
+  late RefreshController refreshController = RefreshController();
   late S translate;
 
   bool get isTablet => _isTablet;

@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
 import 'package:gameshop_deals/model/sort_by_enum.dart';
 import 'package:gameshop_deals/model/view_format_enum.dart';
 import 'package:gameshop_deals/presentation/widgets/preference_dialog.dart';
 import 'package:gameshop_deals/presentation/widgets/radio_popup_menu_item.dart';
-import 'package:gameshop_deals/presentation/widgets/search_delegate.dart';
 import 'package:gameshop_deals/provider/deal_provider.dart';
 import 'package:gameshop_deals/provider/display_provider.dart';
 import 'package:gameshop_deals/provider/filter_provider.dart';
 import 'package:gameshop_deals/provider/saved_deals_provider.dart';
+import 'package:gameshop_deals/provider/search_provider.dart';
 import 'package:gameshop_deals/provider/theme_provider.dart';
 import 'package:gameshop_deals/utils/routes_constants.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:in_app_review/in_app_review.dart';
 
 final InAppReview _inAppReview = InAppReview.instance;
@@ -132,26 +133,83 @@ class SearchSliverAppBar extends StatelessWidget {
   }
 }
 
-class _SearchButton extends ConsumerWidget {
+class _SearchButton extends HookConsumerWidget {
   const _SearchButton({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final title = ref.watch(titleProvider);
-    return IconButton(
-      icon: const Icon(Icons.search_rounded),
-      onPressed: () async {
-        final result = await showSearch<String>(
-          context: context,
-          delegate: AppSearchDelegate(),
-        );
-        if (result != null && result != title) {
-          final String nameRoute = 'search_response';
-          final queryParameters = <String, dynamic>{'title': result};
-          context.pushNamed(nameRoute, queryParameters: queryParameters);
-        }
+    final searchController = useSearchController(keys: const []);
+    final isFirst = ref.watch(titleProvider.select((value) => value == ''));
+    final query = useListenableSelector(
+      searchController,
+      () => searchController.text.trim(),
+    );
+    final list = ref.watch(suggestionsProvider(query: query));
+    return SearchAnchor(
+      searchController: searchController,
+      builder: (context, controller) => IconButton(
+        onPressed: controller.openView,
+        icon: const Icon(Icons.search_rounded),
+      ),
+      isFullScreen: isFirst,
+      viewConstraints: BoxConstraints(
+        minWidth: 460.0,
+        minHeight: 120.0,
+      ),
+      viewElevation: 4.0,
+      suggestionsBuilder: (context, controller) {
+        final trimmed = searchController.text;
+        return [
+          if (trimmed.isNotEmpty)
+            ListTile(
+              onTap: () async {
+                final params = {'title': trimmed};
+                if (isFirst) {
+                  controller.closeView('');
+                  context.pushNamed('search_response', queryParameters: params);
+                } else {
+                  controller.closeView(trimmed);
+                  context.replaceNamed(
+                    'search_response',
+                    queryParameters: params,
+                  );
+                }
+              },
+              leading: const Icon(Icons.send),
+              title: Text(controller.text),
+            ),
+          ...list.map(
+            (suggestion) => ListTile(
+              onTap: () {
+                final params = {'title': suggestion};
+                if (isFirst) {
+                  controller.closeView('');
+                  context.pushNamed('search_response', queryParameters: params);
+                } else {
+                  controller.closeView(suggestion);
+                  context.replaceNamed(
+                    'search_response',
+                    queryParameters: params,
+                  );
+                }
+              },
+              leading: const Icon(Icons.history),
+              title: Text(
+                suggestion,
+                style: Theme.of(context).primaryTextTheme.bodyLarge,
+              ),
+              trailing: IconButton(
+                icon: const Icon(Icons.north_west_outlined),
+                onPressed: () => controller.value = TextEditingValue(
+                  text: suggestion,
+                  selection: TextSelection.collapsed(offset: suggestion.length),
+                ),
+              ),
+            ),
+          )
+        ];
       },
-      tooltip: MaterialLocalizations.of(context).searchFieldLabel,
+      viewHintText: MaterialLocalizations.of(context).searchFieldLabel,
     );
   }
 }
