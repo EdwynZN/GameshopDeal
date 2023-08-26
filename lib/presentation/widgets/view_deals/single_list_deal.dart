@@ -13,6 +13,7 @@ import 'package:gameshop_deals/utils/theme_constants.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:math' as math;
 
 final _indexDeal = Provider.autoDispose<int>((_) => throw UnimplementedError());
 
@@ -23,23 +24,429 @@ class SliverListDeal extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final actionIndex = useValueNotifier<int?>(null, const []);
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-        (BuildContext _, int index) {
-          return ProviderScope(
-            overrides: [
-              _indexDeal.overrideWithValue(index),
-              singleDeal.overrideWithValue(deals[index])
-            ],
-            child: ListDeal(action: actionIndex),
+        (BuildContext context, int index) {
+          final int itemIndex = index ~/ 2;
+          if (index.isEven) {
+            return ProviderScope(
+              overrides: [
+                _indexDeal.overrideWithValue(index),
+                singleDeal.overrideWithValue(deals[itemIndex])
+              ],
+              child: ListDealUI(),
+            );
+          }
+          return Divider(
+            height: 1,
+            thickness: 1,
+            endIndent: 0,
+            indent: 0,
+            color: Theme.of(context).colorScheme.outline,
           );
         },
-        childCount: deals.length,
+        childCount: math.max(0, deals.length * 2 - 1),
+        semanticIndexCallback: (Widget widget, int index) {
+          return index.isEven ? index ~/ 2 : null;
+        },
       ),
     );
   }
 }
+
+/// New ListDeal UI
+
+class ListDealUI extends HookConsumerWidget {
+  const ListDealUI({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final S translate = S.of(context);
+    final deal = ref.watch(singleDeal);
+    final DateTime? dateTime = useMemoized(
+      () => deal.releaseDate == 0
+        ? null
+        : DateTime.fromMillisecondsSinceEpoch(deal.releaseDate * 1000),
+      [deal.releaseDate],
+    );
+    final lastChange = useMemoized(() {
+      final lastChange =
+          DateTime.fromMillisecondsSinceEpoch(deal.lastChange * 1000);
+      final difference = DateTime.now().difference(lastChange);
+      if (difference.inDays >= 365)
+        return translate.change_in_years(difference.inDays ~/ 365);
+      else if (difference.inDays >= 30)
+        return translate.change_in_months(difference.inDays ~/ 30);
+      else if (difference.inHours >= 24)
+        return translate.change_in_days(difference.inHours ~/ 24);
+      else if (difference.inMinutes >= 60)
+        return translate.change_in_hours(difference.inMinutes ~/ 60);
+      else if (difference.inMinutes >= 1)
+        return translate.change_in_minutes(difference.inMinutes);
+      else
+        return translate.now;
+    }, [translate, deal.lastChange]);
+
+    final Widget body = Padding(
+      padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
+      child: _InfoBody(
+        title: deal.title,
+        releaseDate: dateTime,
+        lastChange: deal.lastChange,
+        normalPrice: deal.normalPrice,
+        salePrice: deal.salePrice,
+        savings: deal.savings,
+        metacriticScore: int.tryParse(deal.metacriticScore),
+      ),
+    );
+    final Widget row = Padding(
+      padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
+      child: _BottomRowInfo(
+        lastChange: lastChange,
+        storeId: deal.storeId,
+      ),
+    );
+    return Material(
+      type: MaterialType.canvas,
+      color: Theme.of(context).colorScheme.surface,
+      child: InkWell(
+        onTap: () {},
+        child: Column(
+          children: [body, gap4, row],
+        ),
+      ),
+    );
+  }
+}
+
+class _InfoBody extends StatelessWidget {
+  final String title;
+  final DateTime? releaseDate;
+  final int? savings;
+  final int lastChange;
+  final String normalPrice;
+  final String salePrice;
+  final int? metacriticScore;
+
+  const _InfoBody({
+    // ignore: unused_element
+    super.key,
+    required this.title,
+    required this.releaseDate,
+    required this.lastChange,
+    required this.salePrice,
+    required this.normalPrice,
+    required this.metacriticScore,
+    this.savings,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final insideBody = Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              color: colorScheme.onSurface,
+              fontSize: 20.0,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.10,
+              height: 0,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.start,
+          ),
+          if (releaseDate != null) ...[
+            gap4,
+            Text(
+              MaterialLocalizations.of(context).formatShortDate(releaseDate!),
+              style: TextStyle(
+                color: colorScheme.onSurface,
+                fontSize: 14.0,
+                fontWeight: FontWeight.normal,
+                letterSpacing: 0.0,
+                height: 0,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        insideBody,
+        gap12,
+        SizedBox(
+          width: 120.0,
+          child: _LateralAssetPrice(
+            lastChange: lastChange,
+            normalPrice: normalPrice,
+            salePrice: salePrice,
+            savings: savings,
+            metacriticScore: metacriticScore,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _BottomRowInfo extends StatelessWidget {
+  final String lastChange;
+  final String storeId;
+
+  const _BottomRowInfo({
+    // ignore: unused_element
+    super.key,
+    required this.lastChange,
+    required this.storeId,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final chip = Chip(
+      avatar: CircleAvatar(
+        maxRadius: 8.0,
+        child: ProviderScope(
+          overrides: [storeIdProvider.overrideWithValue(storeId)],
+          child: const StoreAvatarIcon(size: 16.0),
+        ),
+      ),
+      label: Text.rich(
+        TextSpan(
+          children: [
+            const TextSpan(text: '· ', style: TextStyle(letterSpacing: 0.5)),
+            TextSpan(text: lastChange),
+          ],
+        ),
+      ),
+      shape: const StadiumBorder(),
+      surfaceTintColor: theme.colorScheme.tertiary,
+      labelPadding: const EdgeInsetsDirectional.only(start: 4.0),
+      elevation: 4.0,
+      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 12.0),
+      side: BorderSide.none,
+      labelStyle: TextStyle(
+        letterSpacing: 0.10,
+        fontSize: 14.0,
+        fontWeight: FontWeight.w500,
+        color: theme.colorScheme.onTertiaryContainer,
+        overflow: TextOverflow.clip,
+      ),
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      shadowColor: Colors.transparent,
+    );
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        chip,
+        const Spacer(),
+        gap16,
+        IconButton(
+          tooltip: 'Save game',
+          icon: const Icon(Icons.bookmark_outline_outlined),
+          onPressed: () {},
+        ),
+        IconButton(
+          tooltip: 'Share',
+          icon: const Icon(Icons.share),
+          onPressed: () {},
+        ),
+        IconButton.filledTonal(
+          tooltip: MaterialLocalizations.of(context).moreButtonTooltip,
+          icon: const Icon(Icons.more_vert_outlined),
+          onPressed: () {},
+        ),
+      ],
+    );
+  }
+}
+
+class _LateralAssetPrice extends HookWidget {
+  final int? savings;
+  final int lastChange;
+  final String normalPrice;
+  final String salePrice;
+  final int? metacriticScore;
+
+  const _LateralAssetPrice({
+    // ignore: unused_element
+    super.key,
+    required this.lastChange,
+    required this.salePrice,
+    required this.normalPrice,
+    this.metacriticScore,
+    this.savings,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final PriceTheme priceTheme = theme.extension<PriceTheme>()!;
+    final bool discount = savings != 0;
+    final textTheme = theme.textTheme;
+    final Color discountColor = priceTheme.discountColor;
+    final Color normalPriceColor = priceTheme.regularColor;
+    final Widget price;
+    if (savings == 100 || double.tryParse(salePrice) == 0) {
+      price = Container(
+        padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 16.0),
+        decoration: ShapeDecoration(
+          color: discountColor,
+          shape: const StadiumBorder(),
+        ),
+        child: Text(
+          S.of(context).free,
+          style: TextStyle(
+            color: priceTheme.onDiscountColor,
+            fontSize: 16.0,
+            letterSpacing: 0.15,
+            fontWeight: FontWeight.normal,
+          ),
+          maxLines: 1,
+        ),
+      );
+    } else {
+      price = Text(
+        '\$$salePrice',
+        style: textTheme.titleLarge?.copyWith(
+          color: discount ? discountColor : null,
+          fontSize: 16.0,
+          letterSpacing: -0.15,
+          fontWeight: FontWeight.w600,
+        ),
+        maxLines: 1,
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _AssetDeal(metacriticScore: metacriticScore),
+        gap8,
+        if (discount) ...[
+          Center(
+            child: Text(
+              '\$$normalPrice',
+              style: textTheme.bodyMedium?.copyWith(
+                fontSize: 14.0,
+                decoration: TextDecoration.lineThrough,
+                decorationStyle: TextDecorationStyle.solid,
+                decorationColor: normalPriceColor,
+                decorationThickness: 1.0,
+                color: normalPriceColor,
+                height: 0.5,
+              ),
+              maxLines: 1,
+            ),
+          ),
+          gap4,
+        ],
+        price,
+      ],
+    );
+  }
+}
+
+class _AssetDeal extends StatelessWidget {
+  final num? metacriticScore;
+
+  // ignore: unused_element
+  const _AssetDeal({super.key, this.metacriticScore});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
+    final Widget child;
+
+    final asset = ProviderScope(
+      overrides: [
+        thumbProvider.overrideWith(
+          (ProviderRef ref) => ref.watch(singleDeal).thumb,
+        ),
+      ],
+      child: const ThumbImage(
+        alignment: Alignment.topCenter,
+        fit: BoxFit.cover,
+      ),
+    );
+    if (metacriticScore == null || metacriticScore == 0) {
+      child = asset;
+    } else {
+      final chip = Chip(
+        avatar: Image(
+          image: const AssetImage('assets/thumbnails/metacritic.png'),
+          fit: BoxFit.scaleDown,
+          height: 12.0,
+          width: 12.0,
+        ),
+        label: Text(
+          metacriticScore.toString(),
+          maxLines: 1,
+          overflow: TextOverflow.clip,
+        ),
+        shape: const StadiumBorder(),
+        surfaceTintColor: theme.tertiary,
+        labelPadding: const EdgeInsetsDirectional.only(start: 4.0),
+        visualDensity: const VisualDensity(vertical: -3.0, horizontal: -2.0),
+        elevation: 8.0,
+        side: BorderSide.none,
+        labelStyle: TextStyle(
+          fontSize: 11.0,
+          color: theme.onTertiaryContainer,
+        ),
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        shadowColor: Colors.transparent,
+      );
+      child = Stack(
+        fit: StackFit.passthrough,
+        children: [
+          asset,
+          Positioned(
+            right: 4.0,
+            top: 4.0,
+            child: chip,
+          )
+        ],
+      );
+    }
+
+    return ConstrainedBox(
+      constraints: const BoxConstraints.tightFor(
+        height: 70.0,
+        width: 120.0,
+      ),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(8)),
+        child: ColoredBox(
+          color: ElevationOverlay.applySurfaceTint(
+            theme.background,
+            theme.tertiary,
+            2.0,
+          ),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
+/// Old ListDeal UI
 
 class ListDeal extends HookConsumerWidget {
   final ValueNotifier<int?> action;
