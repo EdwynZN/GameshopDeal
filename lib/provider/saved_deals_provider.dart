@@ -102,16 +102,49 @@ class GamesPagination extends StateNotifier<AsyncValue<Map<String, GameLookup>>>
 
   @override
   Future<void> retrieveNextPage() async {
-    if (state is AsyncLoading || isLastPage)
+    if (state.isLoading || isLastPage)
       return;
     else if (state is AsyncData) ++_page;
-    state = AsyncValue.loading();
+    state = const AsyncValue<Map<String, GameLookup>>.loading().copyWithPrevious(
+      state,
+      isRefresh: false,
+    );
     await _fetch();
   }
 
   Future<void> _fetch() async {
     final fetch = await AsyncValue.guard(() => fetchPage());
-    if (mounted) state = fetch;
+    if (mounted) {
+      state = fetch.whenData(
+        (deals) {
+          final previous = state.valueOrNull;
+          return previous == null ? deals : {...previous, ...deals};
+        },
+      ).copyWithPrevious(state, isRefresh: false);
+    }
+  }
+
+  Future<void> refresh() async {
+    if (state.isLoading || _pagesGames.isEmpty) return;
+    state = const AsyncValue<Map<String, GameLookup>>.loading().copyWithPrevious(
+      state,
+      isRefresh: true,
+    );
+    final fetch = await AsyncValue.guard(() => _cheapSharkService.gamesById(
+        _pagesGames[0],
+        cancelToken: cancelToken,
+      ),
+    );
+    if (mounted) {
+      state = fetch.maybeMap(
+        data: (d) {
+          _lastPage = false;
+          _page = 0;
+          return d;
+        },
+        orElse: () => fetch.copyWithPrevious(state),
+      );
+    }
   }
 
   @override

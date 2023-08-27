@@ -34,9 +34,14 @@ class _SavedGamesPageState extends ConsumerState<SavedGamesPage> with PrincipalS
             );
         }
       } else if (asyncDeals is AsyncData) {
+        final dealProviderInstance = ref.read(savedGamesPageProvider.notifier);
+        if (asyncDeals.isRefreshing) {
+          return;
+        } else if (refreshController.isRefresh) {
+          refreshController.refreshCompleted();
+        }
         if (refreshController.isRefresh) refreshController.refreshCompleted();
-        final noMoreData =
-            ref.read(savedGamesPageProvider.notifier).isLastPage;
+        final noMoreData = dealProviderInstance.isLastPage;
         if (noMoreData)
           refreshController.loadNoData();
         else
@@ -82,7 +87,7 @@ class _SavedGamesPageState extends ConsumerState<SavedGamesPage> with PrincipalS
             ),
             onRefresh: () async {
               refreshController.loadComplete();
-              ref.invalidate(savedGamesProvider);
+              ref.read(savedGamesPageProvider.notifier).refresh();
             },
             onLoading: () async {
               final dealPage = ref.read(savedGamesPageProvider.notifier);
