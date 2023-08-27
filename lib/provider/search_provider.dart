@@ -1,3 +1,4 @@
+import 'package:gameshop_deals/repository/search_repository.dart';
 import 'package:hive/hive.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -28,6 +29,12 @@ Future<Box<String>> _searchLocalCache(_SearchLocalCacheRef ref) async {
   ref.onDispose(box.close);
 
   return box;
+}
+
+@Riverpod(dependencies: [_searchLocalCache])
+SearchRepository searchRepository(SearchRepositoryRef ref) {
+  final asyncBox = ref.watch(_searchLocalCacheProvider.future);
+  return SearchRepository(box: asyncBox);
 }
 
 @Riverpod(dependencies: [_searchLocalCache])

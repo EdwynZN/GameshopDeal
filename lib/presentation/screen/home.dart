@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gameshop_deals/presentation/widgets/appbar.dart';
 import 'package:gameshop_deals/presentation/widgets/filter/filter_drawer.dart';
 import 'package:gameshop_deals/presentation/widgets/principal_mixin_screen.dart';

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
@@ -15,6 +17,7 @@ import 'package:gameshop_deals/utils/routes_constants.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:in_app_review/in_app_review.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 
 final InAppReview _inAppReview = InAppReview.instance;
 
@@ -133,6 +136,216 @@ class SearchSliverAppBar extends StatelessWidget {
   }
 }
 
+SuggestionsBuilder useSuggestions(
+  SearchController controller,
+  WidgetRef ref,
+  bool isFirst,
+) {
+  final searchRepository = ref.watch(searchRepositoryProvider);
+  final title = ref.watch(titleProvider);
+  return useCallback<SuggestionsBuilder>(
+    (context, searchController) async {
+      final trimmed = searchController.text.trim();
+      final asyncList = await AsyncValue.guard(
+        () async => searchRepository.getCoincidence(trimmed),
+      );
+      return [
+        if (trimmed.isNotEmpty &&
+            !(asyncList.hasValue && asyncList.value!.contains(trimmed)))
+          ListTile(
+            onTap: () async {
+              await searchRepository.saveSearch(trimmed);
+              final params = {'title': trimmed};
+              if (isFirst) {
+                controller.closeView('');
+                context.pushNamed('search_response', queryParameters: params);
+              } else {
+                controller.closeView(trimmed);
+                context.replaceNamed(
+                  'search_response',
+                  queryParameters: params,
+                );
+              }
+            },
+            leading: const Icon(Icons.send),
+            title: Text(controller.text),
+          ),
+        ...asyncList.maybeWhen(
+          data: (list) => list.isEmpty
+              ? const []
+              : [
+                  ListTile(
+                    leading: const Icon(Icons.clear_all_rounded),
+                    title: Text(S.of(context).clear_tooltip),
+                    onTap: () async {
+                      await searchRepository.clear();
+                    },
+                  ),
+                  ...list.map(
+                    (suggestion) => ListTile(
+                      onTap: () {
+                        if (suggestion == title) {
+                          controller.closeView(null);
+                          return;
+                        }
+                        final params = {'title': suggestion};
+                        if (isFirst) {
+                          controller.closeView('');
+                          context.pushNamed('search_response',
+                              queryParameters: params);
+                        } else {
+                          controller.closeView(suggestion);
+                          context.replaceNamed(
+                            'search_response',
+                            queryParameters: params,
+                          );
+                        }
+                      },
+                      leading: const Icon(Icons.history),
+                      title: Text(suggestion),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.north_west_outlined),
+                        onPressed: () {
+                          controller.value = TextEditingValue(
+                            text: suggestion,
+                            selection: TextSelection.collapsed(
+                              offset: suggestion.length,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+          orElse: () => const [SizedBox()],
+        ),
+      ];
+    },
+    [searchRepository, isFirst, title],
+  );
+}
+
+SuggestionsBuilder useSliverSuggestions(
+  WidgetRef ref,
+  bool isFirst,
+) {
+  final title = ref.watch(titleProvider);
+  return useCallback<SuggestionsBuilder>(
+    (context, searchController) {
+      return [
+        HookConsumer(
+          builder: (context, ref, child) {
+            final S translate = S.of(context);
+            final searchRepository = ref.watch(searchRepositoryProvider);
+            final trimmed = useListenableSelector(
+              searchController,
+              () => searchController.text.trim(),
+            );
+            final list = ref.watch(suggestionsProvider(query: trimmed));
+            return MultiSliver(
+              children: [
+                if (trimmed.isEmpty)
+                  SliverToBoxAdapter(
+                    child: ListTile(
+                      title: Text(translate.recent_searches),
+                    ),
+                  )
+                else ...[
+                  SliverToBoxAdapter(
+                    child: ListTile(
+                      onTap: () async {
+                        await searchRepository.saveSearch(trimmed);
+                        final params = {'title': trimmed};
+                        if (isFirst) {
+                          searchController.closeView('');
+                          context.pushNamed(
+                            'search_response',
+                            queryParameters: params,
+                          );
+                        } else {
+                          searchController.closeView(trimmed);
+                          context.replaceNamed(
+                            'search_response',
+                            queryParameters: params,
+                          );
+                        }
+                      },
+                      leading: const Icon(Icons.search_rounded),
+                      title: Text(
+                        translate.title_search(trimmed),
+                      ),
+                    ),
+                  ),
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 12.0,
+                    ),
+                    sliver: SliverToBoxAdapter(
+                      child: Text(translate.suggested_searches),
+                    ),
+                  ),
+                ],
+                SliverFixedExtentList(
+                  itemExtent: 56.0,
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final suggestion = list[index];
+                      return ListTile(
+                        onTap: () {
+                          if (suggestion == title) {
+                            searchController.closeView(null);
+                            return;
+                          }
+                          final params = {'title': suggestion};
+                          if (isFirst) {
+                            searchController.closeView('');
+                            context.pushNamed('search_response',
+                                queryParameters: params);
+                          } else {
+                            searchController.closeView(suggestion);
+                            context.replaceNamed(
+                              'search_response',
+                              queryParameters: params,
+                            );
+                          }
+                        },
+                        leading: const Icon(Icons.history),
+                        title: Text(suggestion),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.north_west_outlined),
+                          onPressed: () {
+                            searchController.text = suggestion;
+                          },
+                        ),
+                      );
+                    },
+                    childCount: list.length,
+                  ),
+                ),
+                if (list.isNotEmpty)
+                  SliverToBoxAdapter(
+                    child: ListTile(
+                      selected: true,
+                      dense: true,
+                      leading: const Icon(Icons.clear_all_outlined),
+                      title: Text(translate.clear_tooltip),
+                      onTap: () async {
+                        await searchRepository.clear();
+                        ref.invalidate(suggestionsProvider(query: trimmed));
+                      },
+                    ),
+                  ),
+              ],
+            );
+          },
+        )
+      ];
+    },
+    [isFirst, title],
+  );
+}
+
 class _SearchButton extends HookConsumerWidget {
   const _SearchButton({Key? key}) : super(key: key);
 
@@ -140,16 +353,14 @@ class _SearchButton extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final searchController = useSearchController(keys: const []);
     final isFirst = ref.watch(titleProvider.select((value) => value == ''));
-    final query = useListenableSelector(
-      searchController,
-      () => searchController.text.trim(),
-    );
-    final list = ref.watch(suggestionsProvider(query: query));
+    final suggestions = useSliverSuggestions(ref, isFirst);
+    final searchTooltip = MaterialLocalizations.of(context).searchFieldLabel;
     return SearchAnchor(
       searchController: searchController,
       builder: (context, controller) => IconButton(
         onPressed: controller.openView,
         icon: const Icon(Icons.search_rounded),
+        tooltip: searchTooltip,
       ),
       isFullScreen: isFirst,
       viewConstraints: BoxConstraints(
@@ -157,59 +368,11 @@ class _SearchButton extends HookConsumerWidget {
         minHeight: 120.0,
       ),
       viewElevation: 4.0,
-      suggestionsBuilder: (context, controller) {
-        final trimmed = searchController.text;
-        return [
-          if (trimmed.isNotEmpty)
-            ListTile(
-              onTap: () async {
-                final params = {'title': trimmed};
-                if (isFirst) {
-                  controller.closeView('');
-                  context.pushNamed('search_response', queryParameters: params);
-                } else {
-                  controller.closeView(trimmed);
-                  context.replaceNamed(
-                    'search_response',
-                    queryParameters: params,
-                  );
-                }
-              },
-              leading: const Icon(Icons.send),
-              title: Text(controller.text),
-            ),
-          ...list.map(
-            (suggestion) => ListTile(
-              onTap: () {
-                final params = {'title': suggestion};
-                if (isFirst) {
-                  controller.closeView('');
-                  context.pushNamed('search_response', queryParameters: params);
-                } else {
-                  controller.closeView(suggestion);
-                  context.replaceNamed(
-                    'search_response',
-                    queryParameters: params,
-                  );
-                }
-              },
-              leading: const Icon(Icons.history),
-              title: Text(
-                suggestion,
-                style: Theme.of(context).primaryTextTheme.bodyLarge,
-              ),
-              trailing: IconButton(
-                icon: const Icon(Icons.north_west_outlined),
-                onPressed: () => controller.value = TextEditingValue(
-                  text: suggestion,
-                  selection: TextSelection.collapsed(offset: suggestion.length),
-                ),
-              ),
-            ),
-          )
-        ];
-      },
-      viewHintText: MaterialLocalizations.of(context).searchFieldLabel,
+      suggestionsBuilder: suggestions,
+      viewBuilder: (suggestions) => CustomScrollView(
+        slivers: suggestions.toList(),
+      ),
+      viewHintText: searchTooltip,
     );
   }
 }
