@@ -1,6 +1,5 @@
 import 'package:hive/hive.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:gameshop_deals/model/deal.dart';
 import 'package:gameshop_deals/model/cheapest_price.dart';
 
 part 'game_lookup.freezed.dart';
@@ -22,7 +21,7 @@ class GameLookup with _$GameLookup {
     @JsonKey(
       disallowNullValue: true,
       required: true,
-    ) @HiveField(2) required List<Deal> deals,
+    ) @HiveField(2) required List<GameDeal> deals,
   }) = _GameLookup;
 
   factory GameLookup._fromJsonWithFallback(Map<String, dynamic> json) {
@@ -35,6 +34,34 @@ class GameLookup with _$GameLookup {
 }
 
 @freezed
+class GameDeal with _$GameDeal {
+  @HiveType(typeId: 5, adapterName: 'GameDealAdapter')
+  const factory GameDeal({
+    @JsonKey(
+      name: 'dealID',
+      disallowNullValue: true,
+      required: true,
+    ) @HiveField(0) required String dealId,
+    @JsonKey(
+      name: 'storeID',
+      disallowNullValue: true,
+      required: true,
+    ) @HiveField(1) required String storeId,
+    @JsonKey(
+      disallowNullValue: true,
+      required: true,
+    ) @HiveField(2) required String price,
+    @JsonKey(
+      disallowNullValue: true,
+      required: true,
+    ) @HiveField(3) required String retailPrice,
+    @HiveField(4) String? savings,
+  }) = _GameDeal;
+
+  factory GameDeal.fromJson(Map<String, dynamic> json) => _$GameDealFromJson(json);
+}
+
+@freezed
 class Info with _$Info {
   @HiveType(typeId: 2, adapterName: 'InfoAdapter')
   const factory Info({
@@ -44,9 +71,7 @@ class Info with _$Info {
     ) @HiveField(0) required String title,
     @JsonKey(
       name: 'steamAppID',
-      disallowNullValue: true,
-      required: true,
-    ) @HiveField(1) required String steamAppId,
+    ) @HiveField(1) String? steamAppId,
     @JsonKey(
       disallowNullValue: true,
       required: true,

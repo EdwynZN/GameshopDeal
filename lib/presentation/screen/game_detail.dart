@@ -1,57 +1,121 @@
 import 'package:flutter/material.dart';
 import 'package:gameshop_deals/generated/l10n.dart';
+import 'package:gameshop_deals/model/price_ui.dart';
 import 'package:gameshop_deals/presentation/widgets/material_card.dart';
+import 'package:gameshop_deals/presentation/widgets/view_deals/store_avatar.dart';
+import 'package:gameshop_deals/presentation/widgets/view_deals/thumb_image.dart';
+import 'package:gameshop_deals/provider/game_provider.dart';
+import 'package:gameshop_deals/utils/cheapshark_url_formater.dart';
 import 'package:gameshop_deals/utils/constraints.dart';
 import 'package:gameshop_deals/utils/theme_constants.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class GameDetailScreen extends HookConsumerWidget {
-  final String id;
+  final int id;
 
   const GameDetailScreen({super.key, required this.id});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      appBar: AppBar(elevation: 0.0),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(child: _DetailCard()),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 12.0,
-            ),
-            sliver: SliverGrid.builder(
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 150,
-                mainAxisExtent: 150,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-              ),
-              itemBuilder: (context, index) {
-                return _DealStore(
-                  isSelected: index == 0,
-                );
-              },
-              itemCount: 9,
-            ),
+    final lookup = ref.watch(gameLookupProvider(id: id));
+    final list = lookup.when(
+      loading: () => const [
+        SliverToBoxAdapter(child: LinearProgressIndicator()),
+      ],
+      error: (error, stackTrace) {
+        return [
+          SliverToBoxAdapter(),
+        ];
+      },
+      data: (data) => [
+        SliverToBoxAdapter(
+          child: _DetailCard(
+            title: data.info.title,
+            image: data.info.thumb,
           ),
-        ],
-      ),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 12.0,
+          ),
+          sliver: SliverGrid.builder(
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 150,
+              mainAxisExtent: 125,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
+            itemBuilder: (context, index) {
+              final deal = data.deals[index];
+              return _DealStore(
+                isSelected: index == 0,
+                storeId: deal.storeId,
+                priceUI: PriceUI(
+                  savings: int.tryParse(deal.savings ?? '') ?? 0,
+                  normalPrice: double.tryParse(deal.retailPrice) ?? 0,
+                  salePrice: double.tryParse(deal.price) ?? 0,
+                ),
+                uri: dealUri(deal.dealId),
+              );
+            },
+            itemCount: data.deals.length,
+          ),
+        ),
+      ],
+    );
+    return Scaffold(
+      appBar: AppBar(elevation: 4.0),
+      body: CustomScrollView(slivers: list),
     );
   }
 }
 
 class _DetailCard extends StatelessWidget {
+  final String title;
+  final String? publisher;
+  final DateTime? date;
+  final String image;
+
   const _DetailCard({
     // ignore: unused_element
     super.key,
+    required this.title,
+    required this.image,
+    // ignore: unused_element
+    this.publisher,
+    // ignore: unused_element
+    this.date,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    final asset = ConstrainedBox(
+      constraints: const BoxConstraints.tightFor(
+        width: 140.0,
+        height: 82.0,
+      ),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(8)),
+        child: ColoredBox(
+          color: ElevationOverlay.applySurfaceTint(
+            theme.colorScheme.background,
+            theme.colorScheme.secondary,
+            2.0,
+          ),
+          child: ProviderScope(
+            overrides: [thumbProvider.overrideWithValue(image)],
+            child: const ThumbImage(
+              alignment: Alignment.topCenter,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ),
+    );
 
     final Widget info = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,7 +123,7 @@ class _DetailCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text(
-          'Super smash bros ultimate',
+          title,
           style: const TextStyle(
             fontSize: 18.0,
             fontWeight: FontWeight.w600,
@@ -67,25 +131,29 @@ class _DetailCard extends StatelessWidget {
           ),
           maxLines: 2,
         ),
-        gap4,
-        Text(
-          'Nintendo',
-          style: const TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.normal,
+        if (publisher != null) ...[
+          gap4,
+          Text(
+            publisher!,
+            style: const TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.normal,
+            ),
+            maxLines: 1,
           ),
-          maxLines: 1,
-        ),
-        gap4,
-        Text(
-          MaterialLocalizations.of(context).formatShortDate(DateTime.now()),
-          style: const TextStyle(
-            fontSize: 12.0,
-            fontWeight: FontWeight.bold,
-            letterSpacing: -0.25,
+        ],
+        if (date != null) ...[
+          gap4,
+          Text(
+            MaterialLocalizations.of(context).formatShortDate(date!),
+            style: const TextStyle(
+              fontSize: 12.0,
+              fontWeight: FontWeight.bold,
+              letterSpacing: -0.25,
+            ),
+            maxLines: 2,
           ),
-          maxLines: 2,
-        ),
+        ],
       ],
     );
 
@@ -98,24 +166,15 @@ class _DetailCard extends StatelessWidget {
           children: [
             Expanded(child: info),
             gap12,
-            Container(
-              width: 140.0,
-              height: 82.0,
-              decoration: ShapeDecoration(
-                color: theme.colorScheme.secondaryContainer,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                ),
-              ),
-            ),
+            asset,
           ],
         ),
       ),
     );
 
-    return Card(
+    return TonalCard(
       margin: emptyPadding,
-      elevation: 0.0,
+      elevation: 4.0,
       color: theme.appBarTheme.backgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(16.0)),
@@ -126,27 +185,29 @@ class _DetailCard extends StatelessWidget {
 }
 
 class _DealStore extends StatelessWidget {
+  final PriceUI priceUI;
   final bool isSelected;
+  final String storeId;
+  final Uri uri;
 
   const _DealStore({
     // ignore: unused_element
     super.key,
+    required this.priceUI,
     required this.isSelected,
+    required this.storeId,
+    required this.uri,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final savings = 100;
-    final salePrice = '12';
-    final normalPrice = '99';
     final PriceTheme priceTheme = theme.extension<PriceTheme>()!;
-    final bool discount = savings != 0;
     final textTheme = theme.textTheme;
     final Color discountColor = priceTheme.discountColor;
     final Color normalPriceColor = priceTheme.regularColor;
     final Widget price;
-    if (savings == 100 || double.tryParse(salePrice) == 0) {
+    if (priceUI.isFree) {
       price = Container(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         decoration: ShapeDecoration(
@@ -166,9 +227,9 @@ class _DealStore extends StatelessWidget {
       );
     } else {
       price = Text(
-        '\$$salePrice',
+        '\$${priceUI.salePrice}',
         style: textTheme.titleLarge?.copyWith(
-          color: discount ? discountColor : null,
+          color: priceUI.hasDiscount ? discountColor : null,
           fontSize: 14.0,
           letterSpacing: -0.15,
           fontWeight: FontWeight.w600,
@@ -177,13 +238,26 @@ class _DealStore extends StatelessWidget {
       );
     }
 
+    final asset = ConstrainedBox(
+      constraints: const BoxConstraints.tightForFinite(height: 36.0),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(8)),
+        child: ProviderScope(
+          overrides: [storeIdProvider.overrideWithValue(storeId)],
+          child: const StoreAvatarBanner(alignment: Alignment.center),
+        ),
+      ),
+    );
+/* 
     final timer = Chip(
       avatar: Icon(
         Icons.timelapse_outlined,
         size: 14.0,
         color: theme.colorScheme.tertiary,
       ),
-      label: const Text('3 days ago'),
+      label: Text(
+        S.of(context).change_in_hours(lastChange),
+      ),
       labelStyle: TextStyle(
         fontSize: 10.0,
         height: 0.0,
@@ -203,7 +277,7 @@ class _DealStore extends StatelessWidget {
       ),
       side: BorderSide.none,
     );
-
+ */
     Widget child = Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 12.0,
@@ -211,23 +285,14 @@ class _DealStore extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Container(
-            width: double.infinity,
-            height: 36.0,
-            decoration: ShapeDecoration(
-              color: theme.colorScheme.secondaryContainer,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8.0)),
-              ),
-            ),
-          ),
-          gap4,
-          timer,
-          gap12,
-          if (discount) ...[
+          asset,
+          //gap4,
+          //timer,
+          gap16,
+          if (priceUI.hasDiscount) ...[
             Center(
               child: Text(
-                '\$$normalPrice',
+                '\$${priceUI.normalPrice}',
                 style: textTheme.bodyMedium?.copyWith(
                   fontSize: 11.0,
                   decoration: TextDecoration.lineThrough,
@@ -275,7 +340,10 @@ class _DealStore extends StatelessWidget {
           ),
         ),
       );
-      child = Stack(fit: StackFit.loose, children: [child, best]);
+      child = Stack(
+        fit: StackFit.passthrough,
+        children: [child, best],
+      );
     }
 
     return TonalCard(
@@ -285,7 +353,15 @@ class _DealStore extends StatelessWidget {
         overlayColor: MaterialStatePropertyAll(
           theme.colorScheme.primary.withOpacity(0.08),
         ),
-        onTap: () {},
+        onTap: () async {
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error Launching url')),
+            );
+          }
+        },
         child: child,
       ),
     );

@@ -12,5 +12,5 @@ class TonalCard extends Card {
     super.clipBehavior,
     super.child,
     super.semanticContainer = true,
-  }) : super(shadowColor: Colors.transparent);
+  }) : super(shadowColor: const Color(0x01000000));
 }

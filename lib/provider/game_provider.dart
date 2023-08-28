@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:gameshop_deals/model/deal.dart';
 import 'package:gameshop_deals/model/game_lookup.dart';
 import 'package:gameshop_deals/provider/dispose_extension.dart';
 import 'package:gameshop_deals/provider/repository_provider.dart';
@@ -21,7 +20,7 @@ Future<GameLookup> gameLookup(GameLookupRef ref, {required int id}) async {
 }
 
 @Riverpod(dependencies: [gameLookup])
-AsyncValue<List<Deal>> dealsOfGame(DealsOfGameRef ref, {required int id}) => ref
+AsyncValue<List<GameDeal>> dealsOfGame(DealsOfGameRef ref, {required int id}) => ref
     .watch(gameLookupProvider(id: id))
     .whenData((value) => value.deals);
 

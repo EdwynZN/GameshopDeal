@@ -109,14 +109,11 @@ class StoreAvatarBanner extends ConsumerWidget {
     final asyncStore = ref.watch(singleStoreProvider(id: id));
     if (!asyncStore.hasValue) return const SizedBox.shrink();
     final store = asyncStore.requireValue;
-    final brightness = ThemeData.estimateBrightnessForColor(
-        Theme.of(context).scaffoldBackgroundColor);
-    BlendMode blend =
-        brightness == Brightness.light ? BlendMode.dst : BlendMode.srcATop;
+    final theme = Theme.of(context);
     return CachedNetworkImage(
-      color: Colors.black26,
+      color: theme.colorScheme.inverseSurface.withOpacity(0.36),
       alignment: alignment,
-      colorBlendMode: blend,
+      colorBlendMode: BlendMode.srcATop,
       cacheManager: ref.watch(cacheManagerProvider(cacheKey: cacheKeyStores)),
       imageUrl: cheapsharkUrl + store.images.banner,
       placeholder: (_, __) => Align(
