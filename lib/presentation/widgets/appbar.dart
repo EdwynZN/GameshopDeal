@@ -517,9 +517,9 @@ class __MoreSettingsState extends ConsumerState<_MoreSettings> {
             break;
           case 3:
             if (widget.savedGamesRefresh)
-              ref.invalidate(savedGamesPageProvider);
+              ref.read(savedGamesPageProvider.notifier).refresh();
             else
-              ref.invalidate(dealPageProvider(title));
+              ref.read(dealPageProvider(title).notifier).refresh();
             break;
           case 4:
             context.pushNamed(settingsRoute);
