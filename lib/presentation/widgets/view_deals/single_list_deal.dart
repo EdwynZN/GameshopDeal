@@ -121,7 +121,7 @@ class ListDealUI extends HookConsumerWidget {
           );
         },
         child: Column(
-          children: [body, gap4, row],
+          children: [body, gap12, row],
         ),
       ),
     );
@@ -270,11 +270,6 @@ class _BottomRowInfo extends StatelessWidget {
           icon: const Icon(Icons.bookmark_outline_outlined),
           onPressed: () {},
         ),
-        IconButton(
-          tooltip: 'Share',
-          icon: const Icon(Icons.share),
-          onPressed: () {},
-        ),
         IconButton.filledTonal(
           tooltip: MaterialLocalizations.of(context).moreButtonTooltip,
           icon: const Icon(Icons.more_vert_outlined),
@@ -405,7 +400,7 @@ class _AssetDeal extends StatelessWidget {
           width: 12.0,
         ),
         label: Text(
-          metacriticScore.toString(),
+          '$metacriticScore%',
           maxLines: 1,
           overflow: TextOverflow.clip,
         ),
