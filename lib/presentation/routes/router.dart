@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:gameshop_deals/presentation/screen/game_detail.dart';
 import 'package:gameshop_deals/presentation/screen/home.dart';
 import 'package:gameshop_deals/presentation/screen/saved_deals.dart';
 import 'package:gameshop_deals/presentation/screen/settings.dart';
@@ -35,6 +36,14 @@ GoRouter createRouter({
             name: settingsName,
             path: settingsName,
             builder: (_, __) => const SettingsScreen(),
+          ),
+          GoRoute(
+            name: detailName,
+            path: '$detailRoute/:id',
+            builder:(_, state) {
+              final id = state.pathParameters['id']!;
+              return GameDetailScreen(id: id);
+            },
           ),
           GoRoute(
             name: 'search_response',

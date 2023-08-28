@@ -9,7 +9,9 @@ import 'package:gameshop_deals/provider/deal_provider.dart';
 import 'package:gameshop_deals/provider/preference_provider.dart';
 import 'package:gameshop_deals/utils/constraints.dart';
 import 'package:gameshop_deals/utils/preferences_constants.dart';
+import 'package:gameshop_deals/utils/routes_constants.dart';
 import 'package:gameshop_deals/utils/theme_constants.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -65,8 +67,8 @@ class ListDealUI extends HookConsumerWidget {
     final deal = ref.watch(singleDeal);
     final DateTime? dateTime = useMemoized(
       () => deal.releaseDate == 0
-        ? null
-        : DateTime.fromMillisecondsSinceEpoch(deal.releaseDate * 1000),
+          ? null
+          : DateTime.fromMillisecondsSinceEpoch(deal.releaseDate * 1000),
       [deal.releaseDate],
     );
     final lastChange = useMemoized(() {
@@ -110,7 +112,14 @@ class ListDealUI extends HookConsumerWidget {
       type: MaterialType.canvas,
       color: Theme.of(context).colorScheme.surface,
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          context.pushNamed(
+            detailName,
+            pathParameters: {
+              'id': deal.dealId,
+            },
+          );
+        },
         child: Column(
           children: [body, gap4, row],
         ),
