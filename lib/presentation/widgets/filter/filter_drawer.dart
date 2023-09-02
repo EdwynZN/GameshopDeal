@@ -15,6 +15,11 @@ import 'package:gameshop_deals/model/filter.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' hide Store;
 import 'package:sliver_tools/sliver_tools.dart';
 
+final _filterInternalProvider = StateProvider.autoDispose.family<Filter, String>(
+  (ref, title) => ref.watch(filterProvider(title).notifier).state.copyWith(),
+  name: 'FilterScreen',
+);
+
 class FilterDrawer extends HookWidget {
   const FilterDrawer();
 
@@ -183,7 +188,7 @@ class _SaveButton extends ConsumerWidget {
       onPressed: () async {
         final preferedBox = ref.read(hivePreferencesProvider);
         final StateController<Filter> filterCopy =
-            ref.read(filterProviderCopy(title).notifier);
+            ref.read(_filterInternalProvider(title).notifier);
         await preferedBox.put(filterKey, filterCopy.state);
       },
     );
@@ -209,7 +214,7 @@ class _RestartButton extends ConsumerWidget {
         ),
       ),
       child: Text(translate.restart_tooltip),
-      onPressed: () => ref.refresh(filterProviderCopy(title)),
+      onPressed: () => ref.refresh(_filterInternalProvider(title)),
     );
   }
 }
@@ -224,7 +229,7 @@ class _ApplyButton extends ConsumerWidget {
     return FilledButton(
       onPressed: () {
         final StateController<Filter> filterCopy =
-            ref.read(filterProviderCopy(title).notifier);
+            ref.read(_filterInternalProvider(title).notifier);
         final StateController<Filter> filter =
             ref.read(filterProvider(title).notifier);
         if (filter.state == filterCopy.state) return;
@@ -247,7 +252,7 @@ class _OrderWidget extends ConsumerWidget {
     final S translate = S.of(context);
     final title = ref.watch(titleProvider);
     final bool _isAscendant = ref.watch(
-      filterProviderCopy(title).select((f) => f.isAscendant),
+      _filterInternalProvider(title).select((f) => f.isAscendant),
     );
     return SegmentedButton<bool>(
       emptySelectionAllowed: false,
@@ -276,7 +281,7 @@ class _OrderWidget extends ConsumerWidget {
       selected: <bool>{_isAscendant},
       onSelectionChanged: (newSelection) {
         final StateController<Filter> filter =
-            ref.read(filterProviderCopy(title).notifier);
+            ref.read(_filterInternalProvider(title).notifier);
         filter.state = filter.state.copyWith(isAscendant: newSelection.first);
       },
     );
@@ -291,7 +296,7 @@ class _PriceSlider extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final S translate = S.of(context);
     final title = ref.watch(titleProvider);
-    final RangeValues range = ref.watch(filterProviderCopy(title).select(
+    final RangeValues range = ref.watch(_filterInternalProvider(title).select(
       (f) {
         final lower = f.lowerPrice.toDouble();
         final upper = f.upperPrice.toDouble();
@@ -302,7 +307,7 @@ class _PriceSlider extends ConsumerWidget {
       values: range,
       onChanged: (newRange) {
         final StateController<Filter> filter =
-            ref.read(filterProviderCopy(title).notifier);
+            ref.read(_filterInternalProvider(title).notifier);
         filter.state = filter.state.copyWith(
           lowerPrice: newRange.start.round(),
           upperPrice: newRange.end.round(),
@@ -326,14 +331,14 @@ class _MetacriticFilter extends ConsumerWidget {
     final S translate = S.of(context);
     final title = ref.watch(titleProvider);
     final double metacritic = ref.watch(
-      filterProviderCopy(title).select((f) => f.metacritic.toDouble()),
+      _filterInternalProvider(title).select((f) => f.metacritic.toDouble()),
     );
     return Slider.adaptive(
       value: metacritic,
       thumbColor: Theme.of(context).primaryColor,
       onChanged: (newValue) {
         final StateController<Filter> filter =
-            ref.read(filterProviderCopy(title).notifier);
+            ref.read(_filterInternalProvider(title).notifier);
         filter.state = filter.state.copyWith(metacritic: newValue.toInt());
       },
       min: 0,
@@ -356,7 +361,7 @@ class _SortByWidget extends ConsumerWidget {
     final S translate = S.of(context);
     final title = ref.watch(titleProvider);
     final SortBy sortOrder =
-        ref.watch(filterProviderCopy(title).select((f) => f.sortBy));
+        ref.watch(_filterInternalProvider(title).select((f) => f.sortBy));
     return Wrap(
       spacing: 8,
       runSpacing: 2.0,
@@ -369,7 +374,7 @@ class _SortByWidget extends ConsumerWidget {
             selected: sortOrder == sort,
             onSelected: (val) {
               final StateController<Filter> filter =
-                  ref.read(filterProviderCopy(title).notifier);
+                  ref.read(_filterInternalProvider(title).notifier);
               filter.state = filter.state.copyWith(sortBy: sort);
             },
           )
@@ -387,7 +392,7 @@ class _SteamRating extends ConsumerWidget {
     final S translate = S.of(context);
     final title = ref.watch(titleProvider);
     final double score = ref.watch(
-      filterProviderCopy(title)
+      _filterInternalProvider(title)
           .select((f) => f.steamRating.clamp(40, 95).toDouble()),
     );
     return Slider.adaptive(
@@ -395,7 +400,7 @@ class _SteamRating extends ConsumerWidget {
       value: score,
       onChanged: (newValue) {
         final StateController<Filter> filter =
-            ref.read(filterProviderCopy(title).notifier);
+            ref.read(_filterInternalProvider(title).notifier);
         filter.state = filter.state
             .copyWith(steamRating: newValue <= 40 ? 0 : newValue.toInt());
       },
@@ -418,7 +423,7 @@ class _FlagFilterWidget extends ConsumerWidget {
     final S translate = S.of(context);
     final title = ref.watch(titleProvider);
     final _FilterFlags flags = ref.watch(
-      filterProviderCopy(title).select<_FilterFlags>(
+      _filterInternalProvider(title).select<_FilterFlags>(
         (f) =>
             (onSale: f.onSale, onlyRetail: f.onlyRetail, steam: f.steamWorks),
       ),
@@ -436,7 +441,7 @@ class _FlagFilterWidget extends ConsumerWidget {
               value: flags.onSale,
               onSelected: (value) {
                 final StateController<Filter> filter =
-                    ref.read(filterProviderCopy(title).notifier);
+                    ref.read(_filterInternalProvider(title).notifier);
                 filter.state = filter.state.copyWith(onSale: value);
               },
             ),
@@ -447,7 +452,7 @@ class _FlagFilterWidget extends ConsumerWidget {
               value: flags.onlyRetail,
               onSelected: (value) {
                 final StateController<Filter> filter =
-                    ref.read(filterProviderCopy(title).notifier);
+                    ref.read(_filterInternalProvider(title).notifier);
                 filter.state = filter.state.copyWith(onlyRetail: value);
               },
             ),
@@ -458,7 +463,7 @@ class _FlagFilterWidget extends ConsumerWidget {
               value: flags.steam,
               onSelected: (value) {
                 final StateController<Filter> filter =
-                    ref.read(filterProviderCopy(title).notifier);
+                    ref.read(_filterInternalProvider(title).notifier);
                 filter.state = filter.state.copyWith(steamWorks: value);
               },
             ),
@@ -505,7 +510,7 @@ class _StoreWidget extends ConsumerWidget {
     final S translate = S.of(context);
     final title = ref.watch(titleProvider);
     final Set<String> storesSelected =
-        ref.watch(filterProviderCopy(title).select((f) => f.storeId));
+        ref.watch(_filterInternalProvider(title).select((f) => f.storeId));
     final stores = ref.watch(fetchStoresProvider);
     return stores.when(
       loading: () => const Padding(
@@ -525,7 +530,7 @@ class _StoreWidget extends ConsumerWidget {
               selected: storesSelected.isEmpty,
               onSelected: (val) {
                 final StateController<Filter> filter =
-                    ref.read(filterProviderCopy(title).notifier);
+                    ref.read(_filterInternalProvider(title).notifier);
                 filter.state = filter.state.copyWith(storeId: const <String>{});
               },
               label: Text(translate.all_choice),
@@ -537,7 +542,7 @@ class _StoreWidget extends ConsumerWidget {
                 selected: storesSelected.contains(store.storeId),
                 onSelected: (val) {
                   final StateController<Filter> filter =
-                      ref.read(filterProviderCopy(title).notifier);
+                      ref.read(_filterInternalProvider(title).notifier);
                   Set<String> set = Set<String>.from(storesSelected);
                   if (val)
                     set.add(store.storeId);

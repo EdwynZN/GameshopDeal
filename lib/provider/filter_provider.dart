@@ -5,11 +5,6 @@ import 'package:gameshop_deals/utils/preferences_constants.dart';
 
 final titleProvider = Provider<String>((_) => '', name: 'TitleSearch');
 
-final filterProviderCopy = StateProvider.autoDispose.family<Filter, String>(
-  (ref, title) => ref.read(filterProvider(title)).copyWith(),
-  name: 'FilterScreen',
-);
-
 final filterProvider = StateProvider.autoDispose.family<Filter, String>(
   (ref, title) {
     final preferedBox = ref.watch(hivePreferencesProvider);
