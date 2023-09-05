@@ -15,7 +15,8 @@ import 'package:gameshop_deals/model/filter.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' hide Store;
 import 'package:sliver_tools/sliver_tools.dart';
 
-final _filterInternalProvider = StateProvider.autoDispose.family<Filter, String>(
+final _filterInternalProvider =
+    StateProvider.autoDispose.family<Filter, String>(
   (ref, title) => ref.watch(filterProvider(title).notifier).state.copyWith(),
   name: 'FilterScreen',
 );
@@ -51,7 +52,69 @@ class FilterDrawer extends HookWidget {
                         gap16,
                         Text(translate.filter, style: titleTheme),
                         gap4,
-                        const _FlagFilterWidget(),
+                        Consumer(
+                          builder: (context, ref, child) {
+                            final title = ref.watch(titleProvider);
+                            final bool onSale = ref.watch(
+                              _filterInternalProvider(title).select<bool>(
+                                (f) => f.onSale,
+                              ),
+                            );
+                            return _FilterListTile(
+                              title: translate.on_sale,
+                              value: onSale,
+                              onChanged: (value) {
+                                if (value == null) return;
+                                final StateController<Filter> filter = ref.read(
+                                    _filterInternalProvider(title).notifier);
+                                filter.state =
+                                    filter.state.copyWith(onSale: value);
+                              },
+                            );
+                          },
+                        ),
+                        Consumer(
+                          builder: (context, ref, child) {
+                            final title = ref.watch(titleProvider);
+                            final bool onlyRetail = ref.watch(
+                              _filterInternalProvider(title).select<bool>(
+                                (f) => f.onlyRetail,
+                              ),
+                            );
+                            return _FilterListTile(
+                              title: translate.retail_discount,
+                              value: onlyRetail,
+                              onChanged: (value) {
+                                if (value == null) return;
+                                final StateController<Filter> filter = ref.read(
+                                    _filterInternalProvider(title).notifier);
+                                filter.state =
+                                    filter.state.copyWith(onlyRetail: value);
+                              },
+                            );
+                          },
+                        ),
+                        Consumer(
+                          builder: (context, ref, child) {
+                            final title = ref.watch(titleProvider);
+                            final bool steamWorks = ref.watch(
+                              _filterInternalProvider(title).select<bool>(
+                                (f) => f.steamWorks,
+                              ),
+                            );
+                            return _FilterListTile(
+                              title: translate.steamworks,
+                              value: steamWorks,
+                              onChanged: (value) {
+                                if (value == null) return;
+                                final StateController<Filter> filter = ref.read(
+                                    _filterInternalProvider(title).notifier);
+                                filter.state =
+                                    filter.state.copyWith(steamWorks: value);
+                              },
+                            );
+                          },
+                        ),
                         gap16,
                         Text(translate.price_range, style: titleTheme),
                         gap4,
@@ -232,12 +295,14 @@ class _ApplyButton extends ConsumerWidget {
             ref.read(_filterInternalProvider(title).notifier);
         final StateController<Filter> filter =
             ref.read(filterProvider(title).notifier);
-        if (filter.state == filterCopy.state) return;
-        filter.state = filterCopy.state.copyWith();
+        if (filter.state != filterCopy.state) {
+          filter.state = filterCopy.state.copyWith();
+        }
         Navigator.maybePop(context);
       },
       style: const ButtonStyle(
-          minimumSize: MaterialStatePropertyAll(Size(280.0, 44.0))),
+        minimumSize: MaterialStatePropertyAll(Size(280.0, 44.0)),
+      ),
       child: Text(translate.apply_filter),
     );
   }
@@ -258,24 +323,23 @@ class _OrderWidget extends ConsumerWidget {
       emptySelectionAllowed: false,
       multiSelectionEnabled: false,
       showSelectedIcon: false,
+      style: const ButtonStyle(
+        visualDensity: VisualDensity(vertical: -0.5),
+        tapTargetSize: MaterialTapTargetSize.padded,
+        textStyle: MaterialStatePropertyAll(
+          TextStyle(fontSize: 14.0, fontWeight: FontWeight.w600),
+        ),
+      ),
       segments: <ButtonSegment<bool>>[
         ButtonSegment<bool>(
           value: true,
-          label: Text(
-            translate.ascending,
-            style: const TextStyle(fontSize: 12.0),
-            maxLines: 1,
-          ),
-          icon: const Icon(Icons.arrow_upward, size: 20.0),
+          label: Text(translate.ascending,maxLines: 1),
+          icon: const Icon(Icons.arrow_upward, size: 24.0),
         ),
         ButtonSegment<bool>(
           value: false,
-          label: Text(
-            translate.descending,
-            style: const TextStyle(fontSize: 12.0),
-            maxLines: 1,
-          ),
-          icon: const Icon(Icons.arrow_downward, size: 20.0),
+          label: Text(translate.descending, maxLines: 1),
+          icon: const Icon(Icons.arrow_downward, size: 24.0),
         ),
       ],
       selected: <bool>{_isAscendant},
@@ -412,91 +476,34 @@ class _SteamRating extends ConsumerWidget {
   }
 }
 
-/// Flag Filter
-typedef _FilterFlags = ({bool onSale, bool onlyRetail, bool steam});
-
-class _FlagFilterWidget extends ConsumerWidget {
-  const _FlagFilterWidget({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final S translate = S.of(context);
-    final title = ref.watch(titleProvider);
-    final _FilterFlags flags = ref.watch(
-      _filterInternalProvider(title).select<_FilterFlags>(
-        (f) =>
-            (onSale: f.onSale, onlyRetail: f.onlyRetail, steam: f.steamWorks),
-      ),
-    );
-    return SizedBox(
-      height: 48.0,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.only(right: 8.0),
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: <Widget>[
-            _FilterChip(
-              label: translate.on_sale,
-              tooltip: translate.on_sale_tooltip,
-              value: flags.onSale,
-              onSelected: (value) {
-                final StateController<Filter> filter =
-                    ref.read(_filterInternalProvider(title).notifier);
-                filter.state = filter.state.copyWith(onSale: value);
-              },
-            ),
-            gap8,
-            _FilterChip(
-              label: translate.retail_discount,
-              tooltip: translate.retail_discount_tooltip,
-              value: flags.onlyRetail,
-              onSelected: (value) {
-                final StateController<Filter> filter =
-                    ref.read(_filterInternalProvider(title).notifier);
-                filter.state = filter.state.copyWith(onlyRetail: value);
-              },
-            ),
-            gap8,
-            _FilterChip(
-              label: translate.steamworks,
-              tooltip: translate.steamworks_tooltip,
-              value: flags.steam,
-              onSelected: (value) {
-                final StateController<Filter> filter =
-                    ref.read(_filterInternalProvider(title).notifier);
-                filter.state = filter.state.copyWith(steamWorks: value);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _FilterChip extends StatelessWidget {
-  final ValueChanged<bool>? onSelected;
+class _FilterListTile extends StatelessWidget {
+  final ValueChanged<bool?>? onChanged;
   final bool value;
-  final String? tooltip;
-  final String label;
+  final String title;
 
-  const _FilterChip({
+  const _FilterListTile({
     // ignore: unused_element
     super.key,
-    required this.label,
+    required this.title,
     required this.value,
-    this.onSelected,
-    this.tooltip,
+    this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
-    return FilterChip(
-      showCheckmark: false,
-      label: Text(label),
-      tooltip: tooltip,
-      selected: value,
-      onSelected: onSelected,
+    return CheckboxListTile(
+      visualDensity: const VisualDensity(vertical: -1.0),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(12.0)),
+      ),
+      checkboxSemanticLabel: title,
+      contentPadding: const EdgeInsets.only(left: 24.0, right: 16.0),
+      checkboxShape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(4.0)),
+      ),
+      title: Text(title),
+      value: value,
+      onChanged: onChanged,
     );
   }
 }
@@ -522,6 +529,7 @@ class _StoreWidget extends ConsumerWidget {
         onPressed: () => ref.refresh(fetchStoresProvider),
       ),
       data: (stores) {
+        final avatarColor = Theme.of(context).colorScheme.onSecondaryContainer;
         return Wrap(
           spacing: 8,
           children: <Widget>[
@@ -534,11 +542,12 @@ class _StoreWidget extends ConsumerWidget {
                 filter.state = filter.state.copyWith(storeId: const <String>{});
               },
               label: Text(translate.all_choice),
-              avatar: const Icon(Icons.all_inclusive, size: 20),
+              avatar: Icon(Icons.all_inclusive, size: 20, color: avatarColor),
               tooltip: translate.all_stores_tooltip,
             ),
             for (Store store in stores)
               FilterChip(
+                showCheckmark: false,
                 selected: storesSelected.contains(store.storeId),
                 onSelected: (val) {
                   final StateController<Filter> filter =
