@@ -9,6 +9,18 @@ final class PriceUI {
     required this.salePrice,
   });
 
+  factory PriceUI.fromPrice({
+    required double normalPrice,
+    required double salePrice,
+  }) {
+    final savings = 100 * (1 - salePrice / normalPrice);
+    return PriceUI(
+      normalPrice: normalPrice,
+      salePrice: salePrice,
+      savings: savings.toInt(),
+    );
+  }
+
   bool get isFree => savings == 100 || salePrice == 0;
 
   bool get hasDiscount => savings != 0 || salePrice != normalPrice;

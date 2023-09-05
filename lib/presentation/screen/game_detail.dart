@@ -4,7 +4,7 @@ import 'package:gameshop_deals/model/price_ui.dart';
 import 'package:gameshop_deals/presentation/widgets/material_card.dart';
 import 'package:gameshop_deals/presentation/widgets/view_deals/store_avatar.dart';
 import 'package:gameshop_deals/presentation/widgets/view_deals/thumb_image.dart';
-import 'package:gameshop_deals/provider/game_provider.dart';
+import 'package:gameshop_deals/provider/deal_detail_provider.dart';
 import 'package:gameshop_deals/utils/cheapshark_url_formater.dart';
 import 'package:gameshop_deals/utils/constraints.dart';
 import 'package:gameshop_deals/utils/theme_constants.dart';
@@ -12,13 +12,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GameDetailScreen extends HookConsumerWidget {
-  final int id;
+  final String dealId;
 
-  const GameDetailScreen({super.key, required this.id});
+  const GameDetailScreen({super.key, required this.dealId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final lookup = ref.watch(gameLookupProvider(id: id));
+    final lookup = ref.watch(dealDetailProvider(dealId: dealId));
     final list = lookup.when(
       loading: () => const [
         SliverToBoxAdapter(child: LinearProgressIndicator()),
@@ -31,8 +31,10 @@ class GameDetailScreen extends HookConsumerWidget {
       data: (data) => [
         SliverToBoxAdapter(
           child: _DetailCard(
-            title: data.info.title,
+            title: data.info.name,
             image: data.info.thumb,
+            publisher: data.info.publisher,
+            date: data.info.releaseDate,
           ),
         ),
         SliverPadding(
@@ -48,19 +50,18 @@ class GameDetailScreen extends HookConsumerWidget {
               mainAxisSpacing: 8,
             ),
             itemBuilder: (context, index) {
-              final deal = data.deals[index];
+              final deal = data.cheaperStores[index];
               return _DealStore(
                 isSelected: index == 0,
                 storeId: deal.storeId,
-                priceUI: PriceUI(
-                  savings: int.tryParse(deal.savings ?? '') ?? 0,
+                priceUI: PriceUI.fromPrice(
                   normalPrice: double.tryParse(deal.retailPrice) ?? 0,
-                  salePrice: double.tryParse(deal.price) ?? 0,
+                  salePrice: double.tryParse(deal.salePrice) ?? 0,
                 ),
                 uri: dealUri(deal.dealId),
               );
             },
-            itemCount: data.deals.length,
+            itemCount: data.cheaperStores.length,
           ),
         ),
       ],
@@ -141,7 +142,8 @@ class _DetailCard extends StatelessWidget {
             ),
             maxLines: 1,
           ),
-        ],
+        ] else
+          gap8,
         if (date != null) ...[
           gap4,
           Text(

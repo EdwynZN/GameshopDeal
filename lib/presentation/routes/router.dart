@@ -40,15 +40,9 @@ GoRouter createRouter({
           GoRoute(
             name: detailName,
             path: '$detailRoute/:id',
-            redirect: (context, state) {
-              final id = state.pathParameters['id']!;
-              return int.tryParse(id) == null
-                ? '/'
-                : null;
-            },
             builder:(_, state) {
               final id = state.pathParameters['id']!;
-              return GameDetailScreen(id: int.parse(id));
+              return GameDetailScreen(dealId: id);
             },
           ),
           GoRoute(

@@ -115,9 +115,7 @@ class ListDealUI extends HookConsumerWidget {
         onTap: () {
           context.pushNamed(
             detailName,
-            pathParameters: {
-              'id': deal.gameId,
-            },
+            pathParameters: {'id': deal.dealId},
           );
         },
         child: Column(
